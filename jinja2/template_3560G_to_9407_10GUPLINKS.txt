@@ -1,0 +1,130 @@
+{#- ========================================================= -#}
+{#- IF THE INTERFACE IS AN SVI, A MGMT PORT, OR A LOOPBACK INTERFACE -#}
+{#- ========================================================= -#}
+{%- if "interface Vlan" in interface.interface %}
+{{interface.interface}}
+{%- elif "Loopback" in interface.interface %}
+{{interface.interface}}
+{%- elif "Port-channel" in interface.interface %}
+{{interface.interface}}
+{%- endif %}
+{#- ========================================================= -#}
+{#- IF THE INTERFACE IS A GIGABITETHERNET PORT -#}
+{#- ========================================================= -#}
+{%- if "interface GigabitEthernet0/1" in interface.interface %}
+[[ OLD_INTERFACE: {{ interface.interface}} ]]
+interface TwentyFiveGigE3/0/1
+channel-group 3 mode active
+enable
+{%- endif %}
+{%- if "interface GigabitEthernet0/2" in interface.interface %}
+[[ OLD_INTERFACE: {{ interface.interface}} ]]
+interface TwentyFiveGigE3/0/5
+channel-group 3 mode active
+enable
+{%- endif %}
+{#- ========================================================= -#}
+{#- IF THE INTERFACE IS A FASTETHERNET PORT -#}
+{#- ========================================================= -#}
+
+{%- if "FastEthernet" in interface.interface %}
+[[ OLD_INTERFACE: {{ interface.interface}} ]]
+{%- if interface.interface.split("/")[1] | int < 25 %}
+interface GigabitEthernet1/0/{{ interface.interface.split("/")[1] }}
+{%- elif interface.interface.split("/")[1] | int > 24 %}
+interface TenGigabitEthernet1/0/{{ interface.interface.split("/")[1] }}
+{%- endif %}
+{%- endif %}
+{#- ========================================================= -#}
+{#- GO THROUGH INTERFACE PARAMETERS -#}
+{#- ========================================================= -#}
+{%- if interface.shutdown %}
+{{ interface.shutdown }}
+{%- endif %}
+{%- if interface.description %}
+{{ interface.description }}
+{%- endif %}
+{#- ======================================== -#}
+{#- IF THE INTERFACE IS A LAYER-3 SWITCHPORT -#}
+{#- ======================================== -#}
+{%- if interface.layer_3 == True %}
+{%- if interface.ip_address %}
+{%- for ipaddress in interface.ip_address %}
+{{ ipaddress }}
+{%- endfor %}
+{%- endif %}
+{%- if interface.ip_helper_1%}
+{{ interface.ip_helper_1 }}
+{%- endif %}
+{%- if interface.ip_helper_2%}
+{{ interface.ip_helper_2 }}
+{%- endif %}
+{%- if interface.ip_helper_3%}
+{{ interface.ip_helper_3 }}
+{%- endif %}
+{%- if interface.pim_mode %}
+{{ interface.pim_mode }}
+{%- endif %}
+{%- if interface.igmp_version %}
+{{ interface.igmp_version }}
+{%- endif %}
+{%- elif interface.layer_3 == False %}
+{%- if interface.svl %}
+{{ interface.svl }}
+{%- endif %}
+{#- ======================================== -#}
+{#- IF THE INTERFACE IS A LAYER-2 SWITCHPORT -#}
+{#- ======================================== -#}
+{%- if interface.switchport_mode %}
+{{ interface.switchport_mode }}
+{%- endif %}
+{%- if interface.trunk_encapsulation %}
+{{ interface.trunk_encapsulation }}
+{%- endif %}
+{%- if interface.trunk_native_vlan %}
+{{ interface.trunk_native_vlan }}
+{%- endif %}
+{%- if interface.switchport_vlan %}
+{{ interface.switchport_vlan }}
+{%- endif %}
+{%- if interface.switchport_voice_vlan %}
+{{ interface.switchport_voice_vlan }}
+{%- endif %}
+{%- if interface.cdp_status %}
+{{ interface.cdp_status }}
+{%- endif %}
+{%- endif %}
+{#- ======================================== -#}
+{#- CHECK FOR LAYER-2 OR 3 COMMANDS -#}
+{#- ======================================== -#}
+{%- if interface.port_channel %}
+{{ interface.port_channel }}
+{%- endif %}
+{%- if interface.speed %}
+{{ interface.speed }}
+{%- endif %}
+{%- if interface.ip_dhcp_snooping %}
+{{ interface.ip_dhcp_snooping }}
+{%- endif %}
+{%- if interface.vrf %}
+{{ interface.vrf }}
+{%- endif %}
+{%- if interface.access_groups %}
+{%- for access_group in interface.access_groups %}
+{{ access_group }}
+{%- endfor %}
+{%- endif %}
+{%- if interface.portfast %}
+{{ interface.portfast }}
+{%- endif %}
+{%- if interface.eigrp_hold_time %}
+{{ interface.eigrp_hold_time }}
+{%- endif %}
+{%- if interface.eigrp_hello_interval %}
+{{ interface.eigrp_hello_interval }}
+{%- endif %}
+{%- if interface.trunk_allowed %}
+{%- for allowedvlan in interface.trunk_allowed %}
+{{ allowedvlan }}
+{%- endfor %}
+{%- endif %}
