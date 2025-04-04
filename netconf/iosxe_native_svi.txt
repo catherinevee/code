@@ -1,0 +1,32 @@
+<config>
+  <native xmlns="http://cisco.com/ns/yang/Cisco-IOS-XE-native">
+    <interface>
+      <Vlan>
+        <name xmlns:nc="urn:ietf:params:xml:ns:netconf:base:1.0">3200</name>
+        <description>PrivateDHCPSubnet</description>
+        <ip>
+          <address>
+            <primary>
+              <address>10.26.4.1</address>
+              <mask>255.255.254.0</mask>
+            </primary>
+          </address>
+          <helper-address>
+            <address>140.160.244.135</address>
+          </helper-address>
+          <helper-address>
+            <address>140.160.245.135</address>
+          </helper-address>
+          <pim>
+            <sparse-mode xmlns="http://cisco.com/ns/yang/Cisco-IOS-XE-multicast"/>
+            <pim-mode xmlns="http://cisco.com/ns/yang/Cisco-IOS-XE-multicast">sparse-mode</pim-mode>
+          </pim>
+          <redirects>false</redirects>
+          <igmp xmlns="http://cisco.com/ns/yang/Cisco-IOS-XE-igmp">
+            <version>3</version>
+          </igmp>
+        </ip>
+      </Vlan>
+    </interface>
+  </native>
+</config>

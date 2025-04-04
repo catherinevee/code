@@ -1,0 +1,20 @@
+<config>
+  <native xmlns="http://cisco.com/ns/yang/Cisco-IOS-XE-native">
+    <username>
+      <name>netmgr</name>
+      <privilege>15</privilege>
+      <secret>
+        <encryption>9</encryption>
+        <secret>$9$JudGg5VLYSb4JE$Gb/AKw65eWJiokB8L2ncsSH9OmjQcpcCApeMDupr20g</secret>
+      </secret>
+    </username>
+    <username>
+      <name>venegaa2</name>
+      <privilege>15</privilege>
+      <secret>
+        <encryption>9</encryption>
+        <secret>$9$zMJdAEoVYO1DRE$btieDp4rVzbkaRhZumHcHzTPdTs/bMqaP9xqdOlYrl2</secret>
+      </secret>
+    </username>
+  </native>
+</config>

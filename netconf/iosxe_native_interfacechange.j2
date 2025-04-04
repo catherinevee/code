@@ -1,0 +1,15 @@
+<config>
+  <native xmlns="http://cisco.com/ns/yang/Cisco-IOS-XE-native">
+	<interface>
+		<{{ interface_type }}>
+		<name> {{ interface_index }} </name>
+        	<switchport>
+          		<access xmlns="http://cisco.com/ns/yang/Cisco-IOS-XE-switch">
+           			 <vlan>
+             				 <vlan>{{ access_vlan }}</vlan>
+           			 </vlan>
+         		 </access>
+		<{{ interface_type }}>
+	</interface>
+  </native>
+</config>

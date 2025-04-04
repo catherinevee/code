@@ -1,0 +1,11 @@
+<config>
+  <native xmlns="http://cisco.com/ns/yang/Cisco-IOS-XE-native">
+    <ip>
+      <name-server>
+        <no-vrf>140.160.5.149</no-vrf>
+        <no-vrf>140.160.242.13</no-vrf>
+        <no-vrf>{{ global.DNS }}</no-vrf>
+      </name-server>
+    </ip>
+  </native>
+</config>

@@ -1,0 +1,8 @@
+[testing]
+10.fdssdf.101.254
+
+[ac]
+sfsd.net.sdfsd.sdfsd
+
+[managedservers]
+10.247.110.30

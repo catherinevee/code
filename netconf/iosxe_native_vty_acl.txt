@@ -1,0 +1,67 @@
+<config>
+  <native xmlns="http://cisco.com/ns/yang/Cisco-IOS-XE-native">
+    <ip>
+      <access-list>
+        <standard xmlns="http://cisco.com/ns/yang/Cisco-IOS-XE-acl">
+          <name xmlns:nc="urn:ietf:params:xml:ns:netconf:base:1.0">Admin_VTY_Access</name>
+          <access-list-seq-rule>
+            <sequence>10</sequence>
+            <permit>
+              <std-ace>
+                <ipv4-prefix>140.160.54.31</ipv4-prefix>
+                <log/>
+              </std-ace>
+            </permit>
+          </access-list-seq-rule>
+          <access-list-seq-rule>
+            <sequence>20</sequence>
+            <permit>
+              <std-ace>
+                <ipv4-prefix>10.26.0.1</ipv4-prefix>
+                <log/>
+              </std-ace>
+            </permit>
+          </access-list-seq-rule>
+          <access-list-seq-rule>
+            <sequence>30</sequence>
+            <permit>
+              <std-ace>
+                <ipv4-prefix>140.160.244.141</ipv4-prefix>
+                <log/>
+              </std-ace>
+            </permit>
+          </access-list-seq-rule>
+          <access-list-seq-rule>
+            <sequence>40</sequence>
+            <permit>
+              <std-ace>
+                <ipv4-prefix>10.47.11.0</ipv4-prefix>
+                <mask>0.0.0.255</mask>
+                <log/>
+              </std-ace>
+            </permit>
+          </access-list-seq-rule>
+          <access-list-seq-rule>
+            <sequence>50</sequence>
+            <permit>
+              <std-ace>
+                <ipv4-prefix>10.47.10.0</ipv4-prefix>
+                <mask>0.0.0.255</mask>
+                <log/>
+              </std-ace>
+            </permit>
+          </access-list-seq-rule>
+          <access-list-seq-rule>
+            <sequence>60</sequence>
+            <deny>
+              <std-ace>
+                <any/>
+                <log/>
+              </std-ace>
+            </deny>
+          </access-list-seq-rule>
+        </standard>
+      </access-list>
+    </ip>
+  </native>
+</config>
