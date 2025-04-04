@@ -1,0 +1,40 @@
+===============================
+Configuring Network MGMT SVIs
+===============================
+Configuring Areas as Stubs
+----------
+ipv6 unicast-routing
+ipv6 router ospf 6
+  area 11 stub
+
+-Template reference for Management SVIs
+----------
+conf t
+int vlan 1000
+desc NetworkMGMT IPv4 IPv6
+ ipv6 address 2620:B8:8000:A11E::2/64
+ ipv6 enable
+ ipv6 ospf 6 area 3
+do wr
+
+
+-Template reference for data SVIs with a FHRP
+----------
+conf t
+int vlan 711
+desc NetworkMGMT IPv4 IPv6
+ standby version 2
+ standby 12 ipv6 FE80::1
+ standby 12 priority 120
+ standby 12 preempt
+ standby 12 track 1 decrement 15
+ ipv6 address GGGG:GG:GGGG:A11E::3/64
+ ipv6 enable
+ ipv6 ospf 6 area 11
+do wr
+
+-Template reference for the uplink
+
+ ipv6 address GGGG:GG:GGGG:A11A::3/127
+ ipv6 enable
+ ipv6 ospf 6 area 11
