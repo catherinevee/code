@@ -43,9 +43,9 @@ provider "azurerm" {
 }
 
 
-module "azure_paris_module" {
-  source ="./azure/paris"
-}
+#module "azure_paris_module" {
+#  source ="./azure/paris"
+#}
 
 module "azure_poland_module" {
   source ="./azure/poland/prod"
