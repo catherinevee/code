@@ -48,7 +48,7 @@ provider "azurerm" {
 #}
 
 module "azure_poland_module" {
-  source ="./azure/poland/prod"
+  source ="./azure/poland/dev"
 }
 
 provider "google" {
