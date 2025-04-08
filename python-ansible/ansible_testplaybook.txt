@@ -1,7 +1,0 @@
----
-	- name: Run standard check against managed servers
-	  hosts: managedservers
-	
- 	  tasks:
-	    - name: "Testing hostname"
-	    - debug: msg="{{ansible_hostname}}" 

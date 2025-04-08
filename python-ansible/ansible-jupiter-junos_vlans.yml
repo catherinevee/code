@@ -1,0 +1,11 @@
+---
+- name: Merge VLAN101 into configuration
+  hosts: switch-juniper
+  connection: local
+  tasks:
+    - name: Create VLAN
+      junos_vlans:
+        config:
+           - name: vlan101
+             vlan_id: 101
+        state: merged

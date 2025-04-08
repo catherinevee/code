@@ -1,0 +1,44 @@
+---
+- name: Install Host-Dependent packages
+  hosts: linux-networkingservers
+  become: yes
+  tasks:
+    - name: Install Network Packages for Debian
+      apt:
+        pkg:
+           - ncclient
+           - netmiko
+           - nornir
+           - python
+        state: latest
+      when: ansible_os_family== "Debian"
+
+    - name: Install Database Packages for RHEL
+      yum:
+        name:
+          - mongodb-org-server
+          - mongodb-org-mongos
+          - mongodb-org-shell
+          - mongodb-org-tools
+        state: latest
+      when: ansible_os_family == "RedHat"
+
+    - name:  Write IP Addresses of DNS Servers to File
+       shell: ip address >> /home/cathy/ipaddress.txt
+
+    - name: Run Troubleshooting CLI Commands
+      shell: |
+        ip address
+        ping -c 5 8.8.8.8
+        ping -c 5 208.67.222.222
+        ping -c 5 208.67.220.220
+        ping -c 5 1.1.1.1
+        ping -c 5 0.us.pool.ntp.org
+        ping -c 5 1.us.pool.ntp.org
+        ping -c 5 2.us.pool.ntp.org    
+      register: networktshoot_content
+    - debug: msg="{{networktshoot_content}}"
+
+    - name: Write Command Results to File
+      local_action: copy content="{{networktshootcontent}}"
+                    

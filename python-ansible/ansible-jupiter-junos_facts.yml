@@ -1,0 +1,7 @@
+---
+    - name: Gather Facts
+      hosts: router-juniper
+      tasks:
+        - name: Gather Facts From Hosts
+          junos_facts:
+          register: response

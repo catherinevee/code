@@ -1,6 +1,0 @@
-# config file for ansible
-[defaults]
-# default to inventory file of ./hosts
-inventory = ./hosts
-# disable host checking to automatically add hosts to known_hosts
-host_key_checking = True
