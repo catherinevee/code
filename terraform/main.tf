@@ -30,7 +30,7 @@ provider "aws" {
 
 
 module "aws_module" {
-  source ="./aws"
+  source ="./aws/ap-southeast-1/"
 }
 
 provider "azurerm" {
