@@ -1,0 +1,13 @@
+---
+- name: Get stats and write to desktop
+  hosts: linux-cathservers
+  vars:
+     - var1: catherine
+     - var2: katherine
+     - var3: qatherine
+  tasks:
+     - name: get system status info
+       shell: |
+        ip address > /home/{{var1}}
+        ip address > /home/{{var2}}
+        ip address > /home/{{var3}}
