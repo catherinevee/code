@@ -8,7 +8,6 @@ terraform {
   required_providers {
     azurerm = {
       source = "hashicorp/azurerm"
-      version = "4.11.0"
     }
     aws = {
       source = "hashicorp/aws"
@@ -28,9 +27,9 @@ provider "aws" {
 }
 
 
-module "aws_module" {
-  source ="./aws/ap-southeast-1/"
-}
+#module "aws_module" {
+#  source ="./aws/ap-southeast-1/"
+#}
 
 provider "azurerm" {
   features {}  
@@ -47,7 +46,7 @@ provider "azurerm" {
 #}
 
 module "azure_poland_module" {
-  source ="./azure/poland/dev"
+  source ="./azure/westus/"
 }
 
 provider "google" {
