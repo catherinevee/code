@@ -8,11 +8,11 @@ module "avm-res-network-virtualnetwork" {
   subnets = {
     "subnet1" = {
       name             = "${var.defaultlocation}-subnet1"
-      address_prefixes = ["10.0.0.0/24"]
+      address_prefixes = ["10.99.0.0/24"]
     }
     "subnet2" = {
       name             = "{${var.defaultlocation}-subnet2"
-      address_prefixes = ["10.0.1.0/24"]
+      address_prefixes = ["10.99.1.0/24"]
     }
   }
 }
