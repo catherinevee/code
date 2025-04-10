@@ -17,6 +17,11 @@ variable "defaultrg" {
     default = "default_polandresourcegroup"
 }
 
+variable "defaultsa" {
+    type = string
+    default = "sdfsdfsdf"
+}
+
 
 variable "polandcentral-var-prodresourcegroups" {
     type = list(string)
