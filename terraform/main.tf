@@ -49,9 +49,9 @@ module "azure_poland_module" {
   source ="./azure/poland/"
 }
 
-module "azure_wetus_module" {
-  source ="./azure/westus/"
-}
+#module "azure_wetus_module" {
+#  source ="./azure/westus/"
+#}
 
 
 provider "google" {

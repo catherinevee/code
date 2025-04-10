@@ -4,7 +4,7 @@ module "avm-res-network-virtualnetwork" {
   address_space       = ["10.0.0.0/16"]
   location            = "${var.defaultlocation}"
   name                = "${var.defaultlocation}"
-  resource_group_name = var.defaultrg
+  resource_group_name = "${var.defaultrg}"
   subnets = {
     "subnet1" = {
       name             = "${var.defaultlocation}-subnet1"
