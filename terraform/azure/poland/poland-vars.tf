@@ -7,9 +7,14 @@ variable "defaultenv" {
   default = "prod"
 }
 
+variable "defaultvnet" {
+    type = string
+    default = "10.0.0.0/16"
+}
+
 variable "defaultrg" {
     type = string
-    default = "polandresourcegroup"
+    default = "default_polandresourcegroup"
 }
 
 
