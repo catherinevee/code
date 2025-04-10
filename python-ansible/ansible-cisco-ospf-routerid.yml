@@ -1,0 +1,17 @@
+---
+  
+- name: Configure OSPF Router-ID
+  hosts: [cisco-router]
+  connection: network_cli
+
+  tasks:
+    - name: Configure OSPF Router-ID
+      cisco.ios.ios_config:
+       lines:
+        router-id 
+       parents:
+        router ospf 19
+
+      register: my_output
+
+    - debug: var=my_output
