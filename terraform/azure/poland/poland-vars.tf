@@ -9,14 +9,19 @@ variable "defaultenv" {
 
 variable "defaultrg" {
     type = string
-    default = "${var.defaultlocation}-${var.defaultenv}-1"
+    default = "polandresourcegroup"
 }
 
 
 variable "polandcentral-var-prodresourcegroups" {
     type = list(string)
-    default = ["${var.defaultlocation}-${var.defaultenv}-1",
-    "${var.defaultlocation}-${var.defaultenv}-2","${var.defaultlocation}-${var.defaultenv}-3"]
+    default = ["polandcentralrg-1",
+    "polandcentralrg-2","polandcentralrg-3"]
+}
+
+locals {
+    defaultsitename = "${var.defaultlocation}-${var.defaultenv}"
+    defaultrg = "${var.defaultlocation}-${var.defaultenv}-1"
 }
 
 variable "polandcentral-var-prod-allowed-in-tcpports" {

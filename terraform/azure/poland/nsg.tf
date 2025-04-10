@@ -1,7 +1,7 @@
 module "network-security-group" {
   source                = "Azure/network-security-group/azurerm"
-  resource_group_name   = var.defaultlocation
-  location              = var.defaultlocation
+  resource_group_name   = "${var.defaultlocation}"
+  location              = "${var.defaultlocation}"
   security_group_name   = "${var.defaultlocation}-sg-prod"
   source_address_prefix = ["10.7.0.0/24"]
   predefined_rules = [
@@ -45,5 +45,5 @@ module "network-security-group" {
     costcenter  = "it"
   }
 
-  depends_on = [azurerm_resource_group.westus-prod-resourcegroups]
+  depends_on = [azurerm_resource_group.polandcentral-prod-resourcegroups]
 }

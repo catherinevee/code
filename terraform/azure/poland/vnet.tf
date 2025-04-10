@@ -2,7 +2,7 @@ module "avm-res-network-virtualnetwork" {
   source = "Azure/avm-res-network-virtualnetwork/azurerm"
 
   address_space       = ["10.0.0.0/16"]
-  location            = var.defaultlocation
+  location            = "${var.defaultlocation}"
   name                = "${var.defaultlocation}"
   resource_group_name = var.defaultrg
   subnets = {
