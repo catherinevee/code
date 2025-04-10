@@ -1,0 +1,20 @@
+---
+- name: Show BGP Neighborship Status for VRF Neighbors
+  hosts: [edge-router]
+  gather_facts: false
+  connection: local
+
+  tasks:
+    - name: Show BGP Neighborship Status for VRF Neighbors
+      ios_command:
+        commands:
+          - show bgp vrf Mgmt-intf
+          - show bgp vrf uswest-1a all summary
+          - show bgp vrf uswest-2a all summary
+          - show bgp vrf uswest-3a all summary
+          - show bgp vrf uswest-1b all summary
+          - show bgp vrf uswest-2b all summary
+          - show bgp vrf uswest-3b all summary
+
+      register: print_output
+    -  debug: var=print_output.stdout_lines
