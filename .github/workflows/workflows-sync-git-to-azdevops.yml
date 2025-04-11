@@ -12,7 +12,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Run script file
       env:
-        AZ_USERNAME: ${{secrets.AZURE_CLIENT_ID}} # calling secrets from environment variables
+        AZ_USERNAME: ${{secrets.AZ_USERNAME}} # calling secrets from environment variables
         AZ_PAT: ${{secrets.AZ_PAT}}
         AZ_USEREMAIL: ${{secrets.AZ_USEREMAIL}}
         AZ_ORG: ${{secrets.AZ_ORG}}
