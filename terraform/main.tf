@@ -47,6 +47,7 @@ provider "azurerm" {
 
 module "azure_poland_module" {
   source ="./azure/poland/"
+  AZURE_TENANT_ID = var.AZURE_TENANT_ID
 }
 
 #module "azure_wetus_module" {
