@@ -12,7 +12,7 @@ rm -rf code/.git
 git fetch --unshallow
 
 # Pull changes from Azure DevOps if its exiting branch and have commits on it
-git pull https://$AZUSERNAME:$AZUREPAT@dev.azure.com/$AZORG/Brain%20Squeezes/_git/Brain-Squeezes.git
+git pull https://$AZUSERNAME:$AZUREPAT@dev.azure.com/$AZORG/code/_git/code.git
 
 #git checkout -b $github_to_azure_sync
 
