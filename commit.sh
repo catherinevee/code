@@ -12,7 +12,7 @@ rm -rf code/.git
 git fetch --unshallow
 echo ">>>> https://$AZ_USERNAME:$AZ_PAT@dev.azure.com/$AZ_ORG/"
 # Pull changes from Azure DevOps if its exiting branch and have commits on it
-git pull https://$AZ_USERNAME:$AZ_PAT@dev.azure.com/$AZ_ORG/
+git pull https://catherinevee:$AZ_PAT@dev.azure.com/code/
 
 #git checkout -b $github_to_azure_sync
 
@@ -23,4 +23,4 @@ git config --global user.name $AZ_USERNAME
 # Add all changes into stage, commit, and push to Azure DevOps
 git add .
 git commit -m "Sync from GitHub to Azure DevOps"
-git push --force https://$AZ_USERNAME:$AZ_PAT@dev.azure.com/$AZ_ORG/
+git push --force https://catherinevee:$AZ_PAT@dev.azure.com/$code/
