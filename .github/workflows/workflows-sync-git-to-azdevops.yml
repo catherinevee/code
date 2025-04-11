@@ -2,8 +2,7 @@ name: Sync Github Repo to AzureDevOps Repo
 on:
   push:
     branches:
-      - '*' # applies for all branches in github.
-      - '!master' # This line is used to restrict this pipeline which won't triggers for master branch. remove this if you need to trigger for code push in master branch (Create PR if needed in devops repos)
+      - 'main' # applies for all branches in github.
 jobs:
   check-bats-version:
     runs-on: ubuntu-latest
@@ -18,6 +17,6 @@ jobs:
         AZ_ORG: ${{secrets.AZ_ORG}}
       run: |
          chmod +x ./commit.sh
-         ./commit.sh # it will calls 'commit.sh' file. Thats where our logic is in.
+         ./commit.sh
       shell: bash
   
