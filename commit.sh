@@ -1,5 +1,7 @@
 #!/bin/bash
 
+AZ_USERNAME = ${{secrets.AZ_USERNAME}}
+
 # Remove Git information (for fresh git start)
 rm -rf code/.git
 
@@ -7,7 +9,7 @@ rm -rf code/.git
 git fetch --unshallow
 
 # Pull changes from Azure DevOps if its exiting branch and have commits on it
-git pull "https://${{secrets.AZ_USERNAME}}:${{secrets.AZURE_CLIENT_SECRET}}@dev.azure.com/${{secrets.AZ_ORG}}/code.git"
+git pull "https://$AZ_USERNAME:${{secrets.AZURE_CLIENT_SECRET}}@dev.azure.com/${{secrets.AZ_ORG}}/code.git"
 
 #git checkout -b $github_to_azure_sync
 
