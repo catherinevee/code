@@ -1,9 +1,9 @@
 #!/bin/bash
 
-export AZ_USERNAME=${{secrets.AZ_USERNAME}}
-export AZ_AZURE_CLIENT_SECRET=${{secrets.AZURE_CLIENT_SECRET}}
-export AZ_ORG=${{secrets.AZ_ORG}}
-export AZ_USERNAME=${{secrets.AZ_USERNAME}}
+export AZ_USERNAME=${AZ_USERNAME}
+export AZ_AZURE_CLIENT_SECRET=${AZ_AZURE_CLIENT_SECRET}
+export AZ_ORG=${AZ_ORG}
+export AZ_USERNAME=${AZ_USERNAME}
 
 # Remove Git information (for fresh git start)
 rm -rf code/.git
