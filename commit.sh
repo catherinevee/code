@@ -1,9 +1,9 @@
 #!/bin/bash
 
-AZ_USERNAME = ${{secrets.AZ_USERNAME}}
-AZ_PAT = ${{secrets.AZURE_CLIENT_SECRET}}
-AZ_ORG = ${{secrets.AZ_ORG}}
-AZ_USERNAME = ${{secrets.AZ_USERNAME}}
+AZ_USERNAME=${{secrets.AZ_USERNAME}}
+AZ_PAT=${{secrets.AZURE_CLIENT_SECRET}}
+AZ_ORG=${{secrets.AZ_ORG}}
+AZ_USERNAME=${{secrets.AZ_USERNAME}}
 
 # Remove Git information (for fresh git start)
 rm -rf code/.git
