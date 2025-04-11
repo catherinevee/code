@@ -25,12 +25,6 @@ variable "defaultsa" {
     default = "sdfsdfsdf"
 }
 
-variable "defaultsa-container" {
-    type = string
-    default = "tfstatecontainer"
-}
-
-variable "ARM_ACCESS_KEY" {}
 
 variable "polandcentral-var-prodresourcegroups" {
     type = list(string)
