@@ -1,5 +1,3 @@
-variable "AZURE_TENANT_ID" {}
-
 variable "defaultlocation" {
     type = string
     default = "polandcentral"
