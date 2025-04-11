@@ -4,6 +4,6 @@ module "avm-res-keyvault-vault" {
   location = var.defaultlocation
   name = "${var.defaultlocation}-keyvault"
   resource_group_name = var.defaultrg
-  tenant_id = var.AZURE_TENANT_ID
+  tenant_id = "${var.AZURE_TENANT_ID}"
 
 }
