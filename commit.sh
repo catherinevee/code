@@ -7,7 +7,7 @@ rm -rf code/.git
 git fetch --unshallow
 
 # Pull changes from Azure DevOps if its exiting branch and have commits on it
-git pull https://${{secrets.AZUSERNAME}}:${{secrets.AZURE_CLIENT_SECRET}}@dev.azure.com/${{secrets.AZ_ORG}}/code.git
+git pull "https://${{secrets.AZUSERNAME}}:${{secrets.AZURE_CLIENT_SECRET}}@dev.azure.com/${{secrets.AZ_ORG}}/code.git"
 
 #git checkout -b $github_to_azure_sync
 
