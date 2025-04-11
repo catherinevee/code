@@ -10,7 +10,7 @@ rm -rf code/.git
 
 # Fetch the changes from Azure DevOps to ensure we have latest
 git fetch --unshallow
-
+echo "https://$AZ_USERNAME:$AZ_PAT@dev.azure.com/$AZ_ORG/code.git"
 # Pull changes from Azure DevOps if its exiting branch and have commits on it
 git pull https://$AZ_USERNAME:$AZ_PAT@dev.azure.com/$AZ_ORG/code.git
 
