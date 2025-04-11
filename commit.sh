@@ -1,10 +1,5 @@
 #!/bin/bash
 
-AZUREPAT=$AZURE_CLIENT_SECRET
-AZUSERNAME= $AZURE_CLIENT_ID
-AZUSER_EMAIL=$AZUSER_EMAIL
-AZORG=$AZ_ORG
-
 # Remove Git information (for fresh git start)
 rm -rf code/.git
 
@@ -12,13 +7,13 @@ rm -rf code/.git
 git fetch --unshallow
 
 # Pull changes from Azure DevOps if its exiting branch and have commits on it
-git pull https://$AZUSERNAME:$AZUREPAT@dev.azure.com/$AZORG/code.git
+git pull https://${{secrets.AZUSERNAME}}:${{secrets.AZURE_CLIENT_SECRET}}@dev.azure.com/${{secrets.AZ_ORG}}/code.git
 
 #git checkout -b $github_to_azure_sync
 
 # Set Git user identity
-git config --global user.email "$AZUSER_EMAIL"
-git config --global user.name "$AZUSERNAME"
+git config --global user.email "catherine.vee@outlook.com"
+git config --global user.name "${{secrets.AZUSERNAME}}"
 
 # Add all changes into stage, commit, and push to Azure DevOps
 git add .
