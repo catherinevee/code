@@ -1,5 +1,10 @@
 #!/bin/bash
 
+AZ_USERNAME=$AZ_USERNAME
+AZ_AZURE_CLIENT_SECRET=$AZ_AZURE_CLIENT_SECRET
+AZ_ORG=$AZ_ORG
+AZ_USERNAME=$AZ_USERNAME
+
 # Remove Git information (for fresh git start)
 rm -rf code/.git
 
