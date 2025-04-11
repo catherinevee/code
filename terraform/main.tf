@@ -5,7 +5,7 @@ terraform {
       container_name       = "${var.defaultsa-container}"
       key                  = "${var.ARM_ACCESS_KEY}"
   }
-  }  
+    
   required_providers {
     azurerm = {
       source = "hashicorp/azurerm"
