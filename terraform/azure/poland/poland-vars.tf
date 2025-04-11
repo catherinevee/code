@@ -1,4 +1,5 @@
 
+
 variable "defaultlocation" {
     type = string
     default = "polandcentral"
@@ -24,6 +25,12 @@ variable "defaultsa" {
     default = "sdfsdfsdf"
 }
 
+variable "defaultsa-container" {
+    type = string
+    default = "tfstatecontainer"
+}
+
+variable "ARM_ACCESS_KEY" {}
 
 variable "polandcentral-var-prodresourcegroups" {
     type = list(string)
@@ -34,6 +41,7 @@ variable "polandcentral-var-prodresourcegroups" {
 locals {
     defaultsitename = "${var.defaultlocation}-${var.defaultenv}"
     defaultrg = "${var.defaultlocation}-${var.defaultenv}-1"
+    defaultsa = "${var.defaultlocation}sa"
 }
 
 variable "polandcentral-var-prod-allowed-in-tcpports" {

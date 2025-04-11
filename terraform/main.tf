@@ -18,6 +18,7 @@ terraform {
       version = "6.13.0"
     }   
   }
+
 }
 
 # Configure the AWS Provider
