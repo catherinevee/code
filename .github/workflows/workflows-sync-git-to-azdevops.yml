@@ -13,7 +13,7 @@ jobs:
     - name: Run script file
       env:
         AZ_USERNAME: ${{secrets.AZURE_CLIENT_ID}} # calling secrets from environment variables
-        AZ_AZURE_CLIENT_SECRET: ${{secrets.AZURE_CLIENT_SECRET}}
+        AZ_PAT: ${{secrets.AZ_PAT}}
         AZ_USEREMAIL: ${{secrets.AZ_USEREMAIL}}
         AZ_ORG: ${{secrets.AZ_ORG}}
       run: |
