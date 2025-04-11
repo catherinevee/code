@@ -5,11 +5,6 @@ terraform {
       container_name       = "${var.defaultsa-container}"
       key                  = "${var.ARM_ACCESS_KEY}"
   }
-  cloud {
-    organization = "cathyvee-org"
-    workspaces {
-      name = "cathyvee"
-    }
   }  
   required_providers {
     azurerm = {
