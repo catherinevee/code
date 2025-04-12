@@ -25,7 +25,7 @@ stages:
         terraform --version
         terraform init -backend-config="storage_account_name=$(storageAccountName)" -backend-config="container_name=$(containerName)" -backend-config="key=$(key)" -backend-config="access_key=$(accessKey)"
         terraform plan -out=tfplan
-
+      workingDirectory: ./terraform/
       displayName: 'Terraform Init and Plan'
 
 - stage: Deploy
