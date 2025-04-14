@@ -27,7 +27,7 @@ stages :
               terraformVersion: '${{ variables.terraform_version }}'
           - task: AzureCLI@2
             inputs:
-              azureSubscription: $(ARM_SUBSCRIPTION_ID)
+              azureSubscription: "48421ac6-de0a-47d9-8a76-2166ceafcfe6"
               scriptType: 'bash'
               scriptLocation: 'inlineScript'
               inlineScript: |
