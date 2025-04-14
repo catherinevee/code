@@ -2,14 +2,14 @@ variables:
   storageAccountName: "tfstate-sa"
   containerName: "tfstatecfriy"
   key: ${{ secrets.AZURE_SA_TFSTATE_KEY}}
+  terraform_version:"1.11.3"
   resourceGroup: "tfstate-rg"
-
   backendServiceArm: "catherinevee"
   backendAzureRmResourceGroupName: $(resourceGroup)
   backendAzureRmStorageAccountName: ${storageAccountName}
   backendAzureRmContainerName: $(containerName)
   backendAzureRmKey: $(key)
-  terraform_version:'1.11.3'
+ 
 
 trigger:
 - main
