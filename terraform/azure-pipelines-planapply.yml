@@ -22,12 +22,9 @@ variables:
     value: $(key)
   - name: terraform_version
     value: '1.11.3'
-  - name: action
-    value: ${{ parameters.Action }}
- 
+
 stages :  
   - stage: terraform_plan_apply
-    condition: ne('${{ parameters.Action }}', 'Destroy')
     jobs:
       - job: terraform_apply
         steps:
