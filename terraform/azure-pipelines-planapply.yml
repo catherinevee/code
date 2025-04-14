@@ -31,7 +31,7 @@ stages :
               scriptType: 'bash'
               scriptLocation: 'inlineScript'
               inlineScript: |
-                az login --identity --username catherinevee_manid              
+                az login --identity --client-id 259e201e-2c35-46e1-9908-4e93331d6de5              
           - task: TerraformTaskV2@2
             displayName: 'init'
             inputs:
