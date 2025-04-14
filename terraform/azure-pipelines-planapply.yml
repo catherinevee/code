@@ -25,6 +25,13 @@ stages :
             displayName: 'install'
             inputs:
               terraformVersion: '${{ variables.terraform_version }}'
+          - task: AzureCLI@2
+            inputs:
+              azureSubscription: $(AZURE_SUBSCRIPTION_ID)
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                az login --identity --username catherinevee_manid              
           - task: TerraformTaskV2@2
             displayName: 'init'
             inputs:
