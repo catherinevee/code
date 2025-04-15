@@ -30,3 +30,4 @@ stages :
             inputs:
               backendtype: 'azurerm'
               command: 'init'
+              backendServiceArm: 'catherinevee_manid'
