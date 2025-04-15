@@ -4,7 +4,8 @@ terraform {
       storage_account_name = "${var.tfstatesa}"
       container_name       = "${var.tfstatecontainer}"
       key = "terraform.tfstate"
-      use_msi = true
-      client_id = "catherinevee_manid" 
+      access_key = "$(storagekey)"
+      #use_msi = true
+      #client_id = "catherinevee_manid" 
   }
 }
