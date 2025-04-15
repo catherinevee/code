@@ -30,7 +30,7 @@ stages :
             inputs:
               provider: 'azurerm'
               command: 'init'
-              backendServiceArm: 'catherinevee_manid'
+              backendServiceArm: 'kjbmnb'
               backendAzureRmResourceGroupName: 'polandcentralrg-1'
               backendAzureRmStorageAccountName: 'tfstatecfriy'
               backendAzureRmContainerName: 'tfstate-container'

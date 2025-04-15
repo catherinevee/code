@@ -5,7 +5,6 @@ terraform {
       container_name       = "${var.tfstatecontainer}"
       key = "tf/terraform.tfstate"
       use_msi = true
-      #client_id = "catherinevee_manid"
-      access_key = "${secrets.AZURE_SA_TFSTATE_KEY}"
+      client_id = "catherinevee_manid"
   }
 }
