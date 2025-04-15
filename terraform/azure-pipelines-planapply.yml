@@ -25,13 +25,5 @@ stages :
             displayName: 'install'
             inputs:
               terraformVersion: $(terraform_version)  
-          - task: TerraformTaskV4@4
-            inputs:
-              provider: 'azurerm'
-              command: 'init'
-              backendServiceArm: 'catherinevee_manid'
-              backendAzureRmResourceGroupName: 'polandcentralrg-1'
-              backendAzureRmStorageAccountName: 'tfstatecfriy'
-              backendAzureRmContainerName: 'tfstate-container'
-              backendAzureRmKey: 'terraform.tfstate'
-              workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
+          - script: |
+                terraform init -backend-config="storage_account_name=$(storageAccountName)" -backend-config="container_name=$(containerName)" -backend-config="key=$(key)" -backend-config="access_key=$(accessKey)"
