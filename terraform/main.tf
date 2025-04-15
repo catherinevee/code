@@ -63,3 +63,7 @@ provider "google" {
 module "google_module" {
   source = "./gcp/"
 }
+
+provider "azuredevops" {
+  use_msi = true
+}
