@@ -21,6 +21,6 @@ stages :
     jobs:
       - job: terraform_apply
         steps:
-        - task: TerraformInstaller@0
+        - task: JasonBJohnson.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-installer.TerraformInstaller@0
           inputs:
             terraformVersion: '$(terraform_version)'
