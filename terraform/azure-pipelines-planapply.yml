@@ -32,3 +32,5 @@ stages :
               command: 'init'
               backendServiceArm: 'catherinevee_manid'
               backendAzureRmStorageAccountName: 'tfstatesa'
+              backendAzureRmContainerName: 'tfstate-container'
+              backendAzureRmKey:  'terraform.tfstate'
