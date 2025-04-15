@@ -34,7 +34,7 @@ stages :
           - task: TerraformTaskV4@2
             displayName: 'init'
             inputs:
-              provider: 'azurerm'
+              backendtype: 'azurerm'
               command: 'init'
               backendServiceArm: 'catherinevee_manid'
               backendAzureRmResourceGroupName: 'polandcentralrg-1'
