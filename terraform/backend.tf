@@ -7,6 +7,6 @@ terraform {
       #access_key = {{secrets.storagekey}}
       use_oidc = true
       use_azuread_auth = true
-      client_id = "259e201e-2c35-46e1-9908-4e93331d6de5catherinevee_manid" 
+      client_id = "catherinevee_manid" 
   }
 }
