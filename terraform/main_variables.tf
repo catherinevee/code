@@ -13,6 +13,11 @@ variable "tfstatecontainer" {
   default = "tfstate-container"  
 }
 
+variable "tfstaterg" {
+  type = string 
+  default = "polandcentral-1"  
+}
+
 
 variable "AWS_ACCESS_KEY_ID" {}
 

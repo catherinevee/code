@@ -25,7 +25,7 @@ stages :
             displayName: 'install'
             inputs:
               terraformVersion: $(terraform_version)  
-          - task: TerraformTaskV2@2
+          - task: TerraformTaskV4@2
             displayName: 'init'
             inputs:
               provider: 'azurerm'
@@ -36,14 +36,14 @@ stages :
               backendAzureRmContainerName: 'tfstate-container'
               backendAzureRmKey:  'tf/terraform.tfstate'
               workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
-          - task: TerraformTaskV2@2
+          - task: TerraformTaskV4@2
             displayName: 'plan'
             inputs:
               provider: 'azurerm'
               command: 'plan'
               environmentServiceNameAzureRM: 'catherinevee_manid'
               workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
-          - task: TerraformTaskV2@2
+          - task: TerraformTaskV4@2
             displayName: 'apply'
             inputs:
               provider: 'azurerm'

@@ -1,6 +1,6 @@
 terraform {
   backend "azurerm" {
-      resource_group_name  = "${var.tfstateregion}"
+      resource_group_name  = "${var.tfstaterg}"
       storage_account_name = "${var.tfstatesa}"
       container_name       = "${var.tfstatecontainer}"
       key = "tf/terraform.tfstate"
