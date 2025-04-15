@@ -24,17 +24,17 @@ stages :
           - task: TerraformInstaller@0
             displayName: 'install'
             inputs:
-              terraformVersion: '${{ variables.terraform_version }}'        
+              terraformVersion: $(terraform_version)  
           - task: TerraformTaskV2@2
             displayName: 'init'
             inputs:
               provider: 'azurerm'
               command: 'init'
-              backendServiceArm: '${{ variables.backendServiceArm }}'
-              backendAzureRmResourceGroupName: '${{ variables.backendAzureRmResourceGroupName }}'
-              backendAzureRmStorageAccountName: '${{ variables.backendAzureRmStorageAccountName }}'
-              backendAzureRmContainerName: '${{ variables.backendAzureRmContainerName }}'
-              backendAzureRmKey: '${{ variables.backendAzureRmKey }}'
+              backendServiceArm: $(backendServiceArm)
+              backendAzureRmResourceGroupName: $(backendAzureRmResourceGroupName)
+              backendAzureRmStorageAccountName: $(backendAzureRmStorageAccountName)
+              backendAzureRmContainerName: $backendAzureRmContainerName)
+              backendAzureRmKey: $(variables.backendAzureRmKey)
               workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
           - task: TerraformTaskV2@2
             displayName: 'plan'
