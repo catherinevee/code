@@ -21,10 +21,9 @@ stages :
     jobs:
       - job: terraform_apply
         steps:
-          - task: TerraformInstaller@0
-            displayName: 'install'
+          - task: TerraformInstaller@2
             inputs:
-              terraformVersion: $(terraform_version) 
+              terraformVersion: '$(terraform_version)
           - task: TerraformCLI@2
             inputs:
               command: 'init'
