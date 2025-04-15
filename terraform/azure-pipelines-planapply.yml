@@ -31,3 +31,4 @@ stages :
               backendtype: 'azurerm'
               command: 'init'
               backendServiceArm: 'catherinevee_manid'
+              backendAzureRmStorageAccountName: 'tfstatesa'
