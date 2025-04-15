@@ -25,6 +25,13 @@ stages :
             displayName: 'install'
             inputs:
               terraformVersion: $(terraform_version) 
-              workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/' 
-          - script: |
-                terraform init -backend-config="storage_account_name=$(storageAccountName)" -backend-config="container_name=$(containerName)" -backend-config="key=$(key)" -backend-config="access_key=$(accessKey)"
+          - task: TerraformCLI@2
+            inputs:
+              command: 'init'
+              backendType: 'azurerm'
+              backendServiceArm: 'catherinevee_manid'
+              backendAzureRmResourceGroupName: 'polandcentralrg-1'
+              backendAzureRmStorageAccountName: 'tfstate-sa'
+              backendAzureRmContainerName: 'tfstate-container'
+              backendAzureRmKey: 'terraform.tfstate'
+              allowTelemetryCollection: true
