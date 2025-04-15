@@ -2,7 +2,7 @@ variables:
   storageAccountName: "tfstate-sa"
   containerName: "tfstatecfriy"
   terraform_version: 1.11.3
-  resourceGroup: "tfstate-rg"
+  resourceGroup: "polandcentralrg-1"
   backendServiceArm: "catherinevee_manid"
   backendAzureRmResourceGroupName: $(resourceGroup)
   backendAzureRmStorageAccountName: ${storageAccountName}
