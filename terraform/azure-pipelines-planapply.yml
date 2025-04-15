@@ -1,5 +1,5 @@
 variables:
-  storageAccountName: "tfstatecfriy"
+  storageAccountName: "tfstatesa"
   containerName: "tfstate-container"
   terraform_version: 1.11.3
   resourceGroup: "polandcentralrg-1"
@@ -32,7 +32,7 @@ stages :
               command: 'init'
               backendServiceArm: 'catherinevee_manid'
               backendAzureRmResourceGroupName: 'polandcentralrg-1'
-              backendAzureRmStorageAccountName: 'tfstatecfriy'
+              backendAzureRmStorageAccountName: 'tfstatesa'
               backendAzureRmContainerName: 'tfstate-container'
               backendAzureRmKey:  'terraform.tfstate'
               workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
