@@ -1,8 +1,8 @@
 terraform {
   backend "azurerm" {
-      resource_group_name  = "${var.defaultrg}"
-      storage_account_name = "${var.defaultsa}"
-      container_name       = "${var.defaultsa-container}"
+      resource_group_name  = "${var.tfstateregion}"
+      storage_account_name = "${var.tfstatesa}"
+      container_name       = "${var.tfstatecontainer}"
       use_msi = true
       client_id = "catherinevee_manid"
 

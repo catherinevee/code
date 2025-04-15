@@ -1,14 +1,14 @@
-variable "defaultrg" {
+variable "tfstateregion" {
   type = string
-  default = "tfstate"
+  default = "polandcentral"
 }
 
-variable "defaultsa" {
+variable "tfstatesa" {
   type = string 
-  default = "tfstate-sa"
+  default = "tfstatecfriy"
 }
 
-variable "defaultsa-container" {
+variable "tfstatecontainer" {
   type = string 
   default = "tfstate-container"  
 }
