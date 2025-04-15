@@ -16,6 +16,10 @@ terraform {
     google = {
       source = "hashicorp/google"
       version = "6.13.0"
+    }
+    azuredevops = {
+      source  = "microsoft/azuredevops"
+      version = ">=0.1.0"
     }   
   }
 
