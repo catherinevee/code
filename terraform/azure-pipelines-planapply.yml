@@ -23,7 +23,7 @@ stages :
         steps:
           - task: TerraformInstaller@2
             inputs:
-              terraformVersion: '$(terraform_version)
+              terraformVersion: $(terraform_version)
           - task: TerraformCLI@2
             inputs:
               command: 'init'
