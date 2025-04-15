@@ -7,7 +7,7 @@ variables:
   backendAzureRmResourceGroupName: $(resourceGroup)
   backendAzureRmStorageAccountName: $(storageAccountName)
   backendAzureRmContainerName: $(containerName)
-  backendAzureRmKey: "tf/terraform.tfstate"
+  backendAzureRmKey: "terraform.tfstate"
  
 
 trigger:
@@ -34,7 +34,7 @@ stages :
               backendAzureRmResourceGroupName: 'polandcentralrg-1'
               backendAzureRmStorageAccountName: 'tfstatecfriy'
               backendAzureRmContainerName: 'tfstate-container'
-              backendAzureRmKey:  'tf/terraform.tfstate'
+              backendAzureRmKey:  'terraform.tfstate'
               workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
           - task: TerraformTaskV4@2
             displayName: 'plan'
