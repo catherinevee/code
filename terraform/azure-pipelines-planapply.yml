@@ -35,3 +35,4 @@ stages :
               backendAzureRmContainerName: 'tfstate-container'
               backendAzureRmKey:  'terraform.tfstate'
               backendAzureRmResourceGroupName: 'polandcentralrg-1'
+              workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
