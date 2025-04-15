@@ -25,3 +25,8 @@ stages :
             displayName: 'install'
             inputs:
               terraformVersion: $(terraform_version)  
+          - task: TerraformTaskV4@2
+            displayName: 'init'
+            inputs:
+              backendtype: 'azurerm'
+              command: 'init'
