@@ -24,14 +24,7 @@ stages :
           - task: TerraformInstaller@0
             displayName: 'install'
             inputs:
-              terraformVersion: '${{ variables.terraform_version }}'
-          - task: AzureCLI@2
-            inputs:
-              azureSubscription: catherinevee_manid
-              scriptType: 'bash'
-              scriptLocation: 'inlineScript'
-              inlineScript: |
-                az login --identity --client-id 259e201e-2c35-46e1-9908-4e93331d6de5              
+              terraformVersion: '${{ variables.terraform_version }}'        
           - task: TerraformTaskV2@2
             displayName: 'init'
             inputs:
