@@ -34,3 +34,4 @@ stages :
               backendAzureRmStorageAccountName: 'tfstatesa'
               backendAzureRmContainerName: 'tfstate-container'
               backendAzureRmKey:  'terraform.tfstate'
+              backendAzureRmResourceGroupName: 'polandcentralrg-1'
