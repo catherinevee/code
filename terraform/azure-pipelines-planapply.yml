@@ -21,38 +21,7 @@ stages :
     jobs:
       - job: terraform_apply
         steps:
-          - task: AzureCLI@2
-            inputs:
-              azureSubscription: 'catherinevee_manid'
-              scriptType: 'bash'
-              scriptLocation: 'inlineScript'
-              inlineScript: 'az login --identity --object-id 735b2b0a-b666-4077-b533-75f73e0bfc7a'
           - task: TerraformInstaller@0
             displayName: 'install'
             inputs:
               terraformVersion: $(terraform_version)  
-          - task: TerraformTaskV4@2
-            displayName: 'init'
-            inputs:
-              backendtype: 'azurerm'
-              command: 'init'
-              backendServiceArm: 'catherinevee_manid'
-              backendAzureRmResourceGroupName: 'polandcentralrg-1'
-              backendAzureRmStorageAccountName: 'tfstatesa'
-              backendAzureRmContainerName: 'tfstate-container'
-              backendAzureRmKey:  'terraform.tfstate'
-              workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
-          - task: TerraformTaskV4@2
-            displayName: 'plan'
-            inputs:
-              provider: 'azurerm'
-              command: 'plan'
-              environmentServiceNameAzureRM: 'catherinevee_manid'
-              workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
-          - task: TerraformTaskV4@2
-            displayName: 'apply'
-            inputs:
-              provider: 'azurerm'
-              command: 'apply'
-              environmentServiceNameAzureRM: 'catherinevee_manid'
-              workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
