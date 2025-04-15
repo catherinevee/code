@@ -21,6 +21,12 @@ stages :
     jobs:
       - job: terraform_apply
         steps:
+          - task: AzureCLI@2
+            inputs:
+              azureSubscription: 'catherinevee_manid'
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
+              inlineScript: 'az login --identity --object-id ea526e3e-685f-458e-8208-c32dfcea5eb8'
           - task: TerraformInstaller@0
             displayName: 'install'
             inputs:
