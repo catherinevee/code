@@ -35,17 +35,18 @@ stages :
               backendAzureRmStorageAccountName: 'tfstatecfriy'
               backendAzureRmContainerName: 'tfstate-container'
               backendAzureRmKey:  'tf/terraform.tfstate'
+              workingDirectory: '/terraform/'
           - task: TerraformTaskV2@2
             displayName: 'plan'
             inputs:
               provider: 'azurerm'
               command: 'plan'
               environmentServiceNameAzureRM: 'catherinevee_manid'
-              workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
+              workingDirectory: '/terraform/'
           - task: TerraformTaskV2@2
             displayName: 'apply'
             inputs:
               provider: 'azurerm'
               command: 'apply'
               environmentServiceNameAzureRM: 'catherinevee_manid'
-              workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
+              workingDirectory: '/terraform/'
