@@ -25,14 +25,13 @@ stages :
             displayName: 'install'
             inputs:
               terraformVersion: $(terraform_version)  
-          - task: TerraformTaskV4@2
-            displayName: 'init'
+          - task: TerraformTaskV4@4
             inputs:
-              backendtype: 'azurerm'
+              provider: 'azurerm'
               command: 'init'
+              backendAzureRmUseEnvironmentVariablesForAuthentication: true
               backendServiceArm: 'catherinevee_manid'
+              backendAzureRmResourceGroupName: 'polandcentralrg-1'
               backendAzureRmStorageAccountName: 'tfstatecfriy'
               backendAzureRmContainerName: 'tfstate-container'
-              backendAzureRmKey:  'terraform.tfstate'
-              backendAzureRmResourceGroupName: 'polandcentralrg-1'
-              workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
+              backendAzureRmKey: 'terraform.tfstate'
