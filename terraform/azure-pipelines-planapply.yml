@@ -1,6 +1,6 @@
 variables:
-  storageAccountName: "tfstate-sa"
-  containerName: "tfstatecfriy"
+  storageAccountName: "tfstatecfriy"
+  containerName: "tfstate-container"
   terraform_version: 1.11.3
   resourceGroup: "polandcentralrg-1"
   backendServiceArm: "catherinevee_manid"
