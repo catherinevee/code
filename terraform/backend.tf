@@ -6,5 +6,7 @@ terraform {
       key = "tf/terraform.tfstate"
       use_msi = true
       client_id = "catherinevee_manid"
+      subscription_id = var.ARM_SUBSCRIPTION_ID
+      tenant_id = var.AZURE_TENANT_ID      
   }
 }
