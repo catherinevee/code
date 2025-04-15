@@ -26,7 +26,7 @@ stages :
               azureSubscription: 'catherinevee_manid'
               scriptType: 'bash'
               scriptLocation: 'inlineScript'
-              inlineScript: 'az login --identity --object-id ea526e3e-685f-458e-8208-c32dfcea5eb8'
+              inlineScript: 'az login --identity --client-id 259e201e-2c35-46e1-9908-4e93331d6de5'
             env:
               AZURE_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
               AZURE_CLIENT_ID: $(AZURE_CLIENT_ID)
