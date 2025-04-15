@@ -30,25 +30,23 @@ stages :
             inputs:
               provider: 'azurerm'
               command: 'init'
-              backendServiceArm: $(backendServiceArm)
-              backendAzureRmResourceGroupName: $(backendAzureRmResourceGroupName)
-              backendAzureRmStorageAccountName: $(backendAzureRmStorageAccountName)
-              backendAzureRmContainerName: $backendAzureRmContainerName)
-              backendAzureRmKey: $(variables.backendAzureRmKey)
+              backendServiceArm: 'catherinevee_manid'
+              backendAzureRmResourceGroupName: 'polandcentralrg-1'
+              backendAzureRmStorageAccountName: 'tfstatecfriy'
+              backendAzureRmContainerName: 'tfstate-container'
+              backendAzureRmKey:  'tf/terraform.tfstate'
               workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
           - task: TerraformTaskV2@2
             displayName: 'plan'
-            condition: and(succeeded(), eq(variables['Action'], 'Plan'))
             inputs:
               provider: 'azurerm'
               command: 'plan'
-              environmentServiceNameAzureRM: '${{ variables.backendServiceArm }}'
+              environmentServiceNameAzureRM: 'catherinevee_manid'
               workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
           - task: TerraformTaskV2@2
             displayName: 'apply'
-            condition: and(succeeded(), eq(variables['Action'], 'Apply'))
             inputs:
               provider: 'azurerm'
               command: 'apply'
-              environmentServiceNameAzureRM: '${{ variables.backendServiceArm }}'
+              environmentServiceNameAzureRM: 'catherinevee_manid'
               workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
