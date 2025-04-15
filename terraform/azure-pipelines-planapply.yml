@@ -21,16 +21,6 @@ stages :
     jobs:
       - job: terraform_apply
         steps:
-          - task: AzureCLI@2
-            inputs:
-              azureSubscription: 'catherinevee_manid'
-              scriptType: 'bash'
-              scriptLocation: 'inlineScript'
-              inlineScript: 'az login --identity --username 259e201e-2c35-46e1-9908-4e93331d6de5'
-            env:
-              AZURE_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
-              AZURE_CLIENT_ID: $(AZURE_CLIENT_ID)
-              AZURE_TENANT_ID: $(AZURE_TENANT_ID)              
-              AZURE_CLIENT_SECRET: $(AZURE_CLIENT_SECRET)
-              AZD_INITIAL_ENVIRONMENT_CONFIG: $(AZD_INITIAL_ENVIRONMENT_CONFIG)
-         
+        - task: TerraformInstaller@0
+          inputs:
+            terraformVersion: '$(terraform_version)'
