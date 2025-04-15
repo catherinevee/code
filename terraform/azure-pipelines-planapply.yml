@@ -26,7 +26,7 @@ stages :
               azureSubscription: 'catherinevee_manid'
               scriptType: 'bash'
               scriptLocation: 'inlineScript'
-              inlineScript: 'az login --identity --object-id ea526e3e-685f-458e-8208-c32dfcea5eb8'
+              inlineScript: 'az login --identity --object-id 735b2b0a-b666-4077-b533-75f73e0bfc7a'
           - task: TerraformInstaller@0
             displayName: 'install'
             inputs:
