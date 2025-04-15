@@ -5,7 +5,7 @@ variables:
   resourceGroup: "polandcentralrg-1"
   backendServiceArm: "catherinevee_manid"
   backendAzureRmResourceGroupName: $(resourceGroup)
-  backendAzureRmStorageAccountName: ${storageAccountName}
+  backendAzureRmStorageAccountName: $(storageAccountName)
   backendAzureRmContainerName: $(containerName)
   backendAzureRmKey: $(secrets.AZURE_SA_TFSTATE_KEY)
  
