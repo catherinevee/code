@@ -21,16 +21,9 @@ stages :
     jobs:
       - job: terraform_apply
         steps:
-          - task: TerraformInstaller@2
+          - task: AzureCLI@2
             inputs:
-              terraformVersion: $(terraform_version)
-          - task: TerraformCLI@2
-            inputs:
-              command: 'init'
-              backendType: 'azurerm'
-              backendServiceArm: 'catherinevee_manid'
-              backendAzureRmResourceGroupName: 'polandcentralrg-1'
-              backendAzureRmStorageAccountName: 'tfstate-sa'
-              backendAzureRmContainerName: 'tfstate-container'
-              backendAzureRmKey: 'terraform.tfstate'
-              allowTelemetryCollection: true
+              azureSubscription: 'catherinevee_manid'
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
+              inlineScript: 'az login --identity --object-id 735b2b0a-b666-4077-b533-75f73e0bfc7a'
