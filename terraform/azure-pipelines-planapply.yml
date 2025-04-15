@@ -31,7 +31,7 @@ stages :
               backendtype: 'azurerm'
               command: 'init'
               backendServiceArm: 'catherinevee_manid'
-              backendAzureRmStorageAccountName: 'tfstatesa'
+              backendAzureRmStorageAccountName: 'tfstatecfriy'
               backendAzureRmContainerName: 'tfstate-container'
               backendAzureRmKey:  'terraform.tfstate'
               backendAzureRmResourceGroupName: 'polandcentralrg-1'

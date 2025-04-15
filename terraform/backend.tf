@@ -5,7 +5,8 @@ terraform {
       container_name       = "${var.tfstatecontainer}"
       key = "terraform.tfstate"
       #access_key = {{secrets.storagekey}}
-      use_msi = true
+      use_oidc = true
+      use_azuread_auth = true
       client_id = "catherinevee_manid" 
   }
 }
