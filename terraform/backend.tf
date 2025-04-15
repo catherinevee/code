@@ -8,5 +8,8 @@ terraform {
       use_oidc = true
       use_azuread_auth = true
       client_id = "catherinevee_manid" 
+      tenant_id = var.AZURE_TENANT_ID
+      subscription_id = var.ARM_SUBSCRIPTION_ID
+
   }
 }
