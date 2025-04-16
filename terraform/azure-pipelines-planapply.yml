@@ -76,7 +76,7 @@ stages :
           inputs:
             provider: 'azurerm'
             command: 'apply'
-            commandOptions: 'main.tfplan'
+            commandOptions: '-auto-approve main.tfplan'
             environmentServiceNameAzureRM:  $(backendServiceArm)
             workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
 
