@@ -47,18 +47,18 @@ stages :
       - job: "terraform_install"
         steps:
         - task: JasonBJohnson.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-installer.TerraformInstaller@0
-          displayName: "Install Terraform"
+          displayName: "terraform install"
           inputs:
             terraformVersion: '$(terraform_version)'
         - task: TerraformTaskV4@4
-          displayName: "Install Terraform"
+          displayName: "terraform init"
           inputs:
             provider: 'azurerm'
             command: 'init'
             backendServiceArm: $(backendServiceArm)
             backendAzureRmResourceGroupName: $(resourceGroup)
             backendAzureRmStorageAccountName: $(storageAccountName)
-            backendAzureRmContainerName: (containerName)
+            backendAzureRmContainerName: $(containerName)
             backendAzureRmKey: 'state.tfstate'
             workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
 
