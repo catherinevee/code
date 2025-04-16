@@ -1,8 +1,10 @@
 variables:
-  storageAccountName: "tfstatesa"
-  containerName: "tfstate-container"
+  azureSubscription: "Azure subscription 1"
+  resourceGroup: "tfstate-rg" #located in polandcentral
+  storageAccountName: "tfstatecriy"
+  containerName: "terraformtfstate"
   terraform_version: 1.11.3
-  resourceGroup: "polandcentralrg-1"
+
   backendServiceArm: "catherinevee_manid"
   backendAzureRmResourceGroupName: $(resourceGroup)
   backendAzureRmStorageAccountName: $(storageAccountName)
@@ -31,13 +33,13 @@ stages :
             scriptLocation: 'inlineScript'
             inlineScript: |
               # Set Azure Subscription
-              az account set -s "Azure subscription 1"
+              az account set -s $(azureSubscription)
               
               # Create resource group
-              az group create -l polandcentral -n tfstate-rg
+              az group create -l polandcentral -n $(resourceGroup)
               
               # Create storage account
-              az storage account create -n tfstatecriy -g tfstate-rg -l polandcentral --sku Standard_LRS --kind StorageV2
+              az storage account create -n $(storageAccountName) -g $(resourceGroup) -l polandcentral --sku Standard_LRS --kind StorageV2
               
               # Create blob container
-              az storage container create --account-name tfstatecriy --name terraformtfstate 
+              az storage container create --account-name $(storageAccountName) --name $(containerName) 
