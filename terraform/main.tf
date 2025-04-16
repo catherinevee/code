@@ -38,7 +38,6 @@ provider "aws" {
 
 provider "azurerm" {
   features {}  
-  storage_use_azuread = true
   client_id = var.AZURE_CLIENT_ID
   client_secret = var.AZURE_CLIENT_SECRET
   subscription_id = var.ARM_SUBSCRIPTION_ID

@@ -24,16 +24,20 @@ stages :
         - task: JasonBJohnson.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-installer.TerraformInstaller@0
           inputs:
             terraformVersion: '$(terraform_version)'
-        - task: TerraformTaskV4@4
-          displayName: Initialize Terraform
+        - task: AzureCLI@2
           inputs:
-            provider: 'azurerm'
-            command: 'init'
-            backendServiceArm: 'catherinevee_manid'
-            backendAzureRmResourceGroupName: 'polandcentralrg-1'
-            backendAzureRmStorageAccountName: 'tfstatecriy'
-            backendAzureRmContainerName: 'tfstate-container'
-            backendAzureRmKey: 'state.tfstate'
-            workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
-          env:
-            ARM_USE_AZUREAD: true 
+            azureSubscription: 'catherinevee_manid'
+            scriptType: 'bash'
+            scriptLocation: 'inlineScript'
+            inlineScript: |
+              # Set Azure Subscription
+              az account set -s thomasthorntoncloud
+              
+              # Create resource group
+              az group create -l uksouth -n thomasthorntoncloud
+              
+              # Create storage account
+              az storage account create -n thomasthorntontfstate -g thomasthorntoncloud -l uksouth --sku Standard_LRS --kind StorageV2
+              
+              # Create blob container
+              az storage container create --account-name thomasthorntontfstate --name exampletfstate 
