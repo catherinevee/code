@@ -37,7 +37,7 @@ stages :
               az group create -l polandcentral -n tfstate-rg
               
               # Create storage account
-              az storage account create -n tfstatecriy -g tfstatae-rg -l polandcentral --sku Standard_LRS --kind StorageV2
+              az storage account create -n tfstatecriy -g tfstate-rg -l polandcentral --sku Standard_LRS --kind StorageV2
               
               # Create blob container
               az storage container create --account-name tfstate-container --name terraformtfstate 
