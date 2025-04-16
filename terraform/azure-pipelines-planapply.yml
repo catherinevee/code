@@ -50,8 +50,6 @@ stages :
           displayName: "Install Terraform"
           inputs:
             terraformVersion: '$(terraform_version)'
-      - job: "terraform_init"
-        steps:
         - task: TerraformTaskV4@4
           displayName: "Install Terraform"
           inputs:
@@ -62,6 +60,5 @@ stages :
             backendAzureRmStorageAccountName: $(storageAccountName)
             backendAzureRmContainerName: (containerName)
             backendAzureRmKey: 'state.tfstate'
-
 
 
