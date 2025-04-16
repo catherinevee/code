@@ -70,6 +70,13 @@ stages :
             commandOptions: '-out main.tfplan'
             environmentServiceNameAzureRM:  $(backendServiceArm)
             workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
-
-
+        - task: TerraformTaskV4@4
+          displayName: Apply Terraform Plan
+          condition: and(succeeded(), eq(variables['terraformPlan.changesPresent'], 'true'))
+          inputs:
+            provider: 'azurerm'
+            command: 'apply'
+            commandOptions: 'main.tfplan'
+            environmentServiceNameAzureRM:  $(backendServiceArm)
+            workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
 
