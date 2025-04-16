@@ -1,8 +1,8 @@
 terraform {
   backend "azurerm" {
-      resource_group_name  = "${var.tfstaterg}"
-      storage_account_name = "${var.tfstatesa}"
-      container_name       = "${var.tfstatecontainer}"
+      resource_group_name  = "polandcentralrg-1"
+      storage_account_name = "tfstatecfriy"
+      container_name       = "tfstate-container"
       key = "terraform.tfstate"
       #access_key = {{secrets.storagekey}}
       use_oidc = true
