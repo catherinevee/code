@@ -1,0 +1,17 @@
+---
+- name: "Assign DNS Servers to Cisco"
+  hosts: [all-cisco]
+  gather_facts: false
+  connection: network_cli
+  tasks:
+    - name: "Assign DNS Servers for Cisco IOS"
+      vars: 
+       campus_dns_servers:
+         - "10.254.254.254"
+         - "10.254.254.253"        
+      cisco.ios.ios_ntp_global:
+        config:
+          peers:
+            - peer: "{{ item }}"
+              version: 2
+      loop: "{{ campus_dns_servers }} "
