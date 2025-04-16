@@ -31,13 +31,13 @@ stages :
             scriptLocation: 'inlineScript'
             inlineScript: |
               # Set Azure Subscription
-              az account set -s thomasthorntoncloud
+              az account set -s "Azure subscription 1"
               
               # Create resource group
-              az group create -l uksouth -n thomasthorntoncloud
+              az group create -l polandcentral -n tfstate-rg
               
               # Create storage account
-              az storage account create -n thomasthorntontfstate -g thomasthorntoncloud -l uksouth --sku Standard_LRS --kind StorageV2
+              az storage account create -n tfstatecriy -g tfstatae-rg -l polandcentral --sku Standard_LRS --kind StorageV2
               
               # Create blob container
-              az storage container create --account-name thomasthorntontfstate --name exampletfstate 
+              az storage container create --account-name tfstate-container --name terraformtfstate 
