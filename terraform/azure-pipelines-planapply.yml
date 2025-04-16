@@ -20,7 +20,7 @@ pr: none
 
 
 stages :  
-  - stage: "Install Terraform"
+  - stage: "Install_Terraform"
     jobs:
       - job: "terraform_install"
         steps:
@@ -28,7 +28,7 @@ stages :
           displayName: "Install Terraform"
           inputs:
             terraformVersion: '$(terraform_version)'
-  - stage: "Generate Storage Account"
+  - stage: "Generate_Storage_Account"
     jobs:
       - job: "azure_cli"    
         steps:
