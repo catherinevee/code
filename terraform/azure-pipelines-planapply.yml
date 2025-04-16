@@ -49,4 +49,21 @@ stages :
               az storage account create -n $(storageAccountName) -g $(resourceGroup) -l $(location) --sku Standard_LRS --kind StorageV2
               
               # Create blob container
-              az storage container create --account-name $(storageAccountName) --name $(containerName) 
+              az storage container create --account-name $(storageAccountName) --name $(containerName)
+  - stage: "Terraform_Init"
+    jobs:
+      - job: "terraform_init"
+        steps:
+        - task: TerraformTaskV4@4
+          displayName: "Install Terraform"
+          inputs:
+            provider: 'azurerm'
+            command: 'init'
+            backendServiceArm: 'your-backend-service-connection'
+            backendAzureRmResourceGroupName: $(resourceGroup)
+            backendAzureRmStorageAccountName: $(storageAccountName)
+            backendAzureRmContainerName: (containerName)
+            backendAzureRmKey: 'state.tfstate'
+
+
+
