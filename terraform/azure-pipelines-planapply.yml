@@ -20,20 +20,20 @@ pr: none
 
 
 stages :  
-  - stage: Install Terraform
+  - stage: "Install Terraform"
     jobs:
-      - job: terraform_install
+      - job: "terraform_install"
         steps:
         - task: JasonBJohnson.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-installer.TerraformInstaller@0
-          displayName: Install Terraform
+          displayName: "Install Terraform"
           inputs:
             terraformVersion: '$(terraform_version)'
-  - stage: Generate Storage Account
+  - stage: "Generate Storage Account"
     jobs:
-      - job: azure_cli     
+      - job: "azure_cli"    
         steps:
         - task: AzureCLI@2
-          displayName: Generate Storage Account
+          displayName: "Generate Storage Account"
           inputs:
             azureSubscription: 'catherinevee_manid'
             scriptType: 'bash'
