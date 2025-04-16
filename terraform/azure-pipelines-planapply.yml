@@ -1,5 +1,6 @@
 variables:
   azureSubscription: "Azure subscription 1"
+  location: "polandcentral"
   resourceGroup: "tfstate-rg" #located in polandcentral
   storageAccountName: "tfstatecriy"
   containerName: "terraformtfstate"
@@ -19,14 +20,20 @@ pr: none
 
 
 stages :  
-  - stage: terraform_plan_apply
+  - stage: Install Terraform
     jobs:
-      - job: terraform_apply
+      - job: terraform_install
         steps:
         - task: JasonBJohnson.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-installer.TerraformInstaller@0
+          displayName: Install Terraform
           inputs:
             terraformVersion: '$(terraform_version)'
+  - stage: Generate Storage Account
+    jobs:
+      - job: azure_cli     
+        steps:
         - task: AzureCLI@2
+          displayName: Generate Storage Account
           inputs:
             azureSubscription: 'catherinevee_manid'
             scriptType: 'bash'
@@ -36,10 +43,10 @@ stages :
               az account set -s $(azureSubscription)
               
               # Create resource group
-              az group create -l polandcentral -n $(resourceGroup)
+              az group create -l $(location) -n $(resourceGroup)
               
               # Create storage account
-              az storage account create -n $(storageAccountName) -g $(resourceGroup) -l polandcentral --sku Standard_LRS --kind StorageV2
+              az storage account create -n $(storageAccountName) -g $(resourceGroup) -l $(location) --sku Standard_LRS --kind StorageV2
               
               # Create blob container
               az storage container create --account-name $(storageAccountName) --name $(containerName) 
