@@ -32,3 +32,4 @@ stages :
             backendAzureRmTenantId: $(AZURE_TENANT_ID)
             backendAzureRmSubscriptionId: $(AZURE_SUBSCRIPTION_ID)
             allowTelemetryCollection: true
+            workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
