@@ -59,7 +59,7 @@ stages :
           inputs:
             provider: 'azurerm'
             command: 'init'
-            backendServiceArm: 'your-backend-service-connection'
+            backendServiceArm: $(backendServiceArm)
             backendAzureRmResourceGroupName: $(resourceGroup)
             backendAzureRmStorageAccountName: $(storageAccountName)
             backendAzureRmContainerName: (containerName)
