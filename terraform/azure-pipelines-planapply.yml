@@ -19,7 +19,7 @@ pr: none
 stages :  
   - stage: terraform_plan_apply
     jobs:
-      - job: terraform_apply@0
+      - job: terraform_apply
         steps:
         - task: JasonBJohnson.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-installer.TerraformInstaller@0
           inputs:
