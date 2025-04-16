@@ -1,0 +1,14 @@
+---
+- name: "Get IPv4 Addresses Per host"
+  hosts: [all-routers]
+  gather_facts: true
+  connection: network_cli
+  tasks:
+    - name: "Get IPv4 Addresses Per Host"
+      debug:
+        msg: "{{ ansible_facts.net_hostname }} has {{ item }}"
+      loop: {{ansible_facts.net_all_ipv4_addresses}}"
+
+
+
+
