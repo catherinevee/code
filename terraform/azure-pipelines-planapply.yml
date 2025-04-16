@@ -69,6 +69,7 @@ stages :
             command: 'plan'
             commandOptions: '-out main.tfplan'
             environmentServiceNameAzureRM:  $(backendServiceArm)
+            workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
 
 
 
