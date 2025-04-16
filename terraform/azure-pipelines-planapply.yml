@@ -24,12 +24,13 @@ stages :
         - task: JasonBJohnson.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-installer.TerraformInstaller@0
           inputs:
             terraformVersion: '$(terraform_version)'
-        - task: TerraformCLI@2
+        - task: TerraformTaskV4@4
+          displayName: Initialize Terraform
           inputs:
+            provider: 'azurerm'
             command: 'init'
-            backendType: 'azurerm'
             backendServiceArm: 'catherinevee_manid'
-            backendAzureRmTenantId: $(AZURE_TENANT_ID)
-            backendAzureRmSubscriptionId: $(AZURE_SUBSCRIPTION_ID)
-            allowTelemetryCollection: true
-            workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
+            backendAzureRmResourceGroupName: 'polandcentralrg-1'
+            backendAzureRmStorageAccountName: 'tfstatecriy'
+            backendAzureRmContainerName: 'tfstate-container'
+            backendAzureRmKey: 'state.tfstate'
