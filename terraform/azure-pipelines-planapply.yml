@@ -61,6 +61,14 @@ stages :
             backendAzureRmContainerName: $(containerName)
             backendAzureRmKey: 'state.tfstate'
             workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
+        - task: TerraformTaskV4@4
+          name: terraformPlan
+          displayName: "terraform plan"
+          inputs:
+            provider: 'azurerm'
+            command: 'plan'
+            commandOptions: '-out main.tfplan'
+            environmentServiceNameAzureRM:  $(backendServiceArm)
 
 
 
