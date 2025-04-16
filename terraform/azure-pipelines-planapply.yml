@@ -35,3 +35,5 @@ stages :
             backendAzureRmContainerName: 'tfstate-container'
             backendAzureRmKey: 'state.tfstate'
             workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
+          env:
+            ARM_USE_AZUREAD: true 
