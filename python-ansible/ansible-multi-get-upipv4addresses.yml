@@ -1,0 +1,13 @@
+---
+- name: "Get uplineprotocol IPv4 Addresses"
+  hosts: [all-routers]
+  gather_facts: true
+  connection: network_cli
+
+  tasks:
+    - name: "Get IPv4 Addresses with Line Protocol Status of Up"
+      debug: 
+        msg:"interface {{ item['key'] }} has {{ item['value']['ipv4'][0][address] }}"
+      loop: "{{ ansible_net_interfaces | dict2items }}"
+      when: item['value']['lineprotocol'] == "up"
+      when: item['value']['ipv4'] != []
