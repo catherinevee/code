@@ -1,0 +1,29 @@
+
+---
+
+- name: Assign Users to Cisco Config
+  hosts: [all-cisco]
+  gather_facts: false
+  connection: network_cli
+
+  tasks:
+    - name: "Create User A Group"
+      cisco.ios.ios_config:
+        lines:
+          - username alyosha priv 7 secret 98fja01sdmf
+          - username dmitri priv 7 secret xlxmakqor9wjs
+          - username grushenka priv 7 secret 10f987am211p
+          - username ivano priv 7 secret amxni99okzq
+          - username karenina priv 7 secret qmakfoquryzzj1
+          - username lizaveta priv 7 secret alqpovjuzhq          
+        register: user_output
+        tags: techs
+
+    - name: "Create User B Group"
+      cisco.ios.ios_config:
+        lines:
+          - username katherine priv 15 secret kdl2qodpo32sidfqnudcn
+          - username catherine priv 15 secret sdbfqsdlpqomncbzuay7a9z8s
+          - username qatherine priv 15 secret mvksuqkmviq01898
+        register: user_output
+        tags: engineers
