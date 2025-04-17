@@ -31,6 +31,4 @@ variable "ARM_SUBSCRIPTION_ID" {}
 
 variable "AZURE_TENANT_ID" {}
 
-variable "ARM_ACCESS_KEY" {}
-
 
