@@ -68,10 +68,6 @@ stages :
             commandOptions: '-out main.tfplan'
             environmentServiceNameAzureRM:  $(backendServiceArm)
             workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
-          env:
-            TF_VAR_AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
-            TF_VAR_AZURE_TENANT_ID: $(AZURE_TENANT_ID)
-            TF_VAR_AZURE_CLIENT_ID: $(AZURE_CLIENT_ID)
 
         - task: TerraformTaskV4@4
           displayName: Apply Terraform Plan
