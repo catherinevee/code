@@ -69,9 +69,10 @@ stages :
             environmentServiceNameAzureRM:  $(backendServiceArm)
             workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
           env:
-            TF_VAR_subscription_id: $(AZURE_SUBSCRIPTION_ID)
-            TF_VAR_tenant_id: $(AZURE_TENANT_ID)
-            TF_VAR_client_id: $(AZURE_CLIENT_ID)
+            TF_VAR_AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
+            TF_VAR_AZURE_TENANT_ID: $(AZURE_TENANT_ID)
+            TF_VAR_AZURE_CLIENT_ID: $(AZURE_CLIENT_ID)
+
         - task: TerraformTaskV4@4
           displayName: Apply Terraform Plan
           condition: and(succeeded(), eq(variables['terraformPlan.changesPresent'], 'true'))
@@ -82,6 +83,6 @@ stages :
             environmentServiceNameAzureRM:  $(backendServiceArm)
             workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
           env:
-            TF_VAR_subscription_id: $(AZURE_SUBSCRIPTION_ID)
-            TF_VAR_tenant_id: $(AZURE_TENANT_ID)
-            TF_VAR_client_id: $(AZURE_CLIENT_ID)
+            TF_VAR_AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
+            TF_VAR_AZURE_TENANT_ID: $(AZURE_TENANT_ID)
+            TF_VAR_AZURE_CLIENT_ID: $(AZURE_CLIENT_ID)
