@@ -17,7 +17,7 @@ variable "defaultvnet" {
 
 variable "defaultrg" {
     type = string
-    default = "default_polandresourcegroup"
+    default = "polandcentral-1"
 }
 
 variable "defaultsa" {

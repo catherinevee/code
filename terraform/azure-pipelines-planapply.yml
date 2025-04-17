@@ -36,6 +36,9 @@ stages :
               
               # Create blob container
               az storage container create --account-name $(storageAccountName) --name $(containerName)
+              
+              az storage account show --resource-group $(resourceGroup) --name $(storageAccountName) --query "[id]"
+
   - stage: "Terraform_Install_Init"
     jobs:
       - job: "terraform_install"
