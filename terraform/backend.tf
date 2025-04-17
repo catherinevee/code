@@ -4,7 +4,6 @@ terraform {
       storage_account_name = "tfstatecfriy"
       container_name       = "tfstate-container"
       key = "terraform.tfstate"
-      #access_key = {{secrets.storagekey}}
       use_oidc = true
       use_azuread_auth = true
       client_id = "catherinevee_manid" 
