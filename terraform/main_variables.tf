@@ -17,18 +17,3 @@ variable "tfstaterg" {
   type = string 
   default = "polandcentral-1"  
 }
-
-
-variable "AWS_ACCESS_KEY_ID" {}
-
-variable "AWS_SECRET_ACCESS_KEY" {}
-
-variable "AZURE_CLIENT_ID" {}
-
-variable "AZURE_CLIENT_SECRET" {}
-
-variable "AZURE_SUBSCRIPTION_ID" {}
-
-variable "AZURE_TENANT_ID" {}
-
-
