@@ -3,7 +3,6 @@ terraform {
       resource_group_name  = "polandcentralrg-1"
       storage_account_name = "tfstatecfriy"
       container_name       = "tfstate-container"
-      key = "terraform.tfstate"
       use_oidc = true
       use_azuread_auth = true
       client_id = "catherinevee_manid" 
