@@ -62,7 +62,7 @@ stages :
             provider: 'azurerm'
             command: 'plan'
             commandOptions: '-out main.tfplan'
-            environmentServiceNameAzureRM:  $(azureSubscription)
+            environmentServiceNameAzureRM:  $(backendServiceArm)
             workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
         - task: TerraformTaskV4@4
           displayName: Apply Terraform Plan
@@ -70,7 +70,7 @@ stages :
           inputs:
             provider: 'azurerm'
             command: 'apply'
-            commandOptions: ' main.tfplan'
-            environmentServiceNameAzureRM:  $(azureSubscription)
+            commandOptions: '-auto-approve main.tfplan'
+            environmentServiceNameAzureRM:  $(backendServiceArm)
             workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
 
