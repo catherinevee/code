@@ -5,13 +5,7 @@ variables:
   storageAccountName: "tfstatecriy"
   containerName: "terraformtfstate"
   terraform_version: 1.11.3
-
   backendServiceArm: "catherinevee_manid"
-  backendAzureRmResourceGroupName: $(resourceGroup)
-  backendAzureRmStorageAccountName: $(storageAccountName)
-  backendAzureRmContainerName: $(containerName)
-  backendAzureRmKey: "terraform.tfstate"
- 
 
 trigger:
 - main
@@ -68,7 +62,7 @@ stages :
             provider: 'azurerm'
             command: 'plan'
             commandOptions: '-out main.tfplan'
-            environmentServiceNameAzureRM:  $(backendServiceArm)
+            environmentServiceNameAzureRM:  $(azureSubscription)
             workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
         - task: TerraformTaskV4@4
           displayName: Apply Terraform Plan
@@ -76,7 +70,7 @@ stages :
           inputs:
             provider: 'azurerm'
             command: 'apply'
-            commandOptions: '-auto-approve main.tfplan'
-            environmentServiceNameAzureRM:  $(backendServiceArm)
+            commandOptions: ' main.tfplan'
+            environmentServiceNameAzureRM:  $(azureSubscription)
             workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
 
