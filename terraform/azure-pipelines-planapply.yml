@@ -55,6 +55,11 @@ stages :
             backendAzureRmContainerName: $(containerName)
             backendAzureRmKey: 'state.tfstate'
             workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
+          env:
+            ARM_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
+            ARM_TENANT_ID: $(AZURE_TENANT_ID)
+            ARM_CLIENT_ID: $(AZURE_CLIENT_ID)
+            ARM_CLIENT_SECRET: $(AZURE_CLIENT_SECRET)
         - task: TerraformTaskV4@4
           name: terraformPlan
           displayName: "terraform plan"
@@ -64,6 +69,11 @@ stages :
             commandOptions: '-out main.tfplan'
             environmentServiceNameAzureRM:  $(backendServiceArm)
             workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
+          env:
+            TF_VAR_subscription_id: $(AZURE_SUBSCRIPTION_ID)
+            TF_VAR_tenant_id: $(AZURE_TENANT_ID)
+            TF_VAR_client_id: $(AZURE_CLIENT_ID)
+            TF_VAR_client_secret: $(AZURE_CLIENT_SECRET)
         - task: TerraformTaskV4@4
           displayName: Apply Terraform Plan
           condition: and(succeeded(), eq(variables['terraformPlan.changesPresent'], 'true'))
@@ -74,9 +84,7 @@ stages :
             environmentServiceNameAzureRM:  $(backendServiceArm)
             workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
           env:
-            AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID)
-            AWS_SECRET_KEY_ID: $(AWS_SECRET_KEY_ID)
-            AZURE_CLIENT_ID: $(AZURE_CLIENT_ID)
-            AZURE_CLIENT_SECRET$: (AZURE_CLIENT_SECRET)
-            AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
-            AZURE_TENANT_ID: $(AZURE_TENANT_ID)
+            TF_VAR_subscription_id: $(AZURE_SUBSCRIPTION_ID)
+            TF_VAR_tenant_id: $(AZURE_TENANT_ID)
+            TF_VAR_client_id: $(AZURE_CLIENT_ID)
+            TF_VAR_client_secret: $(AZURE_CLIENT_SECRET)
