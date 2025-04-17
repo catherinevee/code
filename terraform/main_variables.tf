@@ -27,7 +27,7 @@ variable "AZURE_CLIENT_ID" {}
 
 variable "AZURE_CLIENT_SECRET" {}
 
-variable "ARM_SUBSCRIPTION_ID" {}
+variable "AZURE_SUBSCRIPTION_ID" {}
 
 variable "AZURE_TENANT_ID" {}
 
