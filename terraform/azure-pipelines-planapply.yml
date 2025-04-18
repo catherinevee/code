@@ -9,79 +9,83 @@ variables:
 
 trigger:
 - main
-name: $(BuildDefinitionName)_$(date:yyyyMMdd)$(rev:.r) 
+name: $(BuildDefinitionName)_$(date:yyyyMMdd)$(rev:.r)
 pr: none
 
+stages:
+- stage: "Generate_Storage_Account"
+  jobs:
+  - job: "azure_cli"
+    steps:
+    - task: AzureCLI@2
+      displayName: "Generate Storage Account"
+      inputs:
+        azureSubscription: 'catherinevee_manid'
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        inlineScript: |+
+          # Set Azure Subscription
+          az account set -s $(azureSubscription)
 
-stages :  
-  - stage: "Generate_Storage_Account"
-    jobs:
-      - job: "azure_cli"    
-        steps:
-        - task: AzureCLI@2
-          displayName: "Generate Storage Account"
-          inputs:
-            azureSubscription: 'catherinevee_manid'
-            scriptType: 'bash'
-            scriptLocation: 'inlineScript'
-            inlineScript: |
-              # Set Azure Subscription
-              az account set -s $(azureSubscription)
-              
-              # Create resource group
-              az group create -l $(location) -n $(resourceGroup)
-              
-              # Create storage account
-              az storage account create -n $(storageAccountName) -g $(resourceGroup) -l $(location) --sku Standard_LRS --kind StorageV2
-              
-              # Create blob container
-              az storage container create --account-name $(storageAccountName) --name $(containerName)
-              
-              storageAccountResourceID=$(az storage account show --resource-group $(resourceGroup) --name $(storageAccountName) --query "[id]")
-              echo $storageAccountResourceID
-  - stage: "Terraform_Install_Init"
-    jobs:
-      - job: "terraform_install"
-        steps:
-        - task: JasonBJohnson.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-installer.TerraformInstaller@0
-          displayName: "terraform install"
-          inputs:
-            terraformVersion: '$(terraform_version)'
-        - task: TerraformTaskV4@4
-          displayName: "terraform init"
-          inputs:
-            provider: 'azurerm'
-            command: 'init'
-            backendServiceArm: $(backendServiceArm)
-            backendAzureRmResourceGroupName: $(resourceGroup)
-            backendAzureRmStorageAccountName: $(storageAccountName)
-            backendAzureRmContainerName: $(containerName)
-            backendAzureRmKey: 'state.tfstate'
-            workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
-          env:
-            ARM_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
-            ARM_TENANT_ID: $(AZURE_TENANT_ID)
-            ARM_CLIENT_ID: $(AZURE_CLIENT_ID)
-        - task: TerraformTaskV4@4
-          name: terraformPlan
-          displayName: "terraform plan"
-          inputs:
-            provider: 'azurerm'
-            command: 'plan'
-            commandOptions: '-out main.tfplan'
-            environmentServiceNameAzureRM:  $(backendServiceArm)
-            workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
+          # Create resource group
+          az group create -l $(location) -n $(resourceGroup)
 
-        - task: TerraformTaskV4@4
-          displayName: Apply Terraform Plan
-          condition: and(succeeded(), eq(variables['terraformPlan.changesPresent'], 'true'))
-          inputs:
-            provider: 'azurerm'
-            command: 'apply'
-            commandOptions: '-auto-approve main.tfplan'
-            environmentServiceNameAzureRM:  $(backendServiceArm)
-            workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
-          env:
-            TF_VAR_AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
-            TF_VAR_AZURE_TENANT_ID: $(AZURE_TENANT_ID)
-            TF_VAR_AZURE_CLIENT_ID: $(AZURE_CLIENT_ID)
+          # Create storage account
+          az storage account create -n $(storageAccountName) -g $(resourceGroup) -l $(location) --sku Standard_LRS --kind StorageV2
+
+          # Create blob container
+          az storage container create --account-name $(storageAccountName) --name $(containerName)
+
+          storageAccountResourceID=$(az storage account show --resource-group $(resourceGroup) --name $(storageAccountName) --query "[id]")
+           
+    - task: Bash@3
+      inputs:
+        targetType: 'inline'
+        script: echo $storageAccountResourceID
+
+- stage: "Terraform_Install_Init"
+  jobs:
+  - job: "terraform_install"
+    steps:
+    - task: JasonBJohnson.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-installer.TerraformInstaller@0
+      displayName: "terraform install"
+      inputs:
+        terraformVersion: '$(terraform_version)'
+    - task: TerraformTaskV4@4
+      displayName: "terraform init"
+      inputs:
+        provider: 'azurerm'
+        command: 'init'
+        backendServiceArm: $(backendServiceArm)
+        backendAzureRmResourceGroupName: $(resourceGroup)
+        backendAzureRmStorageAccountName: $(storageAccountName)
+        backendAzureRmContainerName: $(containerName)
+        backendAzureRmKey: 'state.tfstate'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
+      env:
+        ARM_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
+        ARM_TENANT_ID: $(AZURE_TENANT_ID)
+        ARM_CLIENT_ID: $(AZURE_CLIENT_ID)
+    - task: TerraformTaskV4@4
+      name: terraformPlan
+      displayName: "terraform plan"
+      inputs:
+        provider: 'azurerm'
+        command: 'plan'
+        commandOptions: '-out main.tfplan'
+        environmentServiceNameAzureRM: $(backendServiceArm)
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
+
+    - task: TerraformTaskV4@4
+      displayName: Apply Terraform Plan
+      condition: and(succeeded(), eq(variables['terraformPlan.changesPresent'], 'true'))
+      inputs:
+        provider: 'azurerm'
+        command: 'apply'
+        commandOptions: '-auto-approve main.tfplan'
+        environmentServiceNameAzureRM: $(backendServiceArm)
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
+      env:
+        TF_VAR_AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
+        TF_VAR_AZURE_TENANT_ID: $(AZURE_TENANT_ID)
+        TF_VAR_AZURE_CLIENT_ID: $(AZURE_CLIENT_ID)
