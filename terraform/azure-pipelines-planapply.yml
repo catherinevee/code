@@ -42,6 +42,12 @@ stages:
 
           echo $storageAccountResourceID
           echo $SARI
+    - task: Bash@3
+      inputs:
+      bash: |
+        echo "my environment variable is $SARI"
+
+        "
 - stage: "Terraform_Install_Init"
   jobs:
   - job: "terraform_install"
