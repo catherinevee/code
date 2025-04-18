@@ -1,0 +1,11 @@
+---
+
+- name: "Assign BGP Peers for Cisco"
+  hosts: [ edgerouters ]
+  gather_facts: false
+  connection: network_cli
+
+  tasks:
+  - name: "Assign Peers from Template"
+    cisco.ios.ios_config:
+      src: "templates/j2-cisco-bgp.j2"
