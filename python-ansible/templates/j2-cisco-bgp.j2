@@ -1,0 +1,4 @@
+
+{% for neighbor in BGP.peers %}
+neighbor {{ neighbor.neighbor }} remote-as {{neighbor.neighbor.peer_asn}}
+{% endfor %}
