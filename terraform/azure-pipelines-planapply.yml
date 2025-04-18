@@ -38,9 +38,11 @@ stages:
 
           storageAccountResourceID=$(az storage account show --resource-group $(resourceGroup) --name $(storageAccountName) --query "[id]")
           echo "##vso[task.setvariable variable=storageAccountResourceID;isOutput=true ]$storageAccountResourceID" 
-
-    - script: |
-        echo $(storageAccountResourceID)
+    - task: Bash@2
+      displayName: "cli"
+      inputs:
+      - script: |
+          echo "$(storageAccountResourceID)"
 
 - stage: "Terraform_Install_Init"
   jobs:
