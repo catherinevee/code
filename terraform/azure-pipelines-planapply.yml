@@ -38,10 +38,10 @@ stages:
 
           storageAccountResourceID=$(az storage account show --resource-group $(resourceGroup) --name $(storageAccountName) --query "[id]")
           echo "##vso[task.setvariable variable=sari;isOutput=true ]$storageAccountResourceID" 
-  - bash: |
-      echo "$(sari)"
-      echo "1213213"
-      echo "$SARI"
+        bash: |
+          echo $(sari)
+          echo "1213213"
+          echo "$SARI"
 
 - stage: "Terraform_Install_Init"
   jobs:
