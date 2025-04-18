@@ -44,7 +44,6 @@ stages:
         scriptType: 'bash'
         scriptLocation: 'inlineScript'
         inlineScript: |
-          echo "$(storageAccountResourceID)"
           echo $(storageAccountResourceID)
 
 - stage: "Terraform_Install_Init"
