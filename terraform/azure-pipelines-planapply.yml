@@ -43,6 +43,8 @@ stages:
 - stage: "Terraform_Install_Init"
   jobs:
   - job: "terraform_import"
+    variables:
+    myBuildStageVar: $[stageDependencies.buildStage.buildJob.outputs['azurecli.sari']]
     steps:
     - task: Bash@3
       inputs:
