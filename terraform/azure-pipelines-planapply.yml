@@ -43,13 +43,9 @@ stages:
   jobs:
   - job: "terraform_import"
     steps:
-    - task: Bash@1
-      displayName: "terraform import"
+    - task: Bash
       inputs:
-        scriptType: 'bash'
-        scriptLocation: 'inlineScript'
-        inlineScript: |
-          echo $(AzureCLI.storageAccountResourceID)
+      - bash: echo $(AzureCLI.storageAccountResourceID)
   - job: "terraform_install"
     steps:
     - task: JasonBJohnson.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-installer.TerraformInstaller@0
