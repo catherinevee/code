@@ -48,7 +48,7 @@ stages:
         scriptType: 'bash'
         scriptLocation: 'inlineScript'
         inlineScript: |
-          echo $(AzureCLI.storageAccountResourceID)
+          echo $(AzureCLI@2.storageAccountResourceID)
   - job: "terraform_install"
     steps:
     - task: JasonBJohnson.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-installer.TerraformInstaller@0
