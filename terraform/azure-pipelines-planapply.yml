@@ -38,15 +38,16 @@ stages:
 
           storageAccountResourceID=$(az storage account show --resource-group $(resourceGroup) --name $(storageAccountName) --query "[id]")
           echo "##vso[task.setvariable variable=sari;isOutput=true ]$storageAccountResourceID" 
-          echo "$sari"
-
-    - task: Bash@3
-      inputs:
-        bash: |
-          echo "my environment variable is $SARI"
 
 - stage: "Terraform_Install_Init"
   jobs:
+  - job: "terraform_import"
+    steps:
+    - task: Bash@0
+      displayName: "terraform import"
+      inputs:
+        inlineScript: |
+          echo $(AzureCLI.storageAccountResourceID)
   - job: "terraform_install"
     steps:
     - task: JasonBJohnson.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-installer.TerraformInstaller@0
