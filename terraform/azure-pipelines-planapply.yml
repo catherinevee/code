@@ -43,8 +43,9 @@ stages:
   jobs:
   - job: "terraform_import"
     steps:
-    - bash: |
-        echo $(AzureCLI.storageAccountResourceID)
+    - task: Bash
+      inputs:
+      - bash: echo $(AzureCLI.storageAccountResourceID)
   - job: "terraform_install"
     steps:
     - task: JasonBJohnson.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-installer.TerraformInstaller@0
