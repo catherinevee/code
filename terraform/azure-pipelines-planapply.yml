@@ -46,6 +46,8 @@ stages:
     - task: Bash@0
       displayName: "terraform import"
       inputs:
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
         inlineScript: |
           echo $(AzureCLI.storageAccountResourceID)
   - job: "terraform_install"
