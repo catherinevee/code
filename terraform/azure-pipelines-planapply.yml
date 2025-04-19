@@ -43,7 +43,7 @@ stages:
   jobs:
   - job: "terraform_import"
     steps:
-    - task: Bash
+    - task: Bash@1
       inputs:
         scriptType: 'bash'
         scriptLocation: 'inlineScript'
