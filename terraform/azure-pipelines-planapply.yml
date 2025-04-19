@@ -47,6 +47,7 @@ stages:
       inputs:
         scriptType: 'bash'
         scriptLocation: 'inlineScript'
+        targetType: 'inline'
         inlineScript: |
           echo $(AzureCLI@2.storageAccountResourceID)
   - job: "terraform_install"
