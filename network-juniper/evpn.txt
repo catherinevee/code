@@ -1,0 +1,49 @@
+set protocols ospf area 0 interface ge-0/0/0/.0
+set protocols ospf area 0 interface lo.0
+
+
+set routing-options router-id 1.1.1.1
+set routing-options autonomous-system 65530
+
+set protocols bgp group internal local-address 1.1.1.1
+set protocols bgp group internal neighbor 2.2.2.2
+
+set protocols bgp group internal family inet unicast
+set protocols bgp group internal family evpn signaling
+set protocols bgp group internal family vpnv4
+set protocols bgp group internal cluster 2.2.2.2
+set protocols bgp group internal multipath
+
+
+
+
+
+
+set vlans data vlan-id 512 vxlan vni 1512
+set vlans data vlan-id 512 vxlan ingress-node-replication
+set interfaces xe-0/0/3 unit 0 family ethernet-switching interface-mode access
+set interfaces xe-0/0/3 unit 0 family ethernet-switching vlan members data
+
+
+set interfaces irb unit 512 family inet address 10.15.12.3/24 virtual-gateway-address 10.15.12.1
+set interfaces irb unit 512 family inet address 10.15.12.3/24 virtual-gateway-v4-mac 00:aa:11:bb:22:cc
+set vlans Data l3-interface unit 512
+
+#don't advertise into igp
+set interfaces irb unit 512 family inet address 10.15.12.4/24 virtual-gateway-address 10.15.12.1
+set interfaces irb unit 512 family inet address 10.15.12.4/24 virtual-gateway-v4-mac 00:aa:11:bb:22:cc
+set vlans Data l3-interface irb.512
+
+set evpn encapsulation vxlan
+set evpn multicast-mode ingress-replication
+set evpn extended-vni-list all
+
+set switch-options vtep-source-interface lo0.0
+set switch-options route-distinguisher 3.3.3.3:512
+set switch-options vrf-target target:65530:512
+
+
+
+show evpn database
+
+
