@@ -14,8 +14,10 @@ pr: none
 
 stages:
 - stage: "Generate_Storage_Account"
+  name: "genstorageaccount"
   jobs:
   - job: "azure_cli"
+    name: "azure_cli_job"
     steps:
     - task: AzureCLI@2
       name: "azurecli"
@@ -44,7 +46,7 @@ stages:
   jobs:
   - job: "terraform_import"
     variables:
-      sari: $[stageDependencies.buildStage.buildJob.outputs['azurecli.sari']]
+      sari: $[stageDependencies.genstorageaccount.azure_cli_job.outputs['azurecli.sari']]
     steps:
     - task: Bash@3
       inputs:
