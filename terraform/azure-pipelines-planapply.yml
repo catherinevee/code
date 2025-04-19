@@ -37,7 +37,7 @@ stages:
           # Create blob container
           az storage container create --account-name $(storageAccountName) --name $(containerName)
 
-          storageAccountResourceID=${(az storage account show --resource-group $(resourceGroup) --name $(storageAccountName) --query "[id]0}")
+          storageAccountResourceID=${(az storage account show --resource-group $(resourceGroup) --name $(storageAccountName) --query "[id]")[0]}
           echo "##vso[task.setvariable variable=sari;isOutput=true ]$storageAccountResourceID" 
           echo "11111"
           echo $storageAccountResourceID
