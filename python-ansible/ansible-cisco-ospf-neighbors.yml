@@ -1,0 +1,27 @@
+---
+
+- name: "Run Cisco IOS Commands"
+  hosts: [ routers-cisco ]
+  connection: network_cli
+
+  tasks:
+  - name: "OSPF Commands"
+    cisco.ios.ios_command:
+      commands:
+      - "show ip ospf database"
+      - "show ip ospf neighbors"
+    register: cmdoutput
+  - name: "Show OSPF Output"
+    debug:
+      msg: { ? { cmdoutput } }
+
+  - name: "Show Diagnostic Commands"
+    cisco.ios.ios_command:
+      commands:
+      - "dir"
+      - "show mem"
+      - "show ip int brief | i up"
+    register: cmdoutput
+  - name: "Show Diagnostic Output"
+    debug:
+      msg: { ? { cmdoutput } }
