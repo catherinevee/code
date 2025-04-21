@@ -51,10 +51,8 @@ stages:
     steps:
     - task: Bash@3
       inputs:
-        scriptType: 'bash'
-        scriptLocation: 'inlineScript'
         targetType: 'inline'
-        inlineScript: |
+        script: |
           echo "njkbn"
           cat terraform_importfile.txt
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
