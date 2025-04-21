@@ -55,7 +55,8 @@ stages:
         scriptLocation: 'inlineScript'
         targetType: 'inline'
         inlineScript: |
-          echo d$terraform_importfile
+          echo "njkbn"
+          cat terraform_importfile.txt
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
 
   - job: "terraform_install"
