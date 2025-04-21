@@ -54,7 +54,7 @@ stages:
         targetType: 'inline'
         inlineScript: |
           echo $(azurecli.sari)
-          echo $(sari)
+          echo $sari
   - job: "terraform_install"
     steps:
     - task: JasonBJohnson.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-installer.TerraformInstaller@0
