@@ -42,7 +42,7 @@ stages:
           echo "##vso[task.setvariable variable=sari;isOutput=true ]$storageAccountResourceID" 
           echo "11111"
           echo $storageAccountResourceID
-          echo "terraform import $backendServiceResourceGroup $storageAccountResourceID" > terraformimport.txt
+          echo "terraform import $backendServiceResourceGroup $storageAccountResourceID" > $(System.DefaultWorkingDirectory)terraformimport.txt
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
 
 - stage: "Terraform_Install_Init"
@@ -54,7 +54,7 @@ stages:
         targetType: 'inline'
         script: |
           echo "njkbn"
-          cat $(System.DefaultWorkingDirectory)/terraform_importfile.txt
+          cat $(System.DefaultWorkingDirectory)/terraformimport.txt
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
 
   - job: "terraform_install"
