@@ -55,7 +55,9 @@ stages:
         scriptLocation: 'inlineScript'
         targetType: 'inline'
         inlineScript: |
-          cat $terraform_importfile
+          echo d$terraform_importfile
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
+
   - job: "terraform_install"
     steps:
     - task: JasonBJohnson.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-installer.TerraformInstaller@0
