@@ -6,7 +6,8 @@ variables:
   containerName: "terraformtfstate"
   terraform_version: 1.11.3
   backendServiceArm: "catherinevee_manid"
-
+  backendServiceResourceGroup: "polandcentralrg-1" #the RG of the Managed Identity
+  terraform_importfile: "terraformimport.txt"
 trigger:
 - main
 name: $(BuildDefinitionName)_$(date:yyyyMMdd)$(rev:.r)
@@ -41,11 +42,12 @@ stages:
           echo "##vso[task.setvariable variable=sari;isOutput=true ]$storageAccountResourceID" 
           echo "11111"
           echo $storageAccountResourceID
+          echo "terraform import $backendServiceResourceGroup $storageAccountResourceID" > $terraform_importfile
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
+
 - stage: "Terraform_Install_Init"
   jobs:
   - job: "terraform_import"
-    variables:
-      sari: $[stageDependencies.Generate_Storage_Account.azure_cli_job.outputs['azurecli.sari']]
     steps:
     - task: Bash@3
       inputs:
@@ -53,8 +55,7 @@ stages:
         scriptLocation: 'inlineScript'
         targetType: 'inline'
         inlineScript: |
-          echo $(azurecli.sari)
-          echo $sari
+          cat $terraform_importfile
   - job: "terraform_install"
     steps:
     - task: JasonBJohnson.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-installer.TerraformInstaller@0
