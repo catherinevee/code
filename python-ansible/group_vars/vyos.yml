@@ -1,0 +1,3 @@
+ansible_user: "cath"
+ansible_password: "kfjfs9al2m4usdial1j!kslsdsnk2o1lsncxvxviw"
+ansible_network_os: vyos
