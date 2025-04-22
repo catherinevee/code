@@ -1,0 +1,28 @@
+---
+
+- name: "Gather Config"
+  hosts: all
+  connection: network_cli
+
+  tasks:
+  - name: "Gather Config if Cisco IOS"
+    cisco.ios.ios_facts:
+      gather_subset: config
+    register: ios_facts
+    when: "ansible_network_os == 'cisco.ios.ios'"
+
+  - name: "Gather Config if VyOS"
+    vyos.vyos.vyos_facts:
+      gather_subset: config
+    register: vyos_facts
+    when: "ansible_network_os == 'vyos.vyos.vyos'"
+
+  - name: "Print Output if Cisco IOS"
+    debug:
+      msg: "{{ ios_facts.ansible_facts }}"
+    when: "ansible_network_os == 'cisco.ios.ios'"
+
+  - name: "Print Output if VyOS"
+    debug:
+      msg: "{{ vyos_facts.ansible_facts }}"
+    when: "ansible_network_os == 'vyos.vyos.vyos'"

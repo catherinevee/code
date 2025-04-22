@@ -1,0 +1,23 @@
+---
+- name: "Use PyATS for Parsing Cisco IOS"
+  hosts: cisco
+  connection: network_cli
+  gather_facts: no
+  roles:
+  - ansible-pyats
+  tasks:
+  - pyats_parse_command:
+      command: show ip route bgp
+    register: output
+
+  - debug:
+      var: output.structured
+
+  - name: "Run Cisco IOS Command"
+    cli_command:
+      command: show ip route
+    register: cli_output
+
+  - name: "Parsing Output"
+    set_fact:
+      parsed_output: "{{ cli_output.stdout | pyats_parser('show ip route', 'iosxe') }}"
