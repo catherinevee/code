@@ -16,6 +16,12 @@ pr: none
 stages:
 - stage: "Generate_Storage_Account"
   jobs:
+  - job: "terraform_install"
+    steps:
+    - task: JasonBJohnson.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-installer.TerraformInstaller@0
+      displayName: "terraform install"
+      inputs:
+        terraformVersion: '$(terraform_version)'
   - job: "azure_cli_job"
     steps:
     - task: AzureCLI@2
@@ -45,61 +51,8 @@ stages:
           cat terraformimport.txt
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
 
-- stage: "Terraform_Install_Init"
-  jobs:
-  - job: "terraform_import"
-    steps:
-    - task: Bash@3
+    - task: TerraformCLI@2
       inputs:
-        targetType: 'inline'
-        script: |
-          echo "njkbn"
-          pwd
-          ls -lash
-          cat terraformimport.txt
-        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
-
-  - job: "terraform_install"
-    steps:
-    - task: JasonBJohnson.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-installer.TerraformInstaller@0
-      displayName: "terraform install"
-      inputs:
-        terraformVersion: '$(terraform_version)'
-    - task: TerraformTaskV4@4
-      displayName: "terraform init"
-      inputs:
-        provider: 'azurerm'
-        command: 'init'
-        backendServiceArm: $(backendServiceArm)
-        backendAzureRmResourceGroupName: $(resourceGroup)
-        backendAzureRmStorageAccountName: $(storageAccountName)
-        backendAzureRmContainerName: $(containerName)
-        backendAzureRmKey: 'state.tfstate'
-        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
-      env:
-        ARM_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
-        ARM_TENANT_ID: $(AZURE_TENANT_ID)
-        ARM_CLIENT_ID: $(AZURE_CLIENT_ID)
-    - task: TerraformTaskV4@4
-      name: terraformPlan
-      displayName: "terraform plan"
-      inputs:
-        provider: 'azurerm'
-        command: 'plan'
-        commandOptions: '-out main.tfplan'
-        environmentServiceNameAzureRM: $(backendServiceArm)
-        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
-
-    - task: TerraformTaskV4@4
-      displayName: Apply Terraform Plan
-      condition: and(succeeded(), eq(variables['terraformPlan.changesPresent'], 'true'))
-      inputs:
-        provider: 'azurerm'
-        command: 'apply'
-        commandOptions: '-auto-approve main.tfplan'
-        environmentServiceNameAzureRM: $(backendServiceArm)
-        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
-      env:
-        TF_VAR_AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
-        TF_VAR_AZURE_TENANT_ID: $(AZURE_TENANT_ID)
-        TF_VAR_AZURE_CLIENT_ID: $(AZURE_CLIENT_ID)
+        command: 'import'
+        resourceAddress: $backendServiceResourceGroup
+        resourceId: $storageAccountResourceID
