@@ -53,12 +53,6 @@ stages:
       displayName: "terraform install"
       inputs:
         terraformVersion: '$(terraform_version)'
-    - task: TerraformCLI@2
-      inputs:
-        command: 'import'
-        resourceAddress: "azurerm_resource_group.polandcentralrg-1"
-        resourceId: $(sari)
-        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
     - task: TerraformTaskV4@4
       displayName: "terraform init"
       inputs:
@@ -74,3 +68,9 @@ stages:
         ARM_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
         ARM_TENANT_ID: $(AZURE_TENANT_ID)
         ARM_CLIENT_ID: $(AZURE_CLIENT_ID)
+    - task: TerraformCLI@2
+      inputs:
+        command: 'import'
+        resourceAddress: "azurerm_resource_group.polandcentralrg-1"
+        resourceId: $(sari)
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
