@@ -74,7 +74,4 @@ stages:
         resourceAddress: "azurerm_resource_group.polandcentralrg-1"
         resourceId: $(sari)
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
-      env:
-        ARM_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
-        ARM_TENANT_ID: $(AZURE_TENANT_ID)
-        ARM_CLIENT_ID: $(AZURE_CLIENT_ID)
+        environmentServiceName: 'catherinevee_manid'
