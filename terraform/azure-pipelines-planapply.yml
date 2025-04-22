@@ -16,12 +16,6 @@ pr: none
 stages:
 - stage: "Generate_Storage_Account"
   jobs:
-  - job: "terraform_install"
-    steps:
-    - task: JasonBJohnson.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-installer.TerraformInstaller@0
-      displayName: "terraform install"
-      inputs:
-        terraformVersion: '$(terraform_version)'
   - job: "azure_cli_job"
     steps:
     - task: AzureCLI@2
@@ -50,9 +44,17 @@ stages:
           echo "terraform import azurerm_resource_group.polandcentralrg-1 $storageAccountResourceID" >> terraformimport.txt
           cat terraformimport.txt
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
-
+  - job: "terraform_install"
+    dependsOn: azure_cli_job
+    variables:
+      myVarFromJobA: $[ dependencies.azure_cli_job.outputs['azurecli.sari'] ]
+    steps:
+    - task: JasonBJohnson.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-installer.TerraformInstaller@0
+      displayName: "terraform install"
+      inputs:
+        terraformVersion: '$(terraform_version)'
     - task: TerraformCLI@2
       inputs:
         command: 'import'
         resourceAddress: $backendServiceResourceGroup
-        resourceId: $storageAccountResourceID
+        resourceId: $sari
