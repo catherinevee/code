@@ -25,6 +25,12 @@ terraform {
 
 }
 
+resource "azurerm_resource_group" "polandcentralrg-1" {
+  name = "polandcentralrg-1"
+  location = "polandcentral"
+}
+
+
 # Configure the AWS Provider
 provider "aws" {
   access_key = var.AWS_ACCESS_KEY_ID

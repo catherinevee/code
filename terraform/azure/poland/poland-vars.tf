@@ -28,8 +28,8 @@ variable "defaultsa" {
 
 variable "polandcentral-var-prodresourcegroups" {
     type = list(string)
-    default = ["polandcentralrg-1",
-    "polandcentralrg-2","polandcentralrg-3"]
+    default = ["polandcentralrg-2",
+    "polandcentralrg-3","polandcentralrg-4"]
 }
 
 locals {
