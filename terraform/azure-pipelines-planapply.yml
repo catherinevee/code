@@ -47,7 +47,7 @@ stages:
   - job: "terraform_install"
     dependsOn: azure_cli_job
     variables:
-      myVarFromJobA: $[ dependencies.azure_cli_job.outputs['azurecli.sari'] ]
+      sari: $[ dependencies.azure_cli_job.outputs['azurecli.sari'] ]
     steps:
     - task: JasonBJohnson.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-installer.TerraformInstaller@0
       displayName: "terraform install"
@@ -56,5 +56,5 @@ stages:
     - task: TerraformCLI@2
       inputs:
         command: 'import'
-        resourceAddress: "$backendServiceResourceGroup"
-        resourceId: "$sari"
+        resourceAddress: "azurerm_resource_group.polandcentralrg-1"
+        resourceId: $(sari)
