@@ -56,5 +56,5 @@ stages:
     - task: TerraformCLI@2
       inputs:
         command: 'import'
-        resourceAddress: $backendServiceResourceGroup
-        resourceId: $sari
+        resourceAddress: "$backendServiceResourceGroup"
+        resourceId: "$sari"
