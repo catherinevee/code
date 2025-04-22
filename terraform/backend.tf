@@ -11,3 +11,8 @@ terraform {
 
   }
 }
+
+resource "azurerm_resource_group" "polandcentralrg-1" {
+  name = "polandcentralrg-1"
+  location = "polandcentral"
+}
