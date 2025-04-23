@@ -1,6 +1,6 @@
 module "network-security-group" {
   source                = "Azure/network-security-group/azurerm"
-  resource_group_name   = "${var.defaultlocation}"
+  resource_group_name   = "${var.defaultrg}"
   location              = "${var.defaultlocation}"
   security_group_name   = "${var.defaultlocation}-sg-prod"
   source_address_prefix = ["10.7.0.0/24"]
