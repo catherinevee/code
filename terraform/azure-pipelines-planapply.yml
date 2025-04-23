@@ -38,15 +38,14 @@ stages:
           # Create blob container
           az storage container create --account-name $(storageAccountName) --name $(containerName)
 
-          storageAccountResourceID=$(az storage account show --resource-group $(resourceGroup) --name $(storageAccountName) --query "[id][0]" -o tsv)
-          echo "##vso[task.setvariable variable=sari;isOutput=true ]$storageAccountResourceID" 
+          resourceGroupResourceID=$(az group show -n polandcentralrg-1 -o tsv --query id" -o tsv)
+          echo "##vso[task.setvariable variable=rgri;isOutput=true ]$resourceGroupResourceID" 
           echo "11111"
-          echo "terraform import azurerm_resource_group.polandcentralrg-1 $storageAccountResourceID" >> terraformimport.txt
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
   - job: "terraform_install"
     dependsOn: azure_cli_job
     variables:
-      sari: $[ dependencies.azure_cli_job.outputs['azurecli.sari'] ]
+      sari: $[ dependencies.azure_cli_job.outputs['azurecli.rgri'] ]
     steps:
     - task: JasonBJohnson.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-installer.TerraformInstaller@0
       displayName: "terraform install"
@@ -71,6 +70,6 @@ stages:
       inputs:
         command: 'import'
         resourceAddress: "azurerm_resource_group.polandcentralrg-1"
-        resourceId: $(sari)
+        resourceId: $(rgri)
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
         environmentServiceName: 'catherinevee_manid'
