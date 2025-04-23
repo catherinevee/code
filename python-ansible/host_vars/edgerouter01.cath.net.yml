@@ -1,0 +1,17 @@
+ospf:
+  default_originate: true
+  rid: "10.101.101.1"
+  networks:
+  - network: 10.101.67.0/24
+    area: 67
+  - network: 10.101.67.1/30
+    area: 67
+  - network: 10.101.101.1/32
+    area: 0
+
+bgp:
+  router_id: "67.192.127.54"
+  asn: "65530"
+  neighbors:
+    neighbor: "104.210.9.2"
+    remote_asn: "65401"
