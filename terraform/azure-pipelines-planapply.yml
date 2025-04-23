@@ -22,7 +22,7 @@ stages:
       name: "azurecli"
       displayName: "Generate Storage Account"
       inputs:
-        azureSubscription: 'catherinevee_manid'
+        azureSubscription: $(backendServiceArm)
         scriptType: 'bash'
         scriptLocation: 'inlineScript'
         inlineScript: |
@@ -40,7 +40,6 @@ stages:
 
           resourceGroupResourceID=$(az group show -n polandcentralrg-1 -o tsv --query id)
           echo "##vso[task.setvariable variable=rgri;isOutput=true ]$resourceGroupResourceID" 
-          echo $resourceGroupResourceID
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
   - job: "terraform_install"
     dependsOn: azure_cli_job
@@ -52,7 +51,7 @@ stages:
       inputs:
         terraformVersion: '$(terraform_version)'
     - task: TerraformTaskV4@4
-      displayName: "terraform init"
+      displayName: "Terraform Init"
       inputs:
         provider: 'azurerm'
         command: 'init'
@@ -67,9 +66,18 @@ stages:
         ARM_TENANT_ID: $(AZURE_TENANT_ID)
         ARM_CLIENT_ID: $(AZURE_CLIENT_ID)
     - task: TerraformCLI@2
+      displayName: "Terraform Import"
       inputs:
         command: 'import'
         resourceAddress: "azurerm_resource_group.polandcentralrg-1"
         resourceId: $(rgri)
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
         environmentServiceName: 'catherinevee_manid'
+    - task: TerraformTaskV4@5
+      displayName: "Terraform Plan"
+      inputs:
+        provider: 'azurerm'
+        command: 'plan'
+        commandOptions: '-out main.tfplan'
+        environmentServiceNameAzureRM: $(backendServiceArm)
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
