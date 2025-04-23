@@ -1,0 +1,26 @@
+---
+
+- name: "Assign BGP Peers to Cisco IOS"
+  hosts: all
+  connection: network_cli
+
+  tasks:
+  - name: "Push Commands for Cisco IOS"
+    cisco.ios.ios_bgp:
+      config:
+        bgp_as: "65538"
+        router_id: "67.127.18.120"
+        log_neighbor_changes: true
+        neighbors:
+        - neighbor: { ? { item.neighbor } }
+          remote_as: { ? { item.peer_asn } }
+        operation: merge
+
+    register: cisco_output
+    when: "ansible_network_os == 'cisco.ios.ios'"
+    loop: "{{ bgp.neighbors }}"
+
+  - name: "Print for Cisco IOS"
+    debug:
+      msg: "{{ cisco_output }}"
+    when: "ansible_network_os == 'cisco.ios.ios'"
