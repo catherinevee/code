@@ -73,7 +73,7 @@ stages:
         resourceId: $(rgri)
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
         environmentServiceName: 'catherinevee_manid'
-    - task: TerraformTaskV4@5
+    - task: TerraformTaskV4@4
       displayName: "Terraform Plan"
       inputs:
         provider: 'azurerm'
