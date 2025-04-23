@@ -45,7 +45,7 @@ stages:
   - job: "terraform_install"
     dependsOn: azure_cli_job
     variables:
-      sari: $[ dependencies.azure_cli_job.outputs['azurecli.rgri'] ]
+      rgri: $[ dependencies.azure_cli_job.outputs['azurecli.rgri'] ]
     steps:
     - task: JasonBJohnson.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-installer.TerraformInstaller@0
       displayName: "terraform install"
