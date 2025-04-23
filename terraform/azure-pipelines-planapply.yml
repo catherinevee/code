@@ -67,6 +67,7 @@ stages:
         ARM_CLIENT_ID: $(AZURE_CLIENT_ID)
     - task: TerraformCLI@2
       displayName: "Terraform Import"
+      continueOnError: true
       inputs:
         command: 'import'
         resourceAddress: "azurerm_resource_group.polandcentralrg-1"
