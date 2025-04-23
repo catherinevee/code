@@ -1,0 +1,12 @@
+---
+
+- name: "Configure for VyOS"
+  hosts: all
+  connection: network_cli
+
+  tasks:
+  - name: "Send Commands for VyOS"
+    vyos.vyos.vyos_config:
+      src: "{{ansible_network_os}}-ospf.j2"
+    register: vyos_output
+    when: "ansible_network_os == 'vyos.vyos.vyos'"

@@ -1,0 +1,21 @@
+---
+
+- name: "Configure OSPF for VyOS"
+  hosts: vyos-router
+  connection: network_cli
+
+  tasks:
+  - name: "Send Commands for VyOS"
+    vyos.vyos.vyos_ospfv2:
+      config:
+        areas:
+        - area_id = "0"
+        network:
+        - address: "10.101.67.0/24"
+    state: replaced
+    register: ospf_output
+    when: "ansible_network_os == 'vyos.vyos.vyos'"
+  - name: "Print Result"
+    debug:
+      msg: "{{ospf_output}}"
+    when: "ansible_network_os == 'vyos.vyos.vyos'"
