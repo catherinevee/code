@@ -82,3 +82,8 @@ stages:
         commandOptions: '-out main.tfplan'
         environmentServiceNameAzureRM: $(backendServiceArm)
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
+    - task: TerraformCLI@2
+      inputs:
+        command: 'apply'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
+        environmentServiceName: 'catherinevee_manid'
