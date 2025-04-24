@@ -1,0 +1,29 @@
+---
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: sharedstorage
+  labels:
+    name: laffeystorage
+spec:
+  volumes:
+  - name: laffeyshared
+    emptyDir: {}
+  volumeMounts:
+  - mountPath: /laffeymount
+    name:
+  containers:
+  - name: cath-container1
+    image: Microsoft/powershell
+    command:
+    - pwsh
+    args:
+    - Command
+    - Wait-Event
+    resources:
+      limits:
+        memory: 1G
+        cpu: 1
+    ports:
+    - containerPort: 8888
