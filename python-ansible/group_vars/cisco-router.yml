@@ -1,3 +1,4 @@
 ansible_user: cathyadmin
 ansible_password: 94kvnxkd01!12ksmsnfjsi1009sskqnfni81!dfgdf
 ansible_network_os: ios
+napalm_platform: "cisco"
