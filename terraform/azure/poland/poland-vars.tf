@@ -17,7 +17,7 @@ variable "defaultvnet" {
 
 variable "defaultrg" {
     type = string
-    default = "polandcentralrg-1"
+    default = "polandcentralrg-2"
 }
 
 variable "defaultsa" {
@@ -28,8 +28,8 @@ variable "defaultsa" {
 
 variable "polandcentral-var-prodresourcegroups" {
     type = list(string)
-    default = ["polandcentralrg-2",
-    "polandcentralrg-3","polandcentralrg-4"]
+    default = ["polandcentralrg-3",
+    "polandcentralrg-4","polandcentralrg-5"]
 }
 
 locals {
