@@ -1,0 +1,31 @@
+---
+
+- name: "Add VLANs for VyOS"
+  hosts: vyos
+  connection: network_cli
+
+  tasks:
+  - name: "Add VLANs for VyOS"
+    vyos.vyos.vyos_vlan:
+      aggregate:
+      - vlan_id: 3000
+        name: "PA-Users"
+        interfaces: eth1
+        state: present
+      - vlan_id: 3100
+        name: "PA-Printers"
+        interfaces: eth2
+        state: present
+      - vlan_id: 3200
+        name: "PA-IPv6-Only"
+        interfaces: eth3
+        state: present
+      - vlan_id: 3300
+        name: "PA-Data"
+        interfaces: eth4
+        state: present
+    register: vyos_output
+
+  - name:
+    debug:
+      msg: "{{ vyos_output }}"

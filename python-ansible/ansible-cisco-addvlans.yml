@@ -1,0 +1,32 @@
+---
+
+- name: "Add VLANs for Cisco"
+  hosts: cisco
+  connection: network_cli
+
+  tasks:
+  - name: "Add VLANs for Cisco"
+    cisco.ios.ios_vlans:
+      config:
+      - name: "IPv6 Testing"
+        vlan_id: 590
+        state: active
+        shutdown: disabled
+      - name: "IPv6Only Prod"
+        vlan_id: 591
+        state: active
+        shutdown: disabled
+      - name: "DualStack Prod"
+        vlan_id: 592
+        state: active
+        shutdown: disabled
+      - name: "IPv6 Dev"
+        vlan_id: 593
+        state: active
+        shutdown: disabled
+      state: overridden
+      register: vlan_output
+
+  - name: "Print Output"
+    debug:
+      msg: "{{vlan_output }}"
