@@ -9,7 +9,10 @@ variables:
   backendServiceResourceGroup: "polandcentralrg-1" #the RG of the Managed Identity
 
 trigger:
-- main/terraform/
+  branches:
+    include:
+    - main
+    - terraform/*
 
 name: $(BuildDefinitionName)_$(date:yyyyMMdd)$(rev:.r)
 pr: none
