@@ -1,0 +1,30 @@
+---
+
+- name: "Replace Running Config for Arista"
+  hosts: localhost
+
+  tasks:
+  - name: "Generate Current Day and Time value Locally"
+    ansible.builtin.setup:
+      filter:
+      - "ansible_data_time"
+
+  - name: "Assign Value to Variable"
+    set_fact:
+      timeday: "{{ ansible_data_time.data }}"
+
+- name: "Use NAPALM to Replace Arista Config"
+  hosts: arista
+  connection: network_cli
+  tasks:
+  - name: "Replace Running Config from File"
+    hosts: arista
+    napalm_install_config:
+      config_file: "backups/local/{{ devicename }} - {{hostvars.localhost.timeday}}"
+      commit_changes: true
+      replace_config: true
+    register: output
+
+  - name: "Print Output"
+    debug:
+      msg: "{{ output }}"

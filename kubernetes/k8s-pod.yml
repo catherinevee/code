@@ -10,9 +10,11 @@ spec:
   volumes:
   - name: laffeyshared
     emptyDir: {}
+    persistentVolumeClaim:
+    claimName: laffey-pvc
   volumeMounts:
   - mountPath: /laffeymount
-    name:
+    name: laffeystorage
   containers:
   - name: cath-container1
     image: Microsoft/powershell
@@ -23,7 +25,7 @@ spec:
     - Wait-Event
     resources:
       limits:
-        memory: 1G
-        cpu: 1
+        memory: "128Mi"
+        cpu: "500m"
     ports:
     - containerPort: 8888

@@ -1,0 +1,31 @@
+---
+
+- name: "Generate Timestamp"
+  hosts: cisco
+
+  tasks:
+  - name: "Generate Current Time and Day"
+    ansible.builtin.setup:
+      filter:
+      - "ansible_data_time"
+
+  - name: "Store Time Value into Variable"
+    set_fact:
+      timeday: "{{ ansible_data_time.data }}"
+- name: "Replace Running Config for Cisco iOS"
+  hosts: cisco
+  connection: network_cli
+
+  tasks:
+  - name: "Replace Config"
+    hosts: cisco
+    napalm_install_config:
+      config_file: "backups/local/{{ devicename }} - {{hostvars.localhost.timeday}}"
+      commit_changes: true
+      replace_config: true
+      optional_args:
+        global_delay_factor: 2
+    register: output
+  - name: "Print Output"
+    debug:
+      msg: "{{ output }}"
