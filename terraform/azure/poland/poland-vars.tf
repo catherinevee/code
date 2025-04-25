@@ -22,28 +22,12 @@ variable "defaultrg" {
 
 variable "defaultsa" {
     type = string
-    default = "sdfsdfsdf"
+    default = "polandsa"
 }
 
 
 variable "polandcentral-var-prodresourcegroups" {
     type = list(string)
-    default = ["polandcentralrg-3",
-    "polandcentralrg-4","polandcentralrg-5"]
-}
-
-locals {
-    defaultsitename = "${var.defaultlocation}-${var.defaultenv}"
-    defaultrg = "${var.defaultlocation}-${var.defaultenv}-1"
-    defaultsa = "${var.defaultlocation}sa"
-}
-
-variable "polandcentral-var-prod-allowed-in-tcpports" {
-    type = list(string)
-    default = ["900","901","9443","443"]
-}
-
-variable "polandcentral-var-prod-allowed-in-sourceipv4ranges" {
-    type = list(string)
-    default = ["10.57.0.0/24","10.70.1.0/24","10.71.2.0/24","10.72.3.0/24"]
+    default = ["polandcentralrg-prod",
+    "polandcentralrg-test","polandcentralrg-dev"]
 }
