@@ -1,0 +1,30 @@
+---
+
+- name: "Assign SNMP Servers for Cisco iOS"
+  hosts: cisco
+  connection: network_cli
+
+  tasks:
+  - name: "Send Commands for Cisco iOS"
+    cisco.ios.ios_snmp_server:
+      config:
+        groups:
+        - group: WriteGrp
+          version: v3
+          version_option: auth
+        hosts:
+        - community_string: qoadksuejqnlapqidjjdqq
+          host: 10.18.9.0
+          version: "3"
+          version_option: priv
+        users:
+        - username: WriteUser
+          group: WriteGrp
+          version: v3
+
+    register: snmp_output
+    state: replaced
+
+  - name: "Print Output"
+    debug:
+      msg: "{{ snmp_output }}"
