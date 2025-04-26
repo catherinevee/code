@@ -13,37 +13,40 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 
-steps:
-- job:
-  script: |
-    git clone https://github.com/cycloidio/inframap
-    cd inframap
-    go mod download
-    make build
-  displayName: 'Run a multi-line script'
+stages:
+- stage: "Generate_Storage_Account"
+  jobs:
+  - job:
+    steps:
+    script: |
+      git clone https://github.com/cycloidio/inframap
+      cd inframap
+      go mod download
+      make build
+    displayName: 'Run a multi-line script'
 
-- job: "terraform_install"
-  steps:
-  - task: JasonBJohnson.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-installer.TerraformInstaller@0
-    displayName: "terraform install"
-    inputs:
-      terraformVersion: '$(terraform_version)'
-  - task: TerraformTaskV4@4
-    displayName: "Terraform Init"
-    inputs:
-      provider: 'azurerm'
-      command: 'init'
-      backendServiceArm: $(backendServiceArm)
-      backendAzureRmResourceGroupName: $(resourceGroup)
-      backendAzureRmStorageAccountName: $(storageAccountName)
-      backendAzureRmContainerName: $(containerName)
-      backendAzureRmKey: 'state.tfstate'
-      workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
-    env:
-      ARM_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
-      ARM_TENANT_ID: $(AZURE_TENANT_ID)
-      ARM_CLIENT_ID: $(AZURE_CLIENT_ID)
-  - task: InfracostSetup@2
-    inputs:
-      apiKey: 'ico-AGbQfiLmDGcZwmvCsAiPnLO2RGnlcums'
-      version: '0.10.x'
+  - job: "terraform_install"
+    steps:
+    - task: JasonBJohnson.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-installer.TerraformInstaller@0
+      displayName: "terraform install"
+      inputs:
+        terraformVersion: '$(terraform_version)'
+    - task: TerraformTaskV4@4
+      displayName: "Terraform Init"
+      inputs:
+        provider: 'azurerm'
+        command: 'init'
+        backendServiceArm: $(backendServiceArm)
+        backendAzureRmResourceGroupName: $(resourceGroup)
+        backendAzureRmStorageAccountName: $(storageAccountName)
+        backendAzureRmContainerName: $(containerName)
+        backendAzureRmKey: 'state.tfstate'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
+      env:
+        ARM_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
+        ARM_TENANT_ID: $(AZURE_TENANT_ID)
+        ARM_CLIENT_ID: $(AZURE_CLIENT_ID)
+    - task: InfracostSetup@2
+      inputs:
+        apiKey: 'ico-AGbQfiLmDGcZwmvCsAiPnLO2RGnlcums'
+        version: '0.10.x'
