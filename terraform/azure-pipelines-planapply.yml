@@ -11,7 +11,7 @@ variables:
 parameters:
 - name: TerraformImportTask
   displayName: Perform a first-time Terraform Import?
-  type: JasonBJohnson.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-installer.TerraformInstaller
+  type: boolean
   default: false
 
 trigger:
