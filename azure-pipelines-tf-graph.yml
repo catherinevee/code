@@ -18,12 +18,12 @@ stages:
   jobs:
   - job:
     steps:
-    script: |
-      git clone https://github.com/cycloidio/inframap
-      cd inframap
-      go mod download
-      make build
-    displayName: 'Run a multi-line script'
+      script: |
+        git clone https://github.com/cycloidio/inframap
+        cd inframap
+        go mod download
+        make build
+      displayName: 'Run a multi-line script'
 
   - job: "terraform_install"
     steps:
