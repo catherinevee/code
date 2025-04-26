@@ -19,7 +19,7 @@ stages:
 
   - job: "inframap"
     steps:
-    - task: "sdfsdf"
+    - task: Bash@3
       inputs:
         script: |
           git clone https://github.com/cycloidio/inframap
