@@ -8,6 +8,12 @@ variables:
   backendServiceArm: "catherinevee_manid"
   backendServiceResourceGroup: "polandcentralrg-1" #the RG of the Managed Identity
 
+parameters:
+- name: TerraformImportTask
+  displayName: Perform a first-time Terraform Import?
+  type: JasonBJohnson.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-installer.TerraformInstaller
+  default: false
+
 trigger:
   branches:
     include:
@@ -77,6 +83,8 @@ stages:
         resourceId: $(rgri)
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
         environmentServiceName: 'catherinevee_manid'
+      condition: eq(${{ parameters.TerraformImportTask }}, true)
+
     - task: TerraformTaskV4@4
       displayName: "Terraform Plan"
       inputs:
