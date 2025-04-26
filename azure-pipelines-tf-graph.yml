@@ -20,11 +20,12 @@ stages:
   - job: "inframap"
     steps:
     - task: "sdfsdf"
-      script: |
-        git clone https://github.com/cycloidio/inframap
-        cd inframap
-        go mod download
-        make build
+      inputs:
+        script: |
+          git clone https://github.com/cycloidio/inframap
+          cd inframap
+          go mod download
+          make build
       displayName: 'Run a multi-line script'
 
   - job: "terraform_install"
