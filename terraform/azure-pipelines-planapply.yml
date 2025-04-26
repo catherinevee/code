@@ -10,7 +10,7 @@ variables:
 
 parameters:
 - name: TerraformImportTask
-  displayName: Perform a first-time Terraform Import?
+  displayName: Check this to do a Terraform Import for the Storage Account for the state file
   type: boolean
   default: false
 
@@ -84,7 +84,11 @@ stages:
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
         environmentServiceName: 'catherinevee_manid'
       condition: eq(${{ parameters.TerraformImportTask }}, true)
-
+    - task: TerraformTask@5
+      displayName: "Terraform Validate"
+      inputs:
+        provider: 'azurerm'
+        command: 'validate'
     - task: TerraformTaskV4@4
       displayName: "Terraform Plan"
       inputs:
