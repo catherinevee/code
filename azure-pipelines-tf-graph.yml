@@ -14,10 +14,12 @@ pool:
   vmImage: ubuntu-latest
 
 stages:
-- stage: "Generate_Storage_Account"
+- stage: "sdfsfsa"
   jobs:
-  - job:
+
+  - job: "inframap"
     steps:
+    - task: "sdfsdf"
       script: |
         git clone https://github.com/cycloidio/inframap
         cd inframap
