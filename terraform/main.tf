@@ -41,6 +41,9 @@ provider "google" {
   project     = "development"
   region      = "europe-west4"
 }
+provider "local" {
+}
+
 
 module "google_module" {
   source = "./gcp/"
