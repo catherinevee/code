@@ -9,7 +9,6 @@ variable "defaultenv" {
   default = "prod"
 }
 
-
 variable "defaultvnet" {
     type = string
     default = "10.0.0.0/16"
@@ -17,7 +16,7 @@ variable "defaultvnet" {
 
 variable "defaultrg" {
     type = string
-    default = "polandcentralrg-test"
+    default = "polandcentralrg-dev"
 }
 
 variable "defaultsa" {
@@ -28,6 +27,9 @@ variable "defaultsa" {
 
 variable "polandcentral-var-prodresourcegroups" {
     type = list(string)
-    default = ["polandcentralrg-prod",
-    "polandcentralrg-test","polandcentralrg-dev"]
+    default = [
+         "polandcentralrg-prod",
+         "polandcentralrg-test",
+         "polandcentralrg-dev"
+        ]
 }
