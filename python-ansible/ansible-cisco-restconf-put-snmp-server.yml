@@ -1,0 +1,25 @@
+---
+- name: "Send POST Payload for NTP to Cisco iOS"
+  hosts: cisco
+  connection: local
+  tasks:
+  - name:
+    uri:
+      url: "{{ url }}/data/native/ntp"
+      user: "{{ ansible_user }}"
+      password:
+      method: PUT
+      headers:
+        Content-Type: 'application/yang-data+json'
+        Accept: application/yang-data+json, application/yang-data.errors+json
+      body_format: json
+      body: "{{ ntp_configure }}"
+      validate_certs: false
+      status_code:
+      - 200
+      - 204
+    register: get_getter
+
+  - name:
+    debug:
+      var: get_getter.json

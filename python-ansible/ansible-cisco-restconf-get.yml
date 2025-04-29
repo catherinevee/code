@@ -1,0 +1,20 @@
+---
+- name: "Get Router Section of Running Config from Cisco iOS"
+  hosts: cisco
+  connection: local
+  tasks:
+  - name: "Send GET to Device"
+    uri:
+      url: "{{ url }}/data/native/router"
+      user: "{{ ansible_user }}"
+      password:
+      method: GET
+      return_content: true
+      headers:
+        Accept: "application/yang-data+json"
+      validate_certs: false
+    register: get_getter
+
+  - name: "Print Response"
+    debug:
+      var: get_getter.json
