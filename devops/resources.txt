@@ -1,0 +1,16 @@
+#sato
+#convert aws cloudformation to terraform
+https://github.com/JamesWoolfenden/sato
+scoop install sato
+
+#inframap
+ git clone https://github.com/cycloidio/inframap
+
+#blastradius
+https://github.com/28mm/blast-radius
+pip install blastradius
+blast-radius --serve terraform/
+
+#rover
+https://github.com/im2nguyen/rover
+docker run --rm -it -p 9000:9000 -v $(pwd):/src im2nguyen/rover
