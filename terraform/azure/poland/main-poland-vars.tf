@@ -14,6 +14,7 @@ variable "defaultvnet" {
     default = "10.0.0.0/16"
 }
 
+
 variable "defaultrg" {
     type = string
     default = "polandcentralrg-dev"

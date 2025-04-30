@@ -1,9 +1,9 @@
 module "avm-res-network-virtualnetwork" {
   source = "Azure/avm-res-network-virtualnetwork/azurerm"
 
-  address_space       = ["10.0.0.0/16"]
-  location            = "East US"
-  name                = "myVNet"
+  address_space       = [var.defaultvnet]
+  location            = var.defaultlocation
+  name                = join("_",[var.defaultlocation, var.defaultenv, "vnet"])
   resource_group_name = var.defaultrg
   subnets = {
     "subnet1" = {
