@@ -18,6 +18,9 @@ trigger:
   branches:
     include:
     - main
+  paths:
+    include:
+    - terraform
 
 name: $(BuildDefinitionName)_$(date:yyyyMMdd)$(rev:.r)
 pr: none
