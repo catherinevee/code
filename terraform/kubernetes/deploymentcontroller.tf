@@ -29,6 +29,5 @@ resource "kubernetes_deployment_v1" "k8s_deployment" {
       }
     }
   }
-  
-}
+
 
