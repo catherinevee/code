@@ -22,8 +22,8 @@ resource "kubernetes_deployment_v1" "k8s_deployment" {
       }
       spec {
         container {
-          image = "nginx"
-          name = "sdfs"
+          image = "nginx:latest"
+          name = "nginx"
         }
         }
       }
