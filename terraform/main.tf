@@ -42,7 +42,11 @@ provider "google" {
 }
 provider "local" {
 }
+provider "kubernetes" {
+  config_path = "kubernetes/kubeconfig.yaml"
+  #config_context = ""
 
+}
 
 module "google_module" {
   source = "./gcp/"
