@@ -45,8 +45,8 @@ provider "local" {
 provider "kubernetes" {
   config_path = "kubernetes/kubeconfig.yaml"
   #config_context = ""
-
 }
+
 
 module "google_module" {
   source = "./gcp/"
@@ -59,6 +59,9 @@ provider "azuredevops" {
 module "azure_poland_module" {
   source ="./azure/poland/"
 }
+
+
+
 
 #module "aws_module" {
 #  source ="./aws/ap-southeast-1/"

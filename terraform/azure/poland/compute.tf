@@ -3,7 +3,7 @@ resource "azurerm_log_analytics_workspace" "poland-compute-analytics-ws" {
   location            = var.defaultlocation
   resource_group_name = var.defaultrg
   sku                 = "PerGB2018"
-  retention_in_days   = 1
+  retention_in_days   = "30"
 }
 
 resource "azurerm_container_app_environment" "poland-containerappenv" {
