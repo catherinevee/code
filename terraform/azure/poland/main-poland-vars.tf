@@ -1,4 +1,27 @@
+#
+variable "tfstate_storageaccount" {
+    type = string
+    default = "tfstatecriy"
+}
+variable "tfstate_storageaccount_location" {
+    type = string
+    default = "polandcentralrg-1"
+}
 
+
+#
+
+
+
+variable "defaultemail" {
+    type = string
+    default = "catherine.vee@outlook.com"
+}
+
+variable "defaultname" {
+    type = string
+    default = "Catherine Vee"
+}
 
 variable "defaultlocation" {
     type = string
