@@ -27,17 +27,17 @@ variable "defaultsa" {
 
 variable "defaultanalyticsworkspace" {
     type = string
-    default = "poland_analytics_workspace"
+    default = "poland-analytics-workspace"
 }
 
 variable "defaultcontainerappenv" {
     type = string
-    default = "containerappenv_default"
+    default = "containerappenv-default"
 }
 
 variable "defaultcontainerapp" {
     type = string
-    default = "containerapp_default"
+    default = "containerapp-default"
 }
 
 variable "polandcentral-var-prodresourcegroups" {
