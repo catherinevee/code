@@ -1,4 +1,4 @@
-module "avm-res-network-virtualnetwork"  {
+module "avm-res-network-virtualnetwork-vnet1"   {
   source = "Azure/avm-res-network-virtualnetwork/azurerm"
 
   address_space       = [var.defaultvnet]
@@ -17,7 +17,7 @@ module "avm-res-network-virtualnetwork"  {
   }
 }
 
-module "avm-res-network-virtualnetwork"  {
+module "avm-res-network-virtualnetwork-vnet2"  {
   source = "Azure/avm-res-network-virtualnetwork/azurerm"
 
   address_space       = ["10.1.0.0/16"]
