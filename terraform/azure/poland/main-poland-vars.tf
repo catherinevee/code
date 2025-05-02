@@ -25,6 +25,20 @@ variable "defaultsa" {
     default = "polandsa"
 }
 
+variable "defaultanalyticsworkspace" {
+    type = string
+    default = "poland_analytics_workspace"
+}
+
+variable "defaultcontainerappenv" {
+    type = string
+    default = "containerappenv_default"
+}
+
+variable "defaultcontainerapp" {
+    type = string
+    default = "containerapp_default"
+}
 
 variable "polandcentral-var-prodresourcegroups" {
     type = list(string)
