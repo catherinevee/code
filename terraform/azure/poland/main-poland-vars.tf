@@ -40,7 +40,7 @@ variable "defaultvnet" {
 
 variable "defaultrg" {
     type = string
-    default = "polandcentralrg-dev"
+    default = "polandcentralrg-prod"
 }
 
 variable "defaultsa" {
