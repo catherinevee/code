@@ -11,7 +11,7 @@ resource "azurerm_cost_anomaly_alert" "poland-costanomalyalert" {
 resource "azurerm_monitor_action_group" "poland-monitoractiongroup" {
   name                = "${var.defaultlocation}monitoractiongroup"
   resource_group_name = "${var.defaultrg}"
-  short_name          = "polandmonitor"
+  short_name          = "polandmag"
   email_receiver {
     name = "${var.defaultname}"
     email_address = "${var.defaultemail}"
