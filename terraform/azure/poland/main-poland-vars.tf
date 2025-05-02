@@ -3,9 +3,9 @@ variable "tfstate_storageaccount" {
     type = string
     default = "tfstatecriy"
 }
-variable "tfstate_storageaccount_location" {
+variable "tfstate_storageaccount_rg" {
     type = string
-    default = "polandcentralrg-1"
+    default = "tfstate-rg"
 }
 
 
