@@ -10,8 +10,8 @@ resource "azurerm_role_assignment" "acr_roleassignment" {
      azurerm_container_registry.acr,
      azurerm_kubernetes_cluster.poland-aks
    ]
-  principal_id                     = azurerm_kubernetes_cluster.acr.kubelet_identity[0].object_id
+  principal_id                     = azurerm_kubernetes_cluster.poland-aks.kubelet_identity[0].object_id
   role_definition_name             = "AcrPull"
-  scope                            = azurerm_container_registry.defaultacr.id
+  scope                            = azurerm_container_registry.acr.id
   skip_service_principal_aad_check = true
 }
