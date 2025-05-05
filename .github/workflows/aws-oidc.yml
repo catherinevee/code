@@ -13,7 +13,7 @@ jobs:
     - name: "Authenticate to AWS via OIDC"
       uses: actions/checkout@v2.4.0
       with:
-        role-to-assume: arn:aws:iam::025066254478:oidc-provider/token.actions.githubusercontent.com
+        role-to-assume: arn:aws:iam::025066254478:role/githubactions
         aws-region: us-west-2
     - run: |
         Install-Module -Name AWS.Tools.EC2 -Force
