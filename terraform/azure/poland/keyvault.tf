@@ -1,6 +1,6 @@
 data "azurerm_client_config" "current" {}
 
-resource "azurerm_key_vault" "des_vault" {
+resource "azurerm_key_vault" "prod_keyvault" {
   location                    = var.defaultlocation
   name                        = "${var.defaultlocation}keyvault"
   resource_group_name         = var.defaultrg

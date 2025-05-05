@@ -27,3 +27,15 @@ data "azurerm_virtual_network" "data_secondvnet_id" {
 output "virtual_network2_id" {
   value = data.azurerm_virtual_network.data_secondvnet_id
 }
+
+
+output "client_certificate" {
+  value     = azurerm_kubernetes_cluster.example.kube_config[0].client_certificate
+  sensitive = true
+}
+
+output "kube_config" {
+  value = azurerm_kubernetes_cluster.example.kube_config_raw
+
+  sensitive = true
+}

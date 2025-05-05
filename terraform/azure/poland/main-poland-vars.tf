@@ -9,7 +9,19 @@ variable "tfstate_storageaccount_rg" {
 }
 
 
-#
+
+variable "tags" {
+  description = "Common tags for all resources"
+  type = object({
+    Environment = string
+    OU   = string
+  })
+  default = {
+    Environment = "prod"
+    OU   = "IT"
+  }
+}
+
 
 
 
@@ -30,6 +42,17 @@ variable "defaultlocation" {
 variable "defaultenv" {
   type = string
   default = "prod"
+}
+
+variable "defaultaks_clustername" {
+    type = string
+    default = "cathy-prod-cluster"
+}
+
+
+variable "defaultaks_dnsname" {
+    type = string
+    default = "catherine89102nf"
 }
 
 variable "defaultvnet" {
