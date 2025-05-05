@@ -11,10 +11,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: "Authenticate to AWS via OIDC"
+      uses: aws-actions/configure-aws-credentials@v2
       with:
         role-to-assume: arn:aws:iam::025066254478:oidc-provider/token.actions.githubusercontent.com
         aws-region: us-west-2
-      run: |
+    - run: |
         Install-Module -Name AWS.Tools.EC2 -Force
         Get-EC2VPC
       shell: pwsh
