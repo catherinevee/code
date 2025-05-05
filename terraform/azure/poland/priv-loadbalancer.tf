@@ -2,7 +2,7 @@ module "mylb" {
   source                                 = "Azure/loadbalancer/azurerm"
   resource_group_name                    = var.defaultrg
   type                                   = "private"
-  frontend_subnet_id                     = "sdfsdfs"
+  frontend_subnet_id                     = data.azurerm_subnet.subnet1
   frontend_private_ip_address_allocation = "Static"
   frontend_private_ip_address            = "10.1.2.254"
   lb_sku                                 = "Standard"
