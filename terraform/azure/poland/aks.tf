@@ -17,3 +17,4 @@ resource "azurerm_kubernetes_cluster" "poland-aks" {
 
   tags = var.tags
 
+}
