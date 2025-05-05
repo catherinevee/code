@@ -57,7 +57,7 @@ variable "defaultaks_dnsname" {
 
 variable "defaultacr" {
     type = string
-    default = "catherine_acr"
+    default = "catherineacr"
 }
 
 
