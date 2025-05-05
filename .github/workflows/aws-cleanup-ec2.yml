@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: "Authenticate to AWS via OIDC"
-      uses: actions/checkout@v2.4.0
+      uses: aws-actions/configure-aws-credentials@v4
       with:
         role-to-assume: arn:aws:iam::025066254478:oidc-provider/token.actions.githubusercontent.com
         aws-region: us-west-2
