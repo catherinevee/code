@@ -1,15 +1,6 @@
 
-#resource "local_file" "blankyaml" {
-#  content = var.filedata
-#  filename = var.filename
-#}
-
-#variable "filedata" {
-#  type = string
-#  description = "---"#
-#}
-
-#variable "filename" {
-#  type = string
-#  default = "blankyaml.yml"
-#}
+module "loadbalancer" {
+  source  = "Azure/loadbalancer/azurerm"
+  version = "4.4.0"
+  resource_group_name = var.defaultrg
+}

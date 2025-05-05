@@ -33,7 +33,6 @@ module "azure_poland_module" {
 
 
 
-
 #module "aws_module" {
 #  source ="./aws/ap-southeast-1/"
 #}
