@@ -7,11 +7,11 @@ permissions:
   id-token: write
 
 jobs:
-  job1:
+  cloudformationdeployment:
     runs-on: ubuntu-latest
     steps:
     - name: "Authenticate to AWS via OIDC"
-      uses: aws-actions/configure-aws-credentials@v2
+      uses: actions/checkout@v2.4.0
       with:
         role-to-assume: arn:aws:iam::025066254478:oidc-provider/token.actions.githubusercontent.com
         aws-region: us-west-2
