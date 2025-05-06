@@ -11,7 +11,7 @@ terraform {
     }
     aws = {
       source = "hashicorp/aws"
-      version = "5.80.0"
+      version = "5.97.0"
    }
     google = {
       source = "hashicorp/google"
