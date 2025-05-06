@@ -39,6 +39,7 @@ output "kube_config" {
 #subnet id is used for input in priv-loadbalancer.tf
 
 data "azurerm_subnet" "subnet1" {
+    depends_on = [ module.avm-res-network-virtualnetwork-vnet1 ]
     name                 = "${var.defaultenv}subnet1" 
     virtual_network_name = module.avm-res-network-virtualnetwork-vnet1.name
     resource_group_name  =  "${var.defaultrg}"
