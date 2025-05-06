@@ -8,8 +8,8 @@ resource "azurerm_public_ip" "lb_azurepublicip" {
 
 resource "azurerm_lb" "lb_azurepubliclb" {
   name                = "cathyloadbalancer"
-  location            = azurerm_resource_group.polandcentral-prod-resourcegroups[0].name
-  resource_group_name = azurerm_resource_group.polandcentral-prod-resourcegroups[0].name
+  location            = azurerm_resource_group.polandcentral-prod-resourcegroups.name[0]
+  resource_group_name = azurerm_resource_group.polandcentral-prod-resourcegroups.name[0]
 
   frontend_ip_configuration {
     name                 = "PublicIPAddress"
