@@ -100,3 +100,13 @@ variable "polandcentral-var-prodresourcegroups" {
          "polandcentralrg-dev"
         ]
 }
+
+
+variable "polandcentral-var-instances" {
+    type = list(string)
+    default = [
+         "pol-production",
+         "pol-test",
+         "pol-dev"
+        ]
+}
