@@ -1,15 +1,15 @@
 resource "azurerm_public_ip" "lb_azurepublicip" {
   name                = "PublicIPForLB"
-  location            = azurerm_resource_group.polandcentral-prod-resourcegroups[0].name
-  resource_group_name = azurerm_resource_group.polandcentral-prod-resourcegroups[0].name
+  location            = var.defaultlocation 
+  resource_group_name = var.defaultrg
   allocation_method   = "Static"
 }
 
 
 resource "azurerm_lb" "lb_azurepubliclb" {
   name                = "cathyloadbalancer"
-  location            = azurerm_resource_group.polandcentral-prod-resourcegroups.name[0]
-  resource_group_name = azurerm_resource_group.polandcentral-prod-resourcegroups.name[0]
+  location            = var.defaultlocation
+  resource_group_name = var.defaultrg
 
   frontend_ip_configuration {
     name                 = "PublicIPAddress"
