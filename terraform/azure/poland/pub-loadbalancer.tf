@@ -25,5 +25,5 @@ resource "azurerm_lb_probe" "lb_probe" {
 
 resource "azurerm_lb_backend_address_pool" "lb_backendpool" {
   loadbalancer_id = azurerm_lb.lb_azurepubliclb.id
-  name            = "BackEndAddressPool"
+  name            = "backendaddresspool_publiclb"
 }
