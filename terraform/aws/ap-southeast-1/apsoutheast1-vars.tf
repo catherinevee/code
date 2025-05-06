@@ -14,7 +14,7 @@ variable "defaulttags" {
 
 
 variable "defaultaz" {
-    type = string
+    type = list(string)
     default = [
       "apsoutheast-1"
     ]
@@ -31,7 +31,7 @@ variable "defaultvpc" {
 }
 
 variable "default_privatesubnets" {
-    type = string
+    type = list(string)
     default = [
       "10.40.1.0/24",
       "10.40.2.0/24",
@@ -40,7 +40,7 @@ variable "default_privatesubnets" {
 }
 
 variable "default_publicsubnets" {
-    type = string
+    type = list(string)
     default = [
       "10.101.1.0/24",
       "10.101.2.0/24",
