@@ -3,6 +3,27 @@ module "avm-res-network-virtualnetwork-vnet1"   {
 
   address_space       = [var.defaultvnet]
   location            = var.defaultlocation
+  name                = join("_",[var.defaultlocation, var.defaultenv, "vnet"])
+  resource_group_name = var.defaultrg
+  subnets = {
+    "subnet1" = {
+      name             = "${var.defaultenv}subnet1"
+      address_prefixes = ["10.0.2.0/24"]
+    }
+    "subnet2" = {
+      name             = "${var.defaultenv}subnet2"
+      address_prefixes = ["10.0.1.0/24"]
+    }
+  }
+}
+
+
+
+module "avm-res-network-virtualnetwork-vnet1"   {
+  source = "Azure/avm-res-network-virtualnetwork/azurerm"
+
+  address_space       = [var.defaultvnet]
+  location            = var.defaultlocation
   name                = join("_",[var.defaultlocation, var.defaultenv, "vnet1"])
   resource_group_name = var.defaultrg
   subnets = {
