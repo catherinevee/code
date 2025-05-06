@@ -39,8 +39,8 @@ output "kube_config" {
 #
 
 data "azurerm_subnet" "subnet1" {
-    name                 = module.avm-res-network-virtualnetwork-vnet1.name
-    virtual_network_name = "${var.defaultenv}subnet1"
+    name                 = "${var.defaultenv}subnet1" 
+    virtual_network_name = module.avm-res-network-virtualnetwork-vnet1.name
     resource_group_name  =  "${var.defaultrg}"
 }
 
