@@ -1,8 +1,15 @@
+locals {
+  
+}
+
+
 #these are used to re-use elastic ips instead of creating new ones 
 resource "aws_eip" "nat" {
   count = 3
 
 }
+
+
 
 module "vpc" {
   source = "terraform-aws-modules/vpc/aws"
@@ -22,3 +29,4 @@ module "vpc" {
   external_nat_ip_ids = "${aws_eip.nat.*.id}"
   tags = var.defaulttags
 }
+

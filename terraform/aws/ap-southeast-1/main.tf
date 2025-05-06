@@ -8,10 +8,6 @@ module "s3-bucket" {
   version = "4.6.0"
 }
 
-module "vpc" {
-  source  = "terraform-aws-modules/vpc/aws"
-  version = "5.19.0"
-}
 
 module "rds" {
   source  = "terraform-aws-modules/rds/aws"
