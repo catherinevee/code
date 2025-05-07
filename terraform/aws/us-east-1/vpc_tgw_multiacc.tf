@@ -20,7 +20,7 @@ module "vpc1" {
   private_subnets = var.default_publicsubnets
 
   enable_ipv6                                    = false
-  tags = tags
+  tags = var.defaulttags
 }
 
 
