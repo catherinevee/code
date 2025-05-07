@@ -77,6 +77,10 @@ stages:
         ARM_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
         ARM_TENANT_ID: $(AZURE_TENANT_ID)
         ARM_CLIENT_ID: $(AZURE_CLIENT_ID)
+    - task: AWSCLI@1
+      inputs:
+        awsCredentials: 'aws'
+        awsCommand: 'list-regions'
     - task: TerraformCLI@2
       displayName: "Terraform Import"
       continueOnError: true
@@ -100,7 +104,3 @@ stages:
         commandOptions: '-out main.tfplan'
         environmentServiceNameAzureRM: $(backendServiceArm)
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
-    - task: AWSCLI@1
-      inputs:
-        awsCredentials: 'aws'
-        awsCommand: 'list-regions'
