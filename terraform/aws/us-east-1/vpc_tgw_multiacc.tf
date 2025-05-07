@@ -92,8 +92,8 @@ module "tgw" {
     },
   }
 
-  ram_allow_external_principals = true
-  ram_principals                = [307990089504]
+  #ram_allow_external_principals = true
+  #ram_principals                = [307990089504]
 
   tags = var.defaulttags
 }
@@ -103,11 +103,7 @@ module "tgw_peer" {
   source  = "terraform-aws-modules/transit-gateway/aws"
   version = "2.13.0"
 
-  providers = {
-    aws = aws.peer
-  }
-
-  name            = "${local.name}-peer"
+  name            = "${local.tgw_name}-peer"
   description     = "My TGW shared with several other AWS accounts"
   amazon_side_asn = 64532
 
@@ -143,8 +139,8 @@ module "tgw_peer" {
     },
   }
 
-  ram_allow_external_principals = true
-  ram_principals                = [307990089504]
+  #ram_allow_external_principals = true
+  #ram_principals                = [307990089504]
 
   tags = var.defaulttags
 }
