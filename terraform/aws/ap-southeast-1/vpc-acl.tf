@@ -132,8 +132,6 @@ module "vpc3" {
   public_inbound_acl_rules       = concat(local.network_acls["default_inbound"], local.network_acls["public_inbound"])
   public_outbound_acl_rules      = concat(local.network_acls["default_outbound"], local.network_acls["public_outbound"])
 
-  private_dedicated_network_acl     = false
-
   manage_default_network_acl = true
 
   enable_ipv6 = true
