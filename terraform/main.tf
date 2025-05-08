@@ -1,13 +1,5 @@
 # Configure the AWS Provider
-provider "aws" {
-  assume_role_with_web_identity {
-    role_arn = "arn:aws:iam::025066254478:role/githubactions"
-    session_name = "github_action_session"
-    web_identity_token_file = "/tmp/web_identity_token_file"
-
-  }
-
-}
+provider "aws" {}
 provider "azurerm" {
   features {}  
   use_msi = true
