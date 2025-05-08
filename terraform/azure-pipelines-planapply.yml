@@ -102,6 +102,7 @@ stages:
         commandOptions: '-out main.tfplan'
         environmentServiceNameAzureRM: $(backendServiceArm)
         providerServiceAws: 'aws'
+        providerAwsRegion: 'us-east-1'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
       env:
         ARM_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
