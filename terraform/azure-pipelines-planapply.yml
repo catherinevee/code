@@ -72,6 +72,8 @@ stages:
         backendAzureRmStorageAccountName: $(storageAccountName)
         backendAzureRmContainerName: $(containerName)
         backendAzureRmKey: 'state.tfstate'
+        providerServiceAws: 'aws'
+        providerAwsRegion: 'us-east-1'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
       env:
         ARM_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
