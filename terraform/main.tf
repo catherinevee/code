@@ -1,5 +1,5 @@
 # Configure the AWS Provider
-provider "aws" {}#default region, overridden by variable 
+provider "aws" {}
 
 provider "azurerm" {
   features {}  
@@ -25,9 +25,9 @@ provider "azuredevops" {
   use_msi = true
 }
 
-#module "azure_poland_module" {
-#  source ="./azure/poland/"
-#}
+module "azure_poland_module" {
+  source ="./azure/poland/"
+}
 
 
 
