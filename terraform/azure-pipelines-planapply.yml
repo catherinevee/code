@@ -72,7 +72,7 @@ stages:
         backendAzureRmStorageAccountName: $(storageAccountName)
         backendAzureRmContainerName: $(containerName)
         backendAzureRmKey: 'state.tfstate'
-        providerServiceAws: 'aws'
+        backendServiceAws: 'aws'
         providerAwsRegion: 'us-east-1'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
     - task: TerraformCLI@2
