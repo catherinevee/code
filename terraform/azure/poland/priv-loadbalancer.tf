@@ -27,20 +27,3 @@ module "privatelb" {
     source      = "terraform"
   }
 }
-
-resource "azurerm_lb_backend_address_pool" "lb_backendpool" {
-  loadbalancer_id = module.privatelb.id
-  name            = "backendaddresspool_privatelb"
-}
-
-
-resource "azurerm_lb_outbound_rule" "this" {
-  name                    = "OutboundRule"
-  loadbalancer_id         = module.privatelb.id
-  protocol                = "Tcp"
-  backend_address_pool_id = azurerm_lb_backend_address_pool.example.id
-
-  frontend_ip_configuration {
-    name = "PublicIPAddress"
-  }
-}
