@@ -23,7 +23,7 @@ resource "azurerm_lb_probe" "lb_probe" {
   port            = 22
 }
 
-resource "azurerm_lb_backend_address_pool" "lb_backendpool" {
+resource "azurerm_lb_backend_address_pool" "lb_backendpool2" {
   loadbalancer_id = azurerm_lb.lb_azurepubliclb.id
   name            = "backendaddresspool_publiclb"
 }

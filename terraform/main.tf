@@ -31,14 +31,14 @@ module "azure_poland_module" {
 
 
 
-module "aws_module-apse1" {
-  source ="./aws/ap-southeast-1/"
-}
+#module "aws_module-apse1" {
+#  source ="./aws/ap-southeast-1/"
+#}
 
 
-module "aws_module-use1" {
-  source ="./aws/us-east-1/"
-}
+#module "aws_module-use1" {
+#  source ="./aws/us-east-1/"
+#}
 
 #module "azure_paris_module" {
 #  source ="./azure/paris"
