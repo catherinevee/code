@@ -75,12 +75,6 @@ stages:
         providerServiceAws: 'aws'
         providerAwsRegion: 'us-east-1'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
-      env:
-        ARM_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
-        ARM_TENANT_ID: $(AZURE_TENANT_ID)
-        ARM_CLIENT_ID: $(AZURE_CLIENT_ID)
-        AWS_ACCESS_KEY_ID: $( AWS_ACCESS_KEY_ID)
-        AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
     - task: TerraformCLI@2
       displayName: "Terraform Import"
       continueOnError: true
@@ -106,10 +100,3 @@ stages:
         providerServiceAws: 'aws'
         providerAwsRegion: 'us-east-1'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
-      env:
-        ARM_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
-        ARM_TENANT_ID: $(AZURE_TENANT_ID)
-        ARM_CLIENT_ID: $(AZURE_CLIENT_ID)
-        AWS_ACCESS_KEY_ID: $( AWS_ACCESS_KEY_ID)
-        AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
-        AWS_DEFAULT_REGION: ($AWS_DEFAULT_REGION)

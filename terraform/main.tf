@@ -1,7 +1,6 @@
 # Configure the AWS Provider
-provider "aws" {
-  region = "us-east-1" #default region, overridden by variable 
-}
+provider "aws" {}#default region, overridden by variable 
+
 provider "azurerm" {
   features {}  
   use_msi = true
