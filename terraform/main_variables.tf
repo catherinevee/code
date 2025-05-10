@@ -17,3 +17,7 @@ variable "tfstaterg" {
   type = string 
   default = "polandcentral-1"  
 }
+
+variable "access_key" {}
+variable "secret_key" {}
+variable "region" {}
