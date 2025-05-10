@@ -62,7 +62,7 @@ stages:
       displayName: "terraform install"
       inputs:
         terraformVersion: '$(terraform_version)'
-    - task: TerraformTask@5
+    - task: TerraformTaskV4@4
       inputs:
         provider: 'aws'
         command: 'init'
