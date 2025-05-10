@@ -68,7 +68,6 @@ stages:
         provider: 'azurerm'
         command: 'init'
         backendServiceArm: $(backendServiceArm)
-        backendServiceAWS: "aws"
         backendAzureRmResourceGroupName: $(resourceGroup)
         backendAzureRmStorageAccountName: $(storageAccountName)
         backendAzureRmContainerName: $(containerName)
@@ -104,6 +103,7 @@ stages:
         command: 'plan'
         commandOptions: '-out main.tfplan'
         environmentServiceNameAzureRM: $(backendServiceArm)
+        environmentServiceNameAWS: "aws"
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
       env:
         ARM_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
