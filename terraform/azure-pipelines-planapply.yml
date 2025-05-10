@@ -31,11 +31,12 @@ stages:
   - job: "azure_cli_job"
     steps:
     - task: TerraformTask@5
-      displayName: Run Terraform Init
       inputs:
         provider: 'aws'
         command: 'init'
-        backendServiceAWS: 'aws'
+        backendServiceAWS: 'aws1'
+        backendAWSBucketName: 's3'
+        backendAWSKey: 'tf/terraform.state'
     - task: AzureCLI@2
       name: "azurecli"
       displayName: "Generate Storage Account"
