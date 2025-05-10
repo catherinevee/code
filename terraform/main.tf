@@ -29,9 +29,9 @@ provider "azuredevops" {
   use_msi = true
 }
 
-#module "azure_poland_module" {
-#  source ="./azure/poland/"
-#}
+module "azure_poland_module" {
+  source ="./azure/poland/"
+}
 
 
 
@@ -40,9 +40,9 @@ module "aws_module-apse1" {
 }
 
 
-#module "aws_module-use1" {
-#  source ="./aws/us-east-1/"
-#}
+module "aws_module-use1" {
+  source ="./aws/us-east-1/"
+}
 
 #module "azure_paris_module" {
 #  source ="./azure/paris"
