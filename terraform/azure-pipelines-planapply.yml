@@ -30,6 +30,12 @@ stages:
   jobs:
   - job: "azure_cli_job"
     steps:
+    - task: TerraformTask@5
+      displayName: Run Terraform Init
+      inputs:
+        provider: 'aws'
+        command: 'init'
+        backendServiceAWS: 'aws'
     - task: AzureCLI@2
       name: "azurecli"
       displayName: "Generate Storage Account"
@@ -103,7 +109,6 @@ stages:
         command: 'plan'
         commandOptions: '-out main.tfplan'
         environmentServiceNameAzureRM: $(backendServiceArm)
-        environmentServiceNameAWS: "aws"
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
       env:
         ARM_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
