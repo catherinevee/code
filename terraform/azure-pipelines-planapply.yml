@@ -68,6 +68,7 @@ stages:
         provider: 'azurerm'
         command: 'init'
         backendServiceArm: $(backendServiceArm)
+        backendServiceAWS: "aws"
         backendAzureRmResourceGroupName: $(resourceGroup)
         backendAzureRmStorageAccountName: $(storageAccountName)
         backendAzureRmContainerName: $(containerName)
