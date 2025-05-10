@@ -67,6 +67,8 @@ stages:
         provider: 'aws'
         command: 'init'
         backendServiceAWS: 'aws1'
+        backendAWSBucketName: 'tfstate_bucket'
+        backendAWSKey: 'terraform.tfstate'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
     - task: TerraformTaskV4@4
       displayName: "Terraform Init"
