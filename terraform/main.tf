@@ -29,9 +29,9 @@ provider "azuredevops" {
   use_msi = true
 }
 
-module "azure_poland_module" {
-  source ="./azure/poland/"
-}
+#module "azure_poland_module" {
+#  source ="./azure/poland/"
+#}
 
 
 
