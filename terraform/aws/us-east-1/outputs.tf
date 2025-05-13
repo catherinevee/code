@@ -9,7 +9,7 @@ output "output_subnet_ids" {
 data "aws_subnets" "defaultvpc" {
   filter {
     name   = "vpc-id"
-    values = [output.output_defaultvpc_id]
+    values = [module.vpc.default_vpc_id]
   }
 }
 
