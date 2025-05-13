@@ -13,6 +13,14 @@ parameters:
   displayName: Check this to do a Terraform Import for the Storage Account for the state file
   type: boolean
   default: false
+- name: TerraformApplyTask
+  displayName: Check this to do an Apply operation
+  type: boolean
+  default: false
+- name: TerraformDestroyTask
+  displayName: Check this to do a Destroy operation
+  type: boolean
+  default: false
 
 trigger:
   branches:
@@ -111,3 +119,19 @@ stages:
         AWS_ACCESS_KEY_ID: $( AWS_ACCESS_KEY_ID)
         AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
         AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+    - task: TerraformCLI@2
+      displayName: "Terraform Apply"
+      continueOnError: true
+      inputs:
+        command: 'apply'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
+        environmentServiceName: 'catherinevee_manid'
+      condition: eq(${{ parameters.TerraformApplyTask }}, true)
+    - task: TerraformCLI@2
+      displayName: "Terraform Apply"
+      continueOnError: true
+      inputs:
+        command: 'destroy'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
+        environmentServiceName: 'catherinevee_manid'
+      condition: eq(${{ parameters.TerraformDestroyTask }}, true)
