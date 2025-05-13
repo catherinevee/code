@@ -1,5 +1,5 @@
 output "output_defaultvpc_id" {
-  value = module.vpc.id
+  value = module.vpc.name.id
 }
 
 output "output_subnet_ids" {
