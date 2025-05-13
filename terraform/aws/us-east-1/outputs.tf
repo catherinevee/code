@@ -3,5 +3,5 @@ output "output_defaultvpc_id" {
 }
 
 output "output_subnet_ids" {
-    value = values(vpc.private_subnets)[*].id
+    value = module.vpc.private_subnets[*].id
 }
