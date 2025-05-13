@@ -61,7 +61,7 @@ stages:
           resourceGroupResourceID=$(az group show -n polandcentralrg-1 -o tsv --query id)
           echo "##vso[task.setvariable variable=rgri;isOutput=true ]$resourceGroupResourceID" 
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
-  - job: "terraform_install"
+  - job: "Terraform"
     dependsOn: azure_cli_job
     variables:
       rgri: $[ dependencies.azure_cli_job.outputs['azurecli.rgri'] ]
@@ -124,14 +124,16 @@ stages:
       continueOnError: true
       inputs:
         command: 'apply'
+        commandOptions: '-var "region=$(region)" -var "access_key=$(AWS_ACCESS_KEY_ID)"  -var "secret_key=$(AWS_SECRET_ACCESS_KEY)" -out main.tfplan'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
         environmentServiceName: 'catherinevee_manid'
       condition: eq(${{ parameters.TerraformApplyTask }}, true)
     - task: TerraformCLI@2
-      displayName: "Terraform Apply"
+      displayName: "Terraform Destroy"
       continueOnError: true
       inputs:
         command: 'destroy'
+        commandOptions: '-var "region=$(region)" -var "access_key=$(AWS_ACCESS_KEY_ID)"  -var "secret_key=$(AWS_SECRET_ACCESS_KEY)" -out main.tfplan'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
         environmentServiceName: 'catherinevee_manid'
       condition: eq(${{ parameters.TerraformDestroyTask }}, true)
