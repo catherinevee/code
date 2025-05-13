@@ -36,6 +36,23 @@ variable "defaultvpc" {
     default = "10.40.0.0/16"
 }
 
+variable "default_privatesubnets" {
+    type = list(string)
+    default = [
+      "10.40.1.0/24",
+      "10.40.2.0/24",
+      "10.40.3.0/24",
+    ]
+}
+
+variable "default_publicsubnets" {
+    type = list(string)
+    default = [
+      "10.40.10.0/24",
+      "10.40.20.0/24",
+      "10.40.30.0/24",
+    ]
+}
 
 
 ############################

@@ -5,8 +5,8 @@ module "vpc" {
   cidr = var.defaultvpc
 
   azs              = var.defaultaz
-  private_subnets  = [for k, v in azs : cidrsubnet(cidr, 8, k)]
-  public_subnets   = [for k, v in azs : cidrsubnet(cidr, 8, k + 4)]
+  private_subnets  = var.default_privatesubnets
+  public_subnets   = var.default_publicsubnets
 
   enable_nat_gateway = true
 
@@ -16,5 +16,5 @@ module "vpc" {
   public_subnet_ipv6_prefixes   = [0, 1, 2]
   private_subnet_ipv6_prefixes  = [3, 4, 5]
 
-  tags = tags
+  tags = var.defaulttags
 }
