@@ -14,6 +14,7 @@ data "aws_subnets" "defaultvpc" {
 }
 
 data "aws_subnet" "defaultsubnets" {
+  depends_on = [ module.vpc ]
   for_each = toset(data.aws_subnets.defaultvpc.ids)
   id       = each.value
 }
