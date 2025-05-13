@@ -5,7 +5,7 @@ output "output_defaultvpc_id" {
 output "output_subnet_ids" {
     value = module.vpc.private_subnets.*
 }
-
+/*
 data "aws_subnets" "defaultvpc" {
   filter {
     name   = "vpc-id"
@@ -22,3 +22,4 @@ data "aws_subnet" "defaultsubnets" {
 output "subnet_cidr_blocks" {
   value = [for s in data.aws_subnet.defaultsubnets : s.ids]
 }
+*/
