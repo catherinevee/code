@@ -50,9 +50,9 @@ module "aws_module-use1" {
 
 
 
-#module "azure_westus_module" {
-#  source ="./azure/westus/"
-#}
+module "azure_westus_module" {
+  source ="./azure/westus/"
+}
 
 
 
