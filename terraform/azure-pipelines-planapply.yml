@@ -90,7 +90,7 @@ stages:
         AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
 
     - task: TerraformCLI@2
-      displayName: "Terraform Import"
+      displayName: "Terraform Import (Optional)"
       continueOnError: true
       inputs:
         command: 'import'
@@ -120,7 +120,7 @@ stages:
         AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
         AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
     - task: TerraformCLI@2
-      displayName: "Terraform Apply"
+      displayName: "Terraform Apply (Optional)"
       continueOnError: true
       inputs:
         command: 'apply'
@@ -136,7 +136,7 @@ stages:
         AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
         AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
     - task: TerraformCLI@2
-      displayName: "Terraform Destroy"
+      displayName: "Terraform Destroy (Optional)"
       continueOnError: true
       inputs:
         command: 'destroy'
