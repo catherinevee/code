@@ -59,3 +59,8 @@ variable "default_eks" {
   type = string
   default = "eks-catherinecluster"
 }
+
+variable "default_eks-nodegroup" {
+  type = string
+  default = "eks-catherinecluster-nodegroup"
+}
