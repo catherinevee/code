@@ -1,6 +1,4 @@
-resource "aws_eip" "nat-ip" {
-  count = 1
-}
+resource "aws_eip" "nat-ip" {}
 
 
 
