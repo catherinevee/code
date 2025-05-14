@@ -309,3 +309,17 @@ resource "aws_iam_policy" "ingress" {
     ]
 })
 }
+
+
+#=========================================
+#use the trustpolicy to create an iam role for the load balancer
+#and attach it to a policy
+resource "aws_iam_role" "ingress-role" {
+  name = "test-ingress"
+  assume_role_policy = data.aws_iam_policy_document.ingress-iam.json
+}
+
+resource "aws_iam_role_policy_attachment" "ingress" {
+  role = aws_iam_role.ingress-role.name
+  policy_arn = aws_iam_policy.ingress.arn
+}
