@@ -31,7 +31,7 @@ provider "azuredevops" {
 
 #module "azure_poland_module" {
 #  source ="./azure/poland/"
-#}
+}
 
 
 
@@ -44,15 +44,19 @@ module "aws_module-use1" {
   source ="./aws/us-east-1/"
 }
 
+module "aws_module-usw1" {
+  source ="./aws/us-west-1/"
+}
+
 #module "azure_paris_module" {
 #  source ="./azure/paris"
 #}
 
 
 
-module "azure_westus_module" {
-  source ="./azure/westus/"
-}
+#module "azure_westus_module" {
+#  source ="./azure/westus/"
+#}
 
 
 
