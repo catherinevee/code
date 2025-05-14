@@ -1,4 +1,6 @@
-# Configure the AWS Provider
+#==============================
+#Cloud Providers
+#==============================
 provider "aws" {
   region = "us-east-1"
   access_key = var.access_key
@@ -13,27 +15,33 @@ provider "google" {
   project     = "development"
   region      = "europe-west4"
 }
-provider "local" {
+
+#==============================
+#Dedicated Providers
+#==============================
+
+provider "local" {}
+provider "azuredevops" {
+  use_msi = true
 }
 provider "kubernetes" {
   config_path = "kubernetes/kubeconfig.yaml"
   #config_context = ""
 }
 
+#==============================
+#Child Modules
+#==============================
 
+#==============================
+#GCP
 module "google_module" {
   source = "./gcp/"
 }
 
-provider "azuredevops" {
-  use_msi = true
-}
 
-#module "azure_poland_module" {
-#  source ="./azure/poland/"
-#}
-
-
+#==============================
+#AWS
 
 module "aws_module-apse1" {
   source ="./aws/ap-southeast-1/"
@@ -47,6 +55,12 @@ module "aws_module-use1" {
 module "aws_module-usw1" {
   source ="./aws/us-west-1/"
 }
+#==============================
+#Azure
+
+#module "azure_poland_module" {
+#  source ="./azure/poland/"
+#}
 
 #module "azure_paris_module" {
 #  source ="./azure/paris"
