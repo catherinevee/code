@@ -1,31 +1,41 @@
+#==============================
+#
+#==============================
+openssl genrsa -out cathy.key 2048
+openssl req -new -key cath.key -out cathy.csr -subj=cathy -o='/CN=asd/0=databases'
+
+#ls /etc/Kubernetes/pki/ca.key ca.cert
+openssl x509 -req -in cathy.csr -CAcreateserial -CA /etc/Kubernetes/pki/ca.crt -CAkey /etc/Kubernetes/pki/ca.key -out cathy.crt -days 1000
+
+kubectl create role databasemgr --verb=get,list,create,delete --resource=pods --namespace databases
+kubectl --namespace databases create rolebinding databasemgrbinding --user=cathy --role=databasemgr
+
+
+kube config -kubeconfig ="cathy.config" config set-cluster cathycluster
+--server=https://172.31.50.34:6443
+kube config -kubeconfig ="cathy.config" config set-cluster cathycluster --certificate-authority=etc/Kubernetes/pki/ca.crt --embed-certs
+
+kube config ---kubeconfig ="cathy.config" config set-cluster cathycluster set-credentials --embed-certs --client-certificate cathy.crt --client-key cathy.key cathy --username cathy
+
+kubectl --kubeconfig cathy.config config set-context cathyctx --cluster cathycluster --user cathy --namespace databases
+
+
+
+#==============================
+#
+#==============================
+
+kubeadm init --pod-network-cidr 10.90.0.0/16  
+kubectl version
+
+kubectl create namespace production
+kubectl create namespace networking
+
 kubectl cluster-info
 kubectl api-resources
 kubectl api-versions
 kubectl get pods --all-namespace
 
-
-eksctl get cluster
-eksctl get cluster --profile eksctl
-eksctl get nodegroup --profile eksctl --cluster asdfsd-fdsfsf-102938118
-
-eksctl create nodegroup --cluster sdfs --profile eksctl --nodes 1 --instance-type t3.xlarge --managed 
-
-
-eksctl scale nodegroup --name sdfsd --cluster sdfsfd --name ng-sdfsdfs --profile eksctl --nodes 2 --nodes-max 5
-
-eksctl upgrade cluster --name=sfsdf --profile eksctl
-eksctl upgrade cluster --name=sfsdf --approve
-
-eksctl utils update-kube-proxy --cluster sdfsd --profile eksctl
-eksctl utils update-aws-node --cluster sdfsd --profile eksctl
-ksctl utils update-coredns --cluster sdfsd --profile eksctl
-
-eksctl create cluster -profile production --with-oidc --config-file 
-
-
-
-
-
 kubectl run cath --image nginx:latest
-
+kubectl run --image=ubuntu:20.04 --stdin --tty interactivepod -- bash
 kubectl apply -f spec.yml

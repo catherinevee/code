@@ -1,0 +1,34 @@
+metadata:
+  name: catherinewebapp
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: catherinewebapp
+  template:
+    metadata:
+      labels:
+        app: catherinewebapp
+    spec:
+      containers:
+      - name: webserver
+        image: 1233909182.dkr.ecr.us-west-2.amazonaws.com/podeapp
+        resources:
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 80
+        livenessProbe:
+          httpGet:
+            port: 80
+            path: /home
+            scheme: http
+          periodSeconds: 3
+          initialDelaySeconds: 5
+        startupProbe:
+          httpGet:
+            path: /home
+            port: 80
+          periodSeconds: 3
+          failureThreshold: 10

@@ -1,0 +1,20 @@
+eskctl create cluster --spot --profile catherinecluster
+eksctl create cluster --spot --profile catherinecluster instance-types=73.medium
+
+
+eksctl get cluster --profile eksctl
+eksctl get nodegroup --profile eksctl --cluster asdfsd-fdsfsf-102938118
+
+eksctl create nodegroup --cluster sdfs --profile eksctl --nodes 1 --instance-type t3.xlarge --managed 
+
+
+eksctl scale nodegroup --name sdfsd --cluster sdfsfd --name ng-sdfsdfs --profile eksctl --nodes 2 --nodes-max 5
+
+eksctl upgrade cluster --name=sfsdf --profile eksctl
+eksctl upgrade cluster --name=sfsdf --approve
+
+eksctl utils update-kube-proxy --cluster sdfsd --profile eksctl
+eksctl utils update-aws-node --cluster sdfsd --profile eksctl
+eksctl utils update-coredns --cluster sdfsd --profile eksctl
+
+
