@@ -1,0 +1,62 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dockerconfig
+data:
+  config.json: |
+    {"credStore": "ecr-login"}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: githubsource
+type: Opaque
+stringData:
+  username: cathy
+  password: lskqienvnq19jssd0918maloennqn1048s7sna98716rgf
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: awscreds
+type: Opaque
+data:
+  credentials: |
+    [default]
+    aws_access_key_id=null
+    aws_secret_access_key=null
+    aws_region=us-west-1
+---
+spec:
+  containers:
+  - name: kaniko
+    image: gcr.io/kaniko-project/exector:latest
+    env:
+    - name: GIT_USERNAME
+      valueFrom:
+        secretKeyRef:
+          name: githubsource
+          key: username
+    - name: GIT_USERNAME
+      valueFrom:
+        secretKeyRef:
+          name: githubsource
+          key: password
+
+    args:
+    - "--dockerfile=Dockerfile"
+    - "--context=git://github.com/catherinevee/code.git"
+    - "--destination=91827301283291.dkr.ecr.us-west-1.amazonaws.com/$PROJECT/$IMAGE:v1"
+    volumeMounts:
+    - name: awscredmount
+      mountPath: /root/aws/
+    - name: docker-cfg
+      mountPath: /kaniko/.docker/
+    restartPolicy: Never
+    volumes:
+    - name: awscredsecret
+      secret:
+        secretName: awscreds
+    - name: docker-cfg
+      configMap:
+        name: dockerconfig

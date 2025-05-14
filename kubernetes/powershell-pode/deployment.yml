@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: powshapp
+spec:
+  type: LoadBalancer
+  selector:
+    app: powshapp
+  ports:
+  - port: 80
+    targetPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: powshapp
+spec:
+  replicas: 6
+  selector:
+    matchLabels:
+      app: powshapp
+  template:
+    metadata:
+      labels:
+        app: powshapp
+    spec:
+      containers:
+      - name: powshapp
+        image: 91827301283291.dkr.ecr.us-west-1.amazonaws.com/$PROJECT/$IMAGE:v1
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 80
