@@ -113,7 +113,6 @@ stages:
         environmentServiceNameAzureRM: $(backendServiceArm)
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
         publishPlanResults: "main.tfplan"
-
       env:
         ARM_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
         ARM_TENANT_ID: $(AZURE_TENANT_ID)
@@ -121,6 +120,15 @@ stages:
         AWS_ACCESS_KEY_ID: $( AWS_ACCESS_KEY_ID)
         AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
         AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+    - task: TerraformTaskV4@4
+      displayName: "Terraform PublishPlan"
+      inputs:
+        provider: 'azurerm'
+        command: 'plan'
+        environmentServiceNameAzureRM: $(backendServiceArm)
+        workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
+        publishPlanResults: "main.tfplan"
+
     - task: TerraformCLI@2
       displayName: "(Opt) Terraform Apply"
       continueOnError: true
