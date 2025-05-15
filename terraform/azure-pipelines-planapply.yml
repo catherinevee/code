@@ -36,7 +36,7 @@ pr: none
 stages:
 - stage: "Run_Terraform"
   jobs:
-  - job: "Generate Remote State Backend"
+  - job: "GenerateRemoteStateBackend"
     steps:
     - task: AzureCLI@2
       name: "azurecli"
