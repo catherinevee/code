@@ -62,9 +62,9 @@ stages:
           echo "##vso[task.setvariable variable=rgri;isOutput=true ]$resourceGroupResourceID" 
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
   - job: "Terraform"
-    dependsOn: azure_cli_job
+    dependsOn: GenerateRemoteStateBackend
     variables:
-      rgri: $[ dependencies.azure_cli_job.outputs['azurecli.rgri'] ]
+      rgri: $[ dependencies.GenerateRemoteStateBackend.outputs['GenerateRemoteStateBackend.rgri'] ]
     steps:
     - task: JasonBJohnson.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-installer.TerraformInstaller@0
       displayName: "terraform install"
