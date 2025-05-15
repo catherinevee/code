@@ -64,3 +64,34 @@ variable "default_eks-nodegroup" {
   type = string
   default = "eks-catherinecluster-nodegroup"
 }
+	
+variable "endpoint_private_access" {
+  type = bool
+  default = true
+  description = "Indicates whether or not the Amazon EKS private API server endpoint is enabled."
+}
+
+variable "endpoint_public_access" {
+  type = bool
+  default = true
+  description = "Indicates whether or not the Amazon EKS public API server endpoint is enabled."
+}
+
+
+variable "ami_type" {
+  description = "Defaults to AL2_x86_64. Valid values: AL2_x86_64, AL2_x86_64_GPU."
+  type = string 
+  default = "AL2_x86_64"
+}
+
+variable "disk_size" {
+  description = "Disk size in GiB for worker nodes. Defaults to 20."
+  type = number
+  default = 20
+}
+
+variable "instance_types" {
+  type = list(string)
+  default = ["t3.medium"]
+  description = "Set of instance types associated with the EKS Node Group."
+}
