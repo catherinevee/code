@@ -90,7 +90,7 @@ stages:
         AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
 
     - task: TerraformCLI@2
-      displayName: "Terraform Import (Optional)"
+      displayName: "(Opt) Terraform Import"
       continueOnError: true
       inputs:
         command: 'import'
@@ -120,13 +120,14 @@ stages:
         AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
         AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
     - task: TerraformCLI@2
-      displayName: "Terraform Apply (Optional)"
+      displayName: "(Opt) Terraform Apply"
       continueOnError: true
       inputs:
         command: 'apply'
         commandOptions: '-var "region=$(region)" -var "access_key=$(AWS_ACCESS_KEY_ID)"  -var "secret_key=$(AWS_SECRET_ACCESS_KEY)" -out main.tfplan --auto-approve'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
         environmentServiceName: 'catherinevee_manid'
+        publishPlanResults: main.tfplan
       condition: eq(${{ parameters.TerraformApplyTask }}, true)
       env:
         ARM_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
@@ -136,13 +137,14 @@ stages:
         AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
         AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
     - task: TerraformCLI@2
-      displayName: "Terraform Destroy (Optional)"
+      displayName: "(Opt) Terraform Destroy"
       continueOnError: true
       inputs:
         command: 'destroy'
         commandOptions: '-var "region=$(region)" -var "access_key=$(AWS_ACCESS_KEY_ID)"  -var "secret_key=$(AWS_SECRET_ACCESS_KEY)" --auto-approve'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
         environmentServiceName: 'catherinevee_manid'
+        publishPlanResults: main.tfplan
       condition: eq(${{ parameters.TerraformDestroyTask }}, true)
       env:
         ARM_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
