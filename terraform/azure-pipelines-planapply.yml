@@ -34,9 +34,9 @@ name: $(BuildDefinitionName)_$(date:yyyyMMdd)$(rev:.r)
 pr: none
 
 stages:
-- stage: "Generate_Storage_Account"
+- stage: "Run_Terraform"
   jobs:
-  - job: "azure_cli_job"
+  - job: "Generate Remote State Backend"
     steps:
     - task: AzureCLI@2
       name: "azurecli"
@@ -112,7 +112,7 @@ stages:
         commandOptions: '-var "region=$(region)" -var "access_key=$(AWS_ACCESS_KEY_ID)"  -var "secret_key=$(AWS_SECRET_ACCESS_KEY)" -out main.tfplan'
         environmentServiceNameAzureRM: $(backendServiceArm)
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
-        publishPlanResults: main.tfplan
+        publishPlanResults: "main.tfplan"
 
       env:
         ARM_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
@@ -129,7 +129,6 @@ stages:
         commandOptions: '-var "region=$(region)" -var "access_key=$(AWS_ACCESS_KEY_ID)"  -var "secret_key=$(AWS_SECRET_ACCESS_KEY)" -out main.tfplan --auto-approve'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
         environmentServiceName: 'catherinevee_manid'
-        publishPlanResults: main.tfplan
       condition: eq(${{ parameters.TerraformApplyTask }}, true)
       env:
         ARM_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
@@ -146,7 +145,6 @@ stages:
         commandOptions: '-var "region=$(region)" -var "access_key=$(AWS_ACCESS_KEY_ID)"  -var "secret_key=$(AWS_SECRET_ACCESS_KEY)" --auto-approve'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
         environmentServiceName: 'catherinevee_manid'
-        publishPlanResults: main.tfplan
       condition: eq(${{ parameters.TerraformDestroyTask }}, true)
       env:
         ARM_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
