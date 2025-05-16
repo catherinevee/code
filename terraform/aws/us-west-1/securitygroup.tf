@@ -52,7 +52,7 @@ resource "aws_security_group" "data_plane_sg" {
 
 # Security group traffic rules
 ## Ingress rule
-resource "aws_security_group_rule" "nodes" {
+resource "aws_security_group_rule" "nodes_intracluster" {
   description              = "Allow nodes to communicate with each other"
   security_group_id = aws_security_group.data_plane_sg.id
   type              = "ingress"
@@ -65,7 +65,7 @@ resource "aws_security_group_rule" "nodes" {
     ])
 }
 
-resource "aws_security_group_rule" "nodes_inbound" {
+resource "aws_security_group_rule" "nodes_intracluster2" {
   description              = "Allow worker Kubelets and pods to receive communication from the cluster control plane"
   security_group_id = aws_security_group.data_plane_sg.id
   type              = "ingress"
