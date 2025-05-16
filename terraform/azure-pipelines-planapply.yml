@@ -125,6 +125,7 @@ stages:
       inputs:
         provider: 'azurerm'
         command: 'plan'
+        commandOptions: '-var "region=$(region)" -var "access_key=$(AWS_ACCESS_KEY_ID)"  -var "secret_key=$(AWS_SECRET_ACCESS_KEY)" -out main.tfplan'
         environmentServiceNameAzureRM: $(backendServiceArm)
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
         publishPlanResults: "main.tfplan"

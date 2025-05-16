@@ -47,14 +47,17 @@ module "aws_module-apse1" {
   source ="./aws/ap-southeast-1/"
 }
 
-
-module "aws_module-use1" {
-  source ="./aws/us-east-1/"
+module "ca-central-1" {
+  source = "./aws/ca-central-1/"
 }
 
-module "aws_module-usw1" {
-  source ="./aws/us-west-1/"
-}
+#module "aws_module-use1" {
+#  source ="./aws/us-east-1/"
+#}
+
+#module "aws_module-usw1" {
+#  source ="./aws/us-west-1/"
+#}
 #==============================
 #Azure
 
