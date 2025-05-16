@@ -1,3 +1,4 @@
+/*
 data "archive_file" "lambda" {
   type        = "zip"
   source_file = "lambda/index.js"
@@ -6,7 +7,7 @@ data "archive_file" "lambda" {
 
 resource "aws_lambda_function" "lambda" {
   filename      = data.archive_file.lambda.output_path
-  function_name = "my-first-tf-lambda-function"
+  function_name = "lambdafunction"
   role          = aws_iam_role.lambda_role.arn
   handler       = "index.handler"
 
@@ -27,3 +28,4 @@ resource "aws_lambda_function_url" "lambda" {
   function_name      = aws_lambda_function.lambda.function_name
   authorization_type = "NONE"
 }
+*/
