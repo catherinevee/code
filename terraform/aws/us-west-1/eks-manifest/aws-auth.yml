@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: aws-auth
+  namespace: kube-system
+data:
+  mapRoles: |
+    - rolearn: arn:aws:iam:::role/
+      username: system:node:
+      groups:
+        - system:bootstrappers
+        - system:nodes
+    - rolearn: arn:aws:iam:::role/ops-role
+      username: ops-role
+  mapUsers: |
+    - userarn: arn:aws:iam:::user/developer-user
+      username: catherine
