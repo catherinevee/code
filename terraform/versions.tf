@@ -20,6 +20,10 @@ terraform {
     azuredevops = {
       source  = "microsoft/azuredevops"
       version = ">=0.1.0"
+    }
+    helm = {
+      source = "hashicorp/helm"
+      version = "2.9.0"
     } 
   }
 
