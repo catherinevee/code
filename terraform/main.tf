@@ -65,8 +65,8 @@ module "aws_module-apse1" {
 #  source ="./azure/poland/"
 #}
 
-module "azure_paris_module" {
-  source ="./azure/paris"
+module "azure_francecentral_module" {
+  source ="./azure/francecentral"
 }
 
 
