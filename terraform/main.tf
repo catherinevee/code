@@ -65,10 +65,13 @@ module "aws_module-apse1" {
 #  source ="./azure/poland/"
 #}
 
-module "azure_francecentral_module" {
-  source ="./azure/francecentral"
-}
+#module "azure_francecentral_module" {
+#  source ="./azure/francecentral"
+#}
 
+module "azure_mexicocentral_module" {
+  source ="./azure/mexicocentral"
+}
 
 
 #module "azure_westus_module" {
