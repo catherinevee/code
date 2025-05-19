@@ -1,8 +1,8 @@
 variables:
   vmImageName: "ubuntu-latest"
-  imageRepository:
-  dockerfilePath:
-  dockerRegistryServiceConnection:
+  imageRepository: ""
+  dockerfilePath: ""
+  dockerRegistryServiceConnection: ""
   tag: 1
 
 stages:
