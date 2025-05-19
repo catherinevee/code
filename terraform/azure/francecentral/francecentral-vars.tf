@@ -25,25 +25,25 @@ variable "defaultname" {
 
 variable "defaultlocation" {
     type = string
-    default = "paris"
+    default = "francecentral"
 }
 
 variable "defaultrg" {
     type = string
-    default = "paris-prod"
+    default = "france-prod"
 }
 
 
 variable "defaultanalyticsworkspace" {
     type = string
-    default = "poland-analytics-workspace"
+    default = "france-analytics-workspace"
 }
 variable "polandcentral-var-prodresourcegroups" {
     type = list(string)
     default = [
-         "polandcentralrg-prod",
-         "polandcentralrg-test",
-         "polandcentralrg-dev"
+         "francecentralrg-prod",
+         "francecentralrg-test",
+         "francecentralrg-dev"
         ]
 }
 
@@ -51,9 +51,9 @@ variable "polandcentral-var-prodresourcegroups" {
 variable "polandcentral-var-instances" {
     type = list(string)
     default = [
-         "pol-production",
-         "pol-test",
-         "pol-dev"
+         "francec-production",
+         "francec-test",
+         "francec-dev"
         ]
 }
 
