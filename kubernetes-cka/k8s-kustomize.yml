@@ -1,0 +1,7 @@
+#kubectl kustomize | kubectl apply
+apiVersion: kustomize.config.k8s.io/v1
+kind: Kustomization
+
+resources:
+- k8s-pod.yml
+- k8s-storageclass-aws.yml
