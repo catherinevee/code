@@ -47,9 +47,9 @@ module "aws_module-apse1" {
   source ="./aws/ap-southeast-1/"
 }
 
-module "ca-central-1" {
-  source = "./aws/ca-central-1/"
-}
+#module "ca-central-1" {
+#  source = "./aws/ca-central-1/"
+#}
 
 #module "aws_module-use1" {
 #  source ="./aws/us-east-1/"
@@ -65,9 +65,9 @@ module "ca-central-1" {
 #  source ="./azure/poland/"
 #}
 
-#module "azure_paris_module" {
-#  source ="./azure/paris"
-#}
+module "azure_paris_module" {
+  source ="./azure/paris"
+}
 
 
 

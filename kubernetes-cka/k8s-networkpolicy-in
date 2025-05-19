@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: netops-inbound
+  namespace: netpolicy
+spec:
+  podSelector:
+    matchLabels:
+      purpose: ops_clients
+    policyTypes:
+    - Egress
+    Egress:
+    - to:
+      - ipBlock:
+          cidr: 172.17.249.0/24
+          except: 172.17.1.0/24
+      - podSelector:
+          matchLabels:
+            purpose: ops_clients
+      ports:
+      - protocol: UDP
+        port: 53

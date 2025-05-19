@@ -30,7 +30,6 @@ trigger:
     include:
     - terraform
 
-name: $(BuildDefinitionName)_$(date:yyyyMMdd)$(rev:.r)
 pr: none
 
 stages:
