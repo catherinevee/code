@@ -2,7 +2,7 @@ resource "azurerm_container_registry" "acr" {
   name                = var.defaultacr
   resource_group_name = var.defaultrg
   location            = var.defaultlocation
-  sku                 = "Standard"
+  sku                 = "Basic"
 }
 
 /*
