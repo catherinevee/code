@@ -1,0 +1,78 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Create a basic VPC with a public subnet, Internet Gateway, and Route Table.
+
+Resources:
+  # VPC
+  productionVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsSupport: 'true'
+      EnableDnsHostnames: 'true'
+      Tags:
+      - Key: Name
+        Value: productionVPC
+
+  # Subnet
+  productionPublicSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref productionVPC
+      CidrBlock: 10.0.1.0/24
+      AvailabilityZone: "us-east-1a"
+      MapPublicIpOnLaunch: 'true'
+      Tags:
+      - Key: Name
+        Value: productionPublicSubnet
+
+  # Internet Gateway
+  productionInternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+      - Key: Name
+        Value: productionInternetGateway
+
+  # Attach the Internet Gateway to the VPC
+  AttachInternetGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref productionVPC
+      InternetGatewayId: !Ref productionInternetGateway
+
+  # Route Table
+  productionRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref productionVPC
+      Tags:
+      - Key: Name
+        Value: productionRouteTable
+
+  # Route to allow outbound internet traffic
+  productionRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref productionRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref productionInternetGateway
+
+  # Associate the Route Table with the subnet
+  productionSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref productionPublicSubnet
+      RouteTableId: !Ref productionRouteTable
+
+Outputs:
+  VPCId:
+    Description: VPC ID
+    Value: !Ref productionVPC
+
+  SubnetId:
+    Description: Public Subnet ID
+    Value: !Ref productionPublicSubnet
+
+  InternetGatewayId:
+    Description: Internet Gateway ID
+    Value: !Ref productionInternetGateway
