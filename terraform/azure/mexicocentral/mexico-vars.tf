@@ -38,3 +38,8 @@ variable "mexicocentralresourcegroups" {
          "mexicocentralrg-dev"
         ]
 }
+
+variable "defaultacr" {
+ type = string
+ default = "mexicocentral-acr" 
+}
