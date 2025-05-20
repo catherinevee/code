@@ -13,7 +13,7 @@ resource "azurerm_virtual_network" "mexicocentralvnet" {
   subnet {
     name             = "2_${azurerm_resource_group.polandcentral-prod-resourcegroups[2].location}_subnet"
     address_prefixes = ["10.0.2.0/24"]
-    3#security_group   = azurerm_network_security_group.sg.id
+    #security_group   = azurerm_network_security_group.sg.id
   }
 
   tags = var.tags
