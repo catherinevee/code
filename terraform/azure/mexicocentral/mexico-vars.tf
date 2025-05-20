@@ -23,7 +23,7 @@ variable "defaultname" {
 
 variable "defaultrg" {
  type = string
- default = "mexicocentral-dev" 
+ default = "mexicocentralrg-dev" 
 }
 variable "defaultlocation" {
  type = string
