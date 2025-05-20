@@ -41,5 +41,5 @@ variable "mexicocentralresourcegroups" {
 
 variable "defaultacr" {
  type = string
- default = "mexicocentral-acr" 
+ default = "mexicocentralacr" 
 }
