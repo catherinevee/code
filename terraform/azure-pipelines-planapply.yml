@@ -134,7 +134,7 @@ stages:
       continueOnError: true
       inputs:
         command: 'apply'
-        commandOptions: '-var "region=$(region)" -var "access_key=$(AWS_ACCESS_KEY_ID)"  -var "secret_key=$(AWS_SECRET_ACCESS_KEY)"--auto-approve'
+        commandOptions: '"main.tfplan" -var "region=$(region)" -var "access_key=$(AWS_ACCESS_KEY_ID)"  -var "secret_key=$(AWS_SECRET_ACCESS_KEY)"'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
         environmentServiceName: 'catherinevee_manid'
       condition: eq(${{ parameters.TerraformApplyTask }}, true)
