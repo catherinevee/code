@@ -1,0 +1,35 @@
+  # Create a private hosted zone
+  productionPrivateDNSZone:
+    Type: AWS::Route53::HostedZone
+    Properties:
+      Name: "catherine29183742.net" 
+      VPCs:
+        - VPCId: !Ref productionVPC
+          VPCRegion: "us-east-1" 
+      HostedZoneConfig:
+        Comment: "Private DNS Zone for internal resources"
+        PrivateZone: "true"
+
+  # Optional: Create an S3 bucket for logging DNS queries
+  productionDNSQueryLogsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: "production-dns-query-logs-bucket"
+      VersioningConfiguration:
+        Status: Enabled
+      Tags:
+        - Key: "Name"
+          Value: "DNSQueryLogsBucket"
+
+Outputs:
+  PrivateDNSZoneId:
+    Description: "ID of the Private DNS Zone"
+    Value: !Ref productionPrivateDNSZone
+
+  PrivateDNSZoneName:
+    Description: "Name of the Private DNS Zone"
+    Value: !GetAtt productionPrivateDNSZone.Name
+
+  VPCId:
+    Description: "VPC ID"
+    Value: !Ref productionVPC
