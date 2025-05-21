@@ -1,0 +1,35 @@
+version: '3'
+
+services:
+  librenms:
+    build: .
+    container_name: librenms
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      - DB_HOST=librenms-db
+      - DB_NAME=libredb
+      - DB_USER=librenms
+      - DB_PASSWORD=librenms
+    depends_on:
+      - librenms-db
+    volumes:
+      - ./librenms:/var/www/html
+      - librenms_data:/data
+
+  librenms-db:
+    image: mariadb:10.3
+    container_name: librenms-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: loepgknfsuekqjfuajenqiajskqloehudjqlnz
+      MYSQL_USER: librenms
+      MYSQL_PASSWORD: librenms
+      MYSQL_DATABASE: librenms
+    volumes:
+      - librenms_db_data:/var/lib/mysql
+
+volumes:
+  librenms_data:
+  librenms_db_data:
