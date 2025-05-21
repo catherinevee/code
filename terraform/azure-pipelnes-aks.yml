@@ -9,7 +9,7 @@ variables:
   dockerRegistryServiceConnection: '81b1cd5f-54df-453b-8a6c-a4eff0556ddb'
   imageRepository: 'catherineveecode'
   containerRegistry: 'mexicocentralacr.azurecr.io'
-  dockerfilePath: '$(Build.SourcesDirectory)/terraform/azure/mexicocentral/app'
+  dockerfilePath: '$(Build.SourcesDirectory)/terraform/azure/mexicocentral/app/Dockerfile'
   tag: '$(Build.BuildId)'
   vmImageName: 'ubuntu-latest'
 
