@@ -1,8 +1,8 @@
-/*
+
 data "archive_file" "lambda" {
   type        = "zip"
-  source_file = "lambda/index.js"
-  output_path = "lambda/lambda.zip"
+  source_file = "${path.module}/lambda/index.js"
+  output_path = "${path.module}/lambda/lambda.zip"
 }
 
 resource "aws_lambda_function" "lambda" {
@@ -28,4 +28,3 @@ resource "aws_lambda_function_url" "lambda" {
   function_name      = aws_lambda_function.lambda.function_name
   authorization_type = "NONE"
 }
-*/
