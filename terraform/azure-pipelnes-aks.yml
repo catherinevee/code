@@ -1,16 +1,24 @@
+trigger:
+- main
+
+resources:
+- repo: self
+
 variables:
-  vmImageName: "ubuntu-latest"
-  imageRepository: ""
-  dockerfilePath: ""
-  dockerRegistryServiceConnection: ""
-  tag: 1
+  # Container registry service connection established during pipeline creation
+  dockerRegistryServiceConnection: '81b1cd5f-54df-453b-8a6c-a4eff0556ddb'
+  imageRepository: 'catherineveecode'
+  containerRegistry: 'mexicocentralacr.azurecr.io'
+  dockerfilePath: '$(Build.SourcesDirectory)/terraform/azure/mexicocentral/app'
+  tag: '$(Build.BuildId)'
+  vmImageName: 'ubuntu-latest'
 
 stages:
 - stage: Build
-  displayName: Build Stage
+  displayName: Build and push stage
   jobs:
   - job: Build
-    displayName: Build Job
+    displayName: Build
     pool:
       vmImage: $(vmImageName)
     steps:
@@ -23,48 +31,3 @@ stages:
         containerRegistry: $(dockerRegistryServiceConnection)
         tags: |
           $(tag)
-
-    - task: PublishPipelineArtifact@1
-      inputs:
-        artifactName: 'manifests'
-        path: 'manifests'
-
-- stage: Deploy
-  displayName: Deploy stage
-  dependsOn: Build
-  jobs:
-  - deployment: Deploy
-    displayName: Deploy job
-    pool:
-      vmImage: $(vmImageName)
-    environment: 'myenv.aksnamespace' #customize with your environment
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          - task: DownloadPipelineArtifact@2
-            inputs:
-              artifactName: 'manifests'
-              downloadPath: '$(System.ArtifactsDirectory)/manifests'
-
-          - task: KubernetesManifest@1
-            displayName: Create imagePullSecret
-            inputs:
-              action: 'createSecret'
-              connectionType: 'kubernetesServiceConnection'
-              kubernetesServiceConnection: 'myapp-default' #customize for your Kubernetes service connection
-              secretType: 'dockerRegistry'
-              secretName: '$(imagePullSecret)'
-              dockerRegistryEndpoint: '$(dockerRegistryServiceConnection)'
-
-          - task: KubernetesManifest@1
-            displayName: Deploy to Kubernetes cluster
-            inputs:
-              action: 'deploy'
-              connectionType: 'kubernetesServiceConnection'
-              kubernetesServiceConnection: 'myapp-default' #customize for your Kubernetes service connection
-              manifests: |
-                $(Pipeline.Workspace)/manifests/deployment.yml
-                $(Pipeline.Workspace)/manifests/service.yml
-              containers: '$(containerRegistry)/$(imageRepository):$(tag)'
-              imagePullSecrets: '$(imagePullSecret)'
