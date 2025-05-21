@@ -1,0 +1,118 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Create a VPC and 4 subnets in the EU (Ireland) region (eu-west-1).
+
+Resources:
+  # VPC
+  productionVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: "10.0.0.0/16"
+      EnableDnsSupport: "true"
+      EnableDnsHostnames: "true"
+      Tags:
+      - Key: "Name"
+        Value: "productionVPC"
+
+  # Subnet 1 in eu-west-1a
+  productionPublicSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref productionVPC
+      CidrBlock: "10.0.1.0/24"
+      AvailabilityZone: "eu-west-1a"
+      MapPublicIpOnLaunch: "true"
+      Tags:
+      - Key: "Name"
+        Value: "productionPublicSubnet1"
+
+  # Subnet 2 in eu-west-1b
+  productionPublicSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref productionVPC
+      CidrBlock: "10.0.2.0/24"
+      AvailabilityZone: "eu-west-1b"
+      MapPublicIpOnLaunch: "true"
+      Tags:
+      - Key: "Name"
+        Value: "productionPublicSubnet2"
+
+  # Subnet 3 in eu-west-1c
+  productionPublicSubnet3:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref productionVPC
+      CidrBlock: "10.0.3.0/24"
+      AvailabilityZone: "eu-west-1c"
+      MapPublicIpOnLaunch: "true"
+      Tags:
+      - Key: "Name"
+        Value: "productionPublicSubnet3"
+
+  # Subnet 4 in eu-west-1d
+  productionPublicSubnet4:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref productionVPC
+      CidrBlock: "10.0.4.0/24"
+      AvailabilityZone: "eu-west-1d"
+      MapPublicIpOnLaunch: "true"
+      Tags:
+      - Key: "Name"
+        Value: "productionPublicSubnet4"
+
+  # Internet Gateway
+  productionInternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+      - Key: "Name"
+        Value: "productionInternetGateway"
+
+  # Attach the Internet Gateway to the VPC
+  AttachInternetGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref productionVPC
+      InternetGatewayId: !Ref productionInternetGateway
+
+  # Route Table
+  productionRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref productionVPC
+      Tags:
+      - Key: "Name"
+        Value: "productionRouteTable"
+
+  # Route to allow outbound internet traffic
+  productionRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref productionRouteTable
+      DestinationCidrBlock: "0.0.0.0/0"
+      GatewayId: !Ref productionInternetGateway
+
+  # Route Table Association for Subnet 1
+  productionSubnet1RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref productionPublicSubnet1
+      RouteTableId: !Ref productionRouteTable
+
+  # Route Table Association for Subnet 2
+  productionSubnet2RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref productionPublicSubnet2
+      RouteTableId: !Ref productionRouteTable
+
+  # Route Table Association for Subnet 3
+  productionSubnet3RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref productionPublicSubnet3
+      RouteTableId: !Ref productionRouteTable
+
+  # Route Table Association for Subnet 4
+  productionSubnet4RouteTableAssociation: T
