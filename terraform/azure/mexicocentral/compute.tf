@@ -4,6 +4,7 @@ locals {
 }
 
 resource "azurerm_network_interface" "nic" {
+  count = local.count
   name = "dev${count.index}-nic"
   location            = var.defaultlocation
   resource_group_name = var.mexicocentralresourcegroups[2]
@@ -16,6 +17,7 @@ resource "azurerm_network_interface" "nic" {
 }
 
 resource "azurerm_virtual_machine" "main" {
+  count = local.count
   name                  = "dev${count.index}-vm"
   location              = var.defaultlocation
   resource_group_name   = var.mexicocentralresourcegroups[2]
