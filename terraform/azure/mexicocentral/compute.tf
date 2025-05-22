@@ -1,8 +1,10 @@
 
+locals {
+    count = 3
+}
 
 resource "azurerm_network_interface" "nic" {
   name = "dev${count.index}-nic"
-  count = 3 
   location            = var.defaultlocation
   resource_group_name = var.mexicocentralresourcegroups[2]
 
