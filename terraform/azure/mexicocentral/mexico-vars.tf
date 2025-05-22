@@ -5,10 +5,16 @@ variable "tags" {
     OU   = string
   })
   default = {
-    Environment = "prod"
+    Environment = "dev"
     OU   = "IT"
   }
 }
+
+variable "defaultenv" {
+    type = string
+    default = "dev"
+}
+
 
 variable "defaultemail" {
     type = string
