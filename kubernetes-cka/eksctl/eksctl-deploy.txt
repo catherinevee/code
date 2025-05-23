@@ -1,0 +1,20 @@
+#download
+#kubectl kubens kubectx
+
+eksctl create cluster housing-app-site-starrez --profile dev
+eksctl get clusters
+
+kubectx housing-app-site-starrez 
+
+kubectl create namespace starrez-siteapp-public
+kubectl create namespace starrez-siteapp-private
+kubectl create namespace starrez-siteapp-vpc
+kubectl create namespace starrez-siteapp-vnet
+kubectl create namespace starrez-siteapp-frontend
+kubectl create namespace starrez-siteapp-backend
+kubectl create namespace starrez-siteapp-database
+
+kubens starrez-siteapp-private
+#kubens kube-system
+
+kubectl run --image=starrezsite:latest pod1

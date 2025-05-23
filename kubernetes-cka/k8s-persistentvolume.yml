@@ -1,13 +1,14 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: sdf
+  name: prodVolume
 spec:
   capacity:
     storage: 1Gi
   volumeMode: Filesystem
-  accessModes: [ ReadWriteOnce ]
-  PersistentVolumeReclaimPolicy: Recycle
+  accessModes:
+  - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Recycle
   awsElasticBlockStore:
-    volumeID:
+    volumeID: "a332kfis9ks938401kd"
     fsType: ext4

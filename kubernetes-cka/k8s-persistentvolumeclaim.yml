@@ -2,11 +2,11 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: laffey-pvc
+  name: prodVolumeClaim
 spec:
   resources:
     requests:
       storage: 1Gi
-  volueMode: Filesystem
+  volumeMode: Filesystem
   accessModes:
   - ReadWriteOnce
