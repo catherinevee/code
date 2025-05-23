@@ -33,7 +33,7 @@ resource "azurerm_virtual_network_gateway" "expressroute1_ergateway" {
   ip_configuration {
     name                 = "vnetExpRouteGatewayConfig"
     public_ip_address_id = azurerm_public_ip.gateway_ip.id
-    subnet_id            = azurerm_subnet.gateway_subnet.id
+    subnet_id            = azurerm_subnet.expressroute1_subnet.id
   }
   tags = var.tags
 
@@ -54,7 +54,7 @@ resource "azurerm_express_route_circuit" "expressroute1_circuit" {
   location              = var.defaultlocation
   service_provider_name = "Alestra"
   peering_location    = var.defaultlocation
-  bandwidth_in_mbps   = 50
+  bandwidth_in_gbps   = 1
   resource_group_name   = var.mexicocentralresourcegroups[0]
   express_route_port_id = azurerm_express_route_port.expressroute1_port.id
 
