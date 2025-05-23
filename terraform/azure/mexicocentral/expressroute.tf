@@ -12,7 +12,7 @@ resource "random_string" "random" {
 
 
 resource "azurerm_public_ip" "gateway_ip" {
-  name                 = "pip-${random_string.name.result}"
+  name                 = "pip-${random_string.result}"
   location            = var.defaultlocation
   resource_group_name = var.mexicocentralresourcegroups[0]
   allocation_method   = "Static"

@@ -1,14 +1,3 @@
-output "vnet_id" {
-  value       = azurerm_virtual_network[*].id
-}
-
-output "vnet_name" {
-  value       = azurerm_virtual_network[*].name
-}
-
-output "vnet_subnets" {
-  value       = azurerm_subnets[*].id
-}
 
 output "express_route_circuit_id" {
   value = azurerm_express_route_circuit.expressroute1_circuit.id
