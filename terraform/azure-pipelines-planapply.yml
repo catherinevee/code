@@ -150,7 +150,6 @@ stages:
       continueOnError: true
       inputs:
         command: 'destroy'
-        commandOptions: 'main.tfplan'
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
         environmentServiceName: 'catherinevee_manid'
       condition: eq(${{ parameters.TerraformDestroyTask }}, true)
