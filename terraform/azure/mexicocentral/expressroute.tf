@@ -10,14 +10,6 @@ resource "random_string" "random" {
 }
 
 
-resource "azurerm_public_ip" "gateway_ip" {
-  name                 = "pip-${random_string.random.result}"
-  location            = var.defaultlocation
-  resource_group_name = var.mexicocentralresourcegroups[0]
-  allocation_method   = "Static"
-  sku                 = "Standard"
-}
-
 module "express_route" {
   source  = "claranet/expressroute/azurerm"
   version = "8.0.0"
