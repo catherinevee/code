@@ -16,7 +16,7 @@ resource "azurerm_network_interface" "nic" {
   }
 }
 
-resource "azurerm_virtual_machine" "main" {
+resource "azurerm_virtual_machine" "compute" {
   count = local.count
   name                  = "dev${count.index}-vm"
   location              = var.defaultlocation
