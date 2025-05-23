@@ -12,7 +12,7 @@ resource "random_string" "random" {
 
 
 resource "azurerm_public_ip" "gateway_ip" {
-  name                 = "pip-${random_string.result}"
+  name                 = "pip-${random_string.random.result}"
   location            = var.defaultlocation
   resource_group_name = var.mexicocentralresourcegroups[0]
   allocation_method   = "Static"
@@ -37,6 +37,16 @@ resource "azurerm_virtual_network_gateway" "expressroute1_ergateway" {
   }
   tags = var.tags
 
+}
+
+
+resource "azurerm_express_route_port" "expressroute1_port" {
+  name                = "${local.prefix}erport"
+  resource_group_name = var.mexicocentralresourcegroups[0]
+  location            = var.defaultlocation
+  peering_location    = "Alestra-A-1-LWQ"
+  bandwidth_in_gbps   = 1
+  encapsulation       = "Dot1Q"
 }
 
 resource "azurerm_express_route_circuit" "expressroute1_circuit" {
