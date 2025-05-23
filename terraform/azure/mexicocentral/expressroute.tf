@@ -11,7 +11,7 @@ resource "random_string" "random" {
 }
 # Create the Azure ExpressRoute Circuit
 resource azurerm_express_route_circuit "express_route" {
-    name                  = "${prefix}-erc"
+    name                  = "${local.prefix}-erc"
     resource_group_name   = var.mexicocentralresourcegroups[0]
     location              = var.defaultlocation
 

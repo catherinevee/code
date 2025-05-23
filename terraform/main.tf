@@ -1,16 +1,53 @@
 #==============================
-#Cloud Providers
+#Cloud Provider Configuration
 #==============================
+
+#call like:
+#resource "azurerm_resource_group" "rg2" {
+#  provider = azurerm.catherineprod
+#}
+
+#use input variables during the pipeline 
+#to change between subscriptions
+
+#production subscriptions
+#aws
+
+
 provider "aws" {
-  region = "us-east-1"
+  alias = "catherineprod"
+  access_key = var.access_key
+  secret_key = var.secret_key
+} 
+provider "aws" {
+  alias = "catherinedev"
+  access_key = var.access_key
+  secret_key = var.secret_key
+}
+provider "aws" {
+  alias = "catherinetest"
   access_key = var.access_key
   secret_key = var.secret_key
 }
 
+#azure
 provider "azurerm" {
+  alias = "catherineprod"
   features {}  
   use_msi = true
 }
+provider "azurerm" {
+  alias = "catherinedev"
+  features {}  
+  use_msi = true
+}
+provider "azurerm" {
+  alias = "catherinetest"
+  features {}  
+  use_msi = true
+}
+
+#gcp
 provider "google" {
   project     = "development"
   region      = "europe-west4"
