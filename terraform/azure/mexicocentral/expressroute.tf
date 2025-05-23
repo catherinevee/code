@@ -57,7 +57,7 @@ resource "azurerm_express_route_circuit" "expressroute1_circuit" {
   bandwidth_in_mbps   = 1024
   resource_group_name   = var.mexicocentralresourcegroups[0]
   express_route_port_id = azurerm_express_route_port.expressroute1_port.id
-
+  bandwidth_in_gbps = 1
   sku {
     tier   = "Standard"
     family = "MeteredData"
