@@ -5,22 +5,13 @@ data "archive_file" "lambda" {
   output_path = "${path.module}/lambda/lambda.zip"
 }
 
-resource "aws_lambda_function" "lambda" {
-  filename      = data.archive_file.lambda.output_path
-  function_name = "lambdafunction"
-  role          = aws_iam_role.lambda_role.arn
-  handler       = "index.handler"
-
-  source_code_hash = data.archive_file.lambda.output_base64sha256
-
-  runtime = "nodejs18.x"
-  timeout = 15
-  memory_size = 1024
-  environment {
-    variables = {
-      PRODUCTION = false
-    }
-}
+resource "aws_lambda_function" "terraform_lambda_func" {
+filename                       = "${path.module}/lambda/lambda.zip"
+function_name                  = "siteFunction"
+role                           = aws_iam_role.lambda_role.arn
+handler                        = "index.lambda_handler"
+runtime                        = "python3.8"
+depends_on                     = [aws_iam_role_policy_attachment.attach_iam_policy_to_iam_role]
 }
 
 resource "aws_lambda_function_url" "lambda" {

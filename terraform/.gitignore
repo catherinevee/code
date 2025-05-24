@@ -3,6 +3,9 @@
 .terraform/.*
 main-vars.tf
 variables.tf
+aws/eu-west-3/lambda/node_modules/
+aws/eu-west-3/lambda/package*
+
 # .tfstate files
 *.tfstate
 *.tfstate.*
