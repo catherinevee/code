@@ -1,0 +1,10 @@
+volumes:
+- name: all-config
+  projected:
+    sources:
+    - configMap:
+        name: app-config
+    - secret:
+        name: app-secrets
+    - configMap:
+        name: shared-config
