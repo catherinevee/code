@@ -1,0 +1,10 @@
+kubeadm init --control-plane-endpoint "LOAD_BALANCER_DNS:LOAD_BALANCER_PORT" \
+    --upload-certs \
+    --pod-network-cidr=192.168.0.0/16
+
+    
+kubeadm join LOAD_BALANCER_DNS:LOAD_BALANCER_PORT \
+    --token <token> \
+    --discovery-token-ca-cert-hash <hash> \
+    --control-plane \
+    --certificate-key <certificate-key>
