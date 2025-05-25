@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: custom-dns-pod
+spec:
+  containers:
+  - name: app
+    image: nginx
+  dnsPolicy: 'None'
+  dnsConfig:
+    nameservers:
+    - 8.8.8.8
+    searches:
+    - example.com
+    options:
+    - name: ndots
+      value: '5'
