@@ -21,3 +21,5 @@ variable "tfstaterg" {
 variable "access_key" {}
 variable "secret_key" {}
 variable "region" {}
+variable "spotinst_token"{}
+variable "spotinst_account" {}

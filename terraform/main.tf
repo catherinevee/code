@@ -76,6 +76,12 @@ provider "kubernetes" {
   #config_context = ""
 }
 
+
+provider "spotinst" {
+   token   = "${var.spotinst_token}"
+   account = "${var.spotinst_account}"
+}
+
 #==============================
 #Child Modules
 #==============================
