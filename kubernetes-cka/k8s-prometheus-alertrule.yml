@@ -1,0 +1,20 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: kubernetes-apps
+  namespace: monitoring
+  labels:
+    prometheus: k8s
+    role: alert-rules
+spec:
+  groups:
+  - name: kubernetes-apps
+    rules:
+    - alert: KubePodCrashLooping
+      expr: rate(kube_pod_container_status_restarts_total{job="kube-state-metrics"}[15m]) * 60 * 5 > 0
+      for: 15m
+      labels:
+        severity: critical
+      annotations:
+        summary: 'Pod {{ $labels.namespace }}/{{ $labels.pod }} is crash looping'
+        description: 'Pod {{ $labels.namespace }}/{{ $labels.pod }} is restarting {{ printf "%.2f" $value }} times every 5 minutes.'

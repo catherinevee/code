@@ -1,0 +1,20 @@
+Node Metrics
+
+    node_cpu_seconds_total: CPU usage
+    node_memory_MemAvailable_bytes: Available memory
+    node_filesystem_avail_bytes: Available disk space
+    node_network_transmit_bytes_total and node_network_receive_bytes_total: Network I/O
+
+Kubernetes Resource Metrics
+
+    kube_pod_container_resource_requests and kube_pod_container_resource_limits: Resource allocation
+    kube_pod_container_status_restarts_total: Container restarts
+    kube_pod_container_status_waiting_reason: Pods in waiting state
+    kube_deployment_spec_replicas and kube_deployment_status_replicas_available: Deployment status
+
+Application Metrics
+
+    http_requests_total: Total HTTP requests (with labels for status code, method, etc.)
+    http_request_duration_seconds: Request latency
+    application_memory_usage_bytes: Application memory usage
+    application_database_connections: Database connection count

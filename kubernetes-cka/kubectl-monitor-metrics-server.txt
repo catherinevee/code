@@ -1,0 +1,9 @@
+# Install Metrics Server
+kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+
+# Verify installation
+kubectl get deployment metrics-server -n kube-system
+
+# Use Metrics Server
+kubectl top nodes
+kubectl top pods --all-namespaces

@@ -1,0 +1,12 @@
+# Clone the repository
+git clone https://github.com/prometheus-operator/kube-prometheus.git
+cd kube-prometheus
+
+# Create the namespace and CRDs
+kubectl create -f manifests/setup
+
+# Wait for the CRDs to be created
+until kubectl get servicemonitors --all-namespaces ; do sleep 1; done
+
+# Create the monitoring stack components
+kubectl create -f manifests/
