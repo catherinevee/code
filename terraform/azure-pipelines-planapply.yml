@@ -108,7 +108,7 @@ stages:
       inputs:
         provider: 'azurerm'
         command: 'plan'
-        commandOptions: '-var "region=$(region)" -var "access_key=$(AWS_ACCESS_KEY_ID)"  -var "secret_key=$(AWS_SECRET_ACCESS_KEY)" -var "spotinst_token=$(spotinst_token)" -var "spotinst_account=$(spotinst_account)"-out main.tfplan'
+        commandOptions: '-var "region=$(region)" -var "access_key=$(AWS_ACCESS_KEY_ID)"  -var "secret_key=$(AWS_SECRET_ACCESS_KEY)" -var "spotinst_token=$(SPOTINST_TOKEN)" -var "spotinst_account=$(SPOTINST_ACCOUNT)"-out main.tfplan'
         environmentServiceNameAzureRM: $(backendServiceArm)
         workingDirectory: '$(System.DefaultWorkingDirectory)/terraform/'
         publishPlanResults: "main.tfplan"
@@ -119,6 +119,8 @@ stages:
         AWS_ACCESS_KEY_ID: $( AWS_ACCESS_KEY_ID)
         AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
         AWS_DEFAULT_REGION: $(AWS_DEFAULT_REGION)
+        SPOTINST_ACCOUNT: $(SPOTINST_ACCOUNT)
+        SPOTINST_TOKEN: $(SPOTINST_TOKEN)
     - task: TerraformTaskV4@4
       displayName: "Terraform PublishPlan"
       inputs:
