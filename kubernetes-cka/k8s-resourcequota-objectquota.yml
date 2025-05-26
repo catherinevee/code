@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: object-quota
+  namespace: team-a
+spec:
+  hard:
+    configmaps: '10'
+    persistentvolumeclaims: '5'
+    services: '5'
+    secrets: '10'
+    services.loadbalancers: '1'

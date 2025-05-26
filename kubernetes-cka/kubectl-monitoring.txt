@@ -1,0 +1,12 @@
+#Check resource requests and limits for pods:
+
+kubectl get pods -o custom-columns=NAME:.metadata.name,REQUESTS:.spec.containers[0].resources.requests,LIMITS:.spec.containers[0].resources.limits
+
+#Get resource allocation per node:
+
+kubectl describe nodes | grep -A 5 "Allocated resources"
+
+#Check current resource usage:
+
+kubectl top nodes
+kubectl top pods
