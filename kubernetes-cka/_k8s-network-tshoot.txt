@@ -1,0 +1,14 @@
+# Check services
+kubectl get services
+
+# Check endpoints
+kubectl get endpoints <service-name>
+
+# Test DNS resolution
+kubectl run -it --rm debug --image=busybox -- nslookup kubernetes.default
+
+# Test connectivity
+kubectl run -it --rm debug --image=nicolaka/netshoot -- curl -v <service-name>
+
+# Check network policies
+kubectl get networkpolicies
