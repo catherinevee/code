@@ -1,0 +1,2 @@
+
+We're planning to create a RESTful API for [specific functionality]. Can you help design the endpoints we'll need? For each endpoint, suggest the HTTP method, URL structure, request/response formats, and any authentication requirements.

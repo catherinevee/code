@@ -1,0 +1,1 @@
+We need to design a database schema for [specific part of the system]. Based on our requirements, can you suggest an initial schema design? Please include tables, key fields, and relationships. Also, consider potential indexing strategies for performance.

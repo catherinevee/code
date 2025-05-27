@@ -1,0 +1,72 @@
+
+Please review the following code for potential security vulnerabilities:
+[Paste your code]
+
+Consider common security issues such as:
+1. Injection flaws
+2. Broken authentication
+3. Sensitive data exposure
+4. XML external entities (XXE)
+5. Broken access control
+6. Security misconfigurations
+7. Cross-site scripting (XSS)
+
+For each vulnerability found, explain the risk and suggest secure coding practices to mitigate it.
+
+---
+
+
+Please perform a security audit on the following code:
+[Paste your code here]
+
+In your audit, please:
+1. Identify any potential security vulnerabilities, including but not limited to:
+   - Injection flaws (SQL, NoSQL, OS command injection, etc.)
+   - Broken authentication
+   - Sensitive data exposure
+   - XML External Entities (XXE)
+   - Broken access control
+   - Security misconfigurations
+   - Cross-Site Scripting (XSS)
+   - Insecure deserialization
+   - Using components with known vulnerabilities
+   - Insufficient logging & monitoring
+2. For each vulnerability found:
+   - Explain the potential impact
+   - Suggest a fix or mitigation strategy
+   - Provide a code snippet demonstrating the fix, if applicable
+3. Suggest any general security improvements or best practices that could be applied to this code.
+4. Recommend any security-related libraries or tools that could help improve the overall security posture of the application.
+
+This comprehensive prompt usually gives me a solid starting point for hardening my application’s security.
+
+
+Please analyze the following code for performance optimization opportunities:
+[Paste your code here]
+
+In your analysis, please:
+1. Identify any performance bottlenecks or inefficient operations
+2. Suggest optimizations, considering:
+   - Time complexity improvements
+   - Memory usage optimization
+   - Reduction of unnecessary operations or function calls
+   - Potential for parallelization or asynchronous operations
+   - Caching strategies
+3. For each suggestion:
+   - Explain the expected performance impact
+   - Provide a code snippet demonstrating the optimization
+   - Discuss any potential trade-offs (e.g., readability, maintainability)
+4. Recommend any language-specific performance best practices or libraries that could be beneficial
+5. Suggest any profiling tools or techniques that could help further analyze the performance in a real-world scenario
+
+
+---
+
+
+Please review the following database interaction code for potential SQL injection vulnerabilities:
+[Paste your database interaction code]
+
+For each vulnerability found:
+1. Explain how it could be exploited
+2. Provide a secure alternative implementation
+3. Suggest any relevant security libraries or techniques specific to our database system

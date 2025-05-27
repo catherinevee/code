@@ -1,0 +1,2 @@
+
+We're considering using [Technology A] or [Technology B] for [specific functionality]. Can you compare these options in the context of our project, considering factors like performance, ease of implementation, and future scalability?

@@ -1,0 +1,1 @@
+Based on our project plan, can you identify potential risks or challenges we might face during development? For each risk, suggest possible mitigation strategies.

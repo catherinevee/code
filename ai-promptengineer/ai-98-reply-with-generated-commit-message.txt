@@ -1,0 +1,11 @@
+
+I've made the following changes to my code:
+[Paste your git diff or describe the changes]
+
+Please help me create a commit message that:
+1. Summarizes the changes concisely (50 characters or less for the subject line)
+2. Provides more details in the body (wrap at 72 characters)
+3. Follows best practices for git commit messages
+4. Includes any relevant issue numbers or references
+
+The commit message should be informative enough that team members can understand the changes without having to look at the code.

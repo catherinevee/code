@@ -1,0 +1,7 @@
+I'm starting a new [type of project] using [programming language/framework]. Can you suggest a basic file structure and essential dependencies I should consider?
+
+---
+
+
+I want to build [brief project description]. Can you help me break this down into manageable tasks and suggest an order of implementation?
+

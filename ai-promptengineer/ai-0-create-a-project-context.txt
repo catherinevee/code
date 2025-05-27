@@ -1,0 +1,5 @@
+    Project Overview: Start with a brief description of your project. What are you building? What problem is it solving?
+    Tech Stack: List out the languages, frameworks, and tools you’re planning to use.
+    Key Requirements: Outline the main features or functionalities you want to implement.
+    Constraints: Any limitations or specific requirements? Maybe you need to support older browsers or have strict performance criteria.
+    Coding Style: If you have specific coding conventions or architectural preferences, mention them.
