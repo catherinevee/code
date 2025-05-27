@@ -1,0 +1,5 @@
+# Using Trivy
+trivy image nginx:1.21
+
+# Or in CI/CD pipeline
+trivy image --exit-code 1 --severity HIGH,CRITICAL myapp:latest

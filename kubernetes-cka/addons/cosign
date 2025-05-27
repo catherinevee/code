@@ -1,0 +1,5 @@
+# Sign an image with Cosign
+cosign sign --key cosign.key registry.example.com/myapp:latest
+
+# Verify an image
+cosign verify --key cosign.pub registry.example.com/myapp:latest

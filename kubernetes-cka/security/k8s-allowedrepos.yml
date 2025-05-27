@@ -1,0 +1,14 @@
+# Using OPA Gatekeeper
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sAllowedRepos
+metadata:
+  name: require-trusted-repos
+spec:
+  match:
+    kinds:
+    - apiGroups: [ '' ]
+      kinds: [ 'Pod' ]
+  parameters:
+    repos:
+    - 'registry.example.com/'
+    - 'docker.io/bitnami/'

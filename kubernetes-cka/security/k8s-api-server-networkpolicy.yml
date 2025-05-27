@@ -1,0 +1,18 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: control-plane-protection
+  namespace: kube-system
+spec:
+  podSelector:
+    matchLabels:
+      tier: control-plane
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - ipBlock:
+        cidr: 10.0.0.0/24 # Admin workstations
+    ports:
+    - protocol: TCP
+      port: 6443 # API server
