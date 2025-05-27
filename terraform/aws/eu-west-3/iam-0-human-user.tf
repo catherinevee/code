@@ -31,3 +31,22 @@ module "katherine" {
   groups     = ["admins"]
 }
 
+
+module "kathryn" {
+  source = "cloudposse/iam-user/aws"
+  version     = "1.2.1"
+  name       = "kathryn"
+  user_name  = "kathryn@outlook.com"
+  pgp_key    = "keybase:kathryn"
+}
+
+module "catharine" {
+  source = "cloudposse/iam-user/aws"
+  version     = "1.2.1"
+  name       = "catharine"
+  user_name  = "catharine@outlook.com"
+  pgp_key    = "keybase:catharine"
+}
+
+
+
