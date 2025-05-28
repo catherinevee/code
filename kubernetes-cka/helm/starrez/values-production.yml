@@ -1,0 +1,29 @@
+replicaCount: 3
+
+image:
+  tag: "v1.0.0"
+
+config:
+  nginx:
+    host: catherine.it.com
+  app:
+    env: production
+    logLevel: warn
+
+autoscaling:
+  enabled: true
+  minReplicas: 3
+  maxReplicas: 15
+  targetCPUUtilizationPercentage: 60
+
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 2
+
+networkPolicy:
+  enabled: true
+
+monitoring:
+  enabled: true
+  serviceMonitor:
+    enabled: true

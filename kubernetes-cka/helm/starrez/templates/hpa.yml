@@ -2,14 +2,14 @@
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: {{ include "starrez-chart.fullname" . }}
+  name: {{ include "starrez-housing.fullname" . }}
   labels:
-    {{- include "starrez-chart.labels" . | nindent 4 }}
+    {{- include "starrez-housing.labels" . | nindent 4 }}
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: {{ include "starrez-chart.fullname" . }}
+    name: {{ include "starrez-housing.fullname" . }}
   minReplicas: {{ .Values.autoscaling.minReplicas }}
   maxReplicas: {{ .Values.autoscaling.maxReplicas }}
   metrics:
@@ -30,3 +30,5 @@ spec:
           averageUtilization: {{ .Values.autoscaling.targetMemoryUtilizationPercentage }}
     {{- end }}
 {{- end }}
+
+---

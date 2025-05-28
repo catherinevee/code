@@ -1,0 +1,34 @@
+replicaCount: 2
+
+image:
+  tag: "staging"
+
+config:
+  nginx:
+    host: staging.catherine.it.com
+  app:
+    env: staging
+    logLevel: info
+
+ingress:
+  hosts:
+  - host: staging.catherine.it.com
+    paths:
+    - path: /
+      pathType: Prefix
+  tls:
+  - secretName: housing-staging-tls-secret
+    hosts:
+    - staging.catherine.it.com
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 6
+
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 1
+
+networkPolicy:
+  enabled: false

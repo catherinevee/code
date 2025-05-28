@@ -1,0 +1,153 @@
+# Oxidized Router Database - 100 Network Devices
+# Format: hostname,model
+# Models: ios (Cisco), junos (Juniper), eos (Arista), vyos (VyOS)
+# Generated for lab/testing environments
+
+# Core Network Infrastructure - Cisco Devices
+core-rtr-01.net.cqc.edu,ios
+core-rtr-02.net.cqc.edu,ios
+core-sw-01.net.cqc.edu,ios
+core-sw-02.net.cqc.edu,ios
+agg-sw-01.net.cqc.edu,ios
+agg-sw-02.net.cqc.edu,ios
+dist-rtr-01.net.cqc.edu,ios
+dist-rtr-02.net.cqc.edu,ios
+
+# Data Center - Arista Switches
+dc1-spine-01.net.cqc.edu,eos
+dc1-spine-02.net.cqc.edu,eos
+dc1-leaf-01.net.cqc.edu,eos
+dc1-leaf-02.net.cqc.edu,eos
+dc1-leaf-03.net.cqc.edu,eos
+dc1-leaf-04.net.cqc.edu,eos
+dc2-spine-01.net.cqc.edu,eos
+dc2-spine-02.net.cqc.edu,eos
+dc2-leaf-01.net.cqc.edu,eos
+dc2-leaf-02.net.cqc.edu,eos
+dc2-leaf-03.net.cqc.edu,eos
+dc2-leaf-04.net.cqc.edu,eos
+
+# Campus Network - Cisco Access Switches
+bldg-a-sw-01.net.cqc.edu,ios
+bldg-a-sw-02.net.cqc.edu,ios
+bldg-a-sw-03.net.cqc.edu,ios
+bldg-b-sw-01.net.cqc.edu,ios
+bldg-b-sw-02.net.cqc.edu,ios
+bldg-b-sw-03.net.cqc.edu,ios
+bldg-c-sw-01.net.cqc.edu,ios
+bldg-c-sw-02.net.cqc.edu,ios
+
+# WAN Edge - Juniper Devices
+wan-edge-01.net.cqc.edu,junos
+wan-edge-02.net.cqc.edu,junos
+mpls-pe-01.net.cqc.edu,junos
+mpls-pe-02.net.cqc.edu,junos
+inet-gw-01.net.cqc.edu,junos
+inet-gw-02.net.cqc.edu,junos
+
+# Branch Offices - Mixed Vendors
+branch-nyc-rtr-01.net.cqc.edu,ios
+branch-nyc-sw-01.net.cqc.edu,ios
+branch-la-rtr-01.net.cqc.edu,vyos
+branch-la-sw-01.net.cqc.edu,ios
+branch-chi-rtr-01.net.cqc.edu,junos
+branch-chi-sw-01.net.cqc.edu,ios
+branch-sea-rtr-01.net.cqc.edu,vyos
+branch-sea-sw-01.net.cqc.edu,eos
+branch-mia-rtr-01.net.cqc.edu,ios
+branch-mia-sw-01.net.cqc.edu,ios
+
+# Remote Sites - VyOS and Cisco
+remote-site-001.net.cqc.edu,vyos
+remote-site-002.net.cqc.edu,vyos
+remote-site-003.net.cqc.edu,ios
+remote-site-004.net.cqc.edu,vyos
+remote-site-005.net.cqc.edu,ios
+remote-site-006.net.cqc.edu,vyos
+remote-site-007.net.cqc.edu,ios
+remote-site-008.net.cqc.edu,vyos
+remote-site-009.net.cqc.edu,ios
+remote-site-010.net.cqc.edu,vyos
+
+# Manufacturing Floor - Cisco Industrial
+plant-floor-sw-01.net.cqc.edu,ios
+plant-floor-sw-02.net.cqc.edu,ios
+plant-floor-sw-03.net.cqc.edu,ios
+plant-floor-sw-04.net.cqc.edu,ios
+plant-core-rtr-01.net.cqc.edu,ios
+plant-dmz-fw-01.net.cqc.edu,ios
+
+# Service Provider Edge - Juniper
+pe-router-01.net.cqc.edu,junos
+pe-router-02.net.cqc.edu,junos
+pe-router-03.net.cqc.edu,junos
+pe-router-04.net.cqc.edu,junos
+asbr-01.net.cqc.edu,junos
+asbr-02.net.cqc.edu,junos
+
+# Cloud Edge - Arista
+cloud-gw-aws-01.net.cqc.edu,eos
+cloud-gw-aws-02.net.cqc.edu,eos
+cloud-gw-azure-01.net.cqc.edu,eos
+cloud-gw-azure-02.net.cqc.edu,eos
+cloud-gw-gcp-01.net.cqc.edu,eos
+cloud-gw-gcp-02.net.cqc.edu,eos
+
+# Wireless Controllers - Cisco
+wlc-campus-01.net.cqc.edu,ios
+wlc-campus-02.net.cqc.edu,ios
+wlc-guest-01.net.cqc.edu,ios
+
+# Lab Environment - Mixed Vendors
+lab-spine-01.net.cqc.edu,eos
+lab-spine-02.net.cqc.edu,eos
+lab-leaf-01.net.cqc.edu,eos
+lab-leaf-02.net.cqc.edu,eos
+lab-rtr-cisco-01.net.cqc.edu,ios
+lab-rtr-juniper-01.net.cqc.edu,junos
+lab-rtr-vyos-01.net.cqc.edu,vyos
+
+# Internet Edge - Juniper
+internet-edge-01.net.cqc.edu,junos
+internet-edge-02.net.cqc.edu,junos
+firewall-edge-01.net.cqc.edu,junos
+firewall-edge-02.net.cqc.edu,junos
+
+# Regional Hubs - Cisco
+regional-hub-east.net.cqc.edu,ios
+regional-hub-west.net.cqc.edu,ios
+regional-hub-central.net.cqc.edu,ios
+
+# Backup and DR - VyOS
+dr-site-rtr-01.net.cqc.edu,vyos
+dr-site-rtr-02.net.cqc.edu,vyos
+backup-site-rtr-01.net.cqc.edu,vyos
+
+# Additional Campus Distribution
+dist-sw-north-01.net.cqc.edu,ios
+dist-sw-north-02.net.cqc.edu,ios
+dist-sw-south-01.net.cqc.edu,ios
+dist-sw-south-02.net.cqc.edu,ios
+
+# Test Environment Devices
+test-rtr-01.net.cqc.edu,vyos
+test-sw-01.net.cqc.edu,eos
+test-fw-01.net.cqc.edu,junos
+
+# Additional Arista Devices for Load Balancing
+lb-spine-01.net.cqc.edu,eos
+lb-spine-02.net.cqc.edu,eos
+lb-leaf-01.net.cqc.edu,eos
+lb-leaf-02.net.cqc.edu,eos
+
+# Edge Computing Sites - Mixed
+edge-compute-01.net.cqc.edu,vyos
+edge-compute-02.net.cqc.edu,ios
+edge-compute-03.net.cqc.edu,eos
+edge-compute-04.net.cqc.edu,junos
+
+# Final Test Devices to Reach 100
+final-test-01.net.cqc.edu,ios
+final-test-02.net.cqc.edu,junos
+final-test-03.net.cqc.edu,eos
+final-test-04.net.cqc.edu,vyos

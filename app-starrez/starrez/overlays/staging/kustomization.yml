@@ -1,0 +1,61 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namePrefix: staging-
+nameSuffix: -staging
+
+resources:
+- ../../base
+
+images:
+- name: housing-frontend
+  newName: catherinevee/catherinevee
+  newTag: staging
+
+replicas:
+- name: housing-frontend
+  count: 2
+
+patches:
+- target:
+    kind: Deployment
+    name: housing-frontend
+  patch: |-
+    - op: replace
+      path: /spec/template/spec/containers/0/resources/requests/memory
+      value: "64Mi"
+    - op: replace
+      path: /spec/template/spec/containers/0/resources/limits/memory
+      value: "128Mi"
+    - op: replace
+      path: /spec/template/spec/containers/0/env/0/value
+      value: "staging.catherine.it.com"
+
+- target:
+    kind: Ingress
+    name: housing-frontend-ingress
+  patch: |-
+    - op: replace
+      path: /spec/rules/0/host
+      value: "staging.catherine.it.com"
+    - op: replace
+      path: /spec/tls/0/hosts/0
+      value: "staging.catherine.it.com"
+
+- target:
+    kind: HorizontalPodAutoscaler
+    name: housing-frontend-hpa
+  patch: |-
+    - op: replace
+      path: /spec/minReplicas
+      value: 2
+    - op: replace
+      path: /spec/maxReplicas
+      value: 6
+
+configMapGenerator:
+- name: housing-app-config
+  behavior: merge
+  literals:
+  - app.env=staging
+  - log.level=info

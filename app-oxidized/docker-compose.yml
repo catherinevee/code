@@ -1,0 +1,23 @@
+version: '3.8'
+services:
+  oxidized:
+    build: .
+    ports:
+      - "8888:8888"
+    environment:
+      - OXIDIZED_USERNAME=backup_user
+      - OXIDIZED_PASSWORD=secure_password
+      - OXIDIZED_GIT_REPO=true
+      - OXIDIZED_INTERVAL=3600
+      - OXIDIZED_THREADS=30
+      - OXIDIZED_WEB_HOST=0.0.0.0
+    volumes:
+      - oxidized_configs:/home/oxidized/.config/oxidized/configs
+      - oxidized_logs:/home/oxidized/.config/oxidized/logs
+      - ./devices.csv:/home/oxidized/.config/oxidized/router.db:ro
+      - ./ssh_keys:/home/oxidized/.ssh:ro
+    restart: unless-stopped
+
+volumes:
+  oxidized_configs:
+  oxidized_logs:

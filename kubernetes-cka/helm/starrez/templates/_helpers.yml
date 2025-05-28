@@ -1,16 +1,14 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "starrez-chart.name" -}}
+{{- define "starrez-housing.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Create a default fully qualified app name.
-We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
-If release name contains chart name it will be used as a full name.
 */}}
-{{- define "starrez-chart.fullname" -}}
+{{- define "starrez-housing.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -26,36 +24,38 @@ If release name contains chart name it will be used as a full name.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "starrez-chart.chart" -}}
+{{- define "starrez-housing.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Common labels
 */}}
-{{- define "starrez-chart.labels" -}}
-helm.sh/chart: {{ include "starrez-chart.chart" . }}
-{{ include "starrez-chart.selectorLabels" . }}
+{{- define "starrez-housing.labels" -}}
+helm.sh/chart: {{ include "starrez-housing.chart" . }}
+{{ include "starrez-housing.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
+app.kubernetes.io/component: web
+app.kubernetes.io/part-of: housing-department
 {{- end }}
 
 {{/*
 Selector labels
 */}}
-{{- define "starrez-chart.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "starrez-chart.name" . }}
+{{- define "starrez-housing.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "starrez-housing.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
 Create the name of the service account to use
 */}}
-{{- define "starrez-chart.serviceAccountName" -}}
+{{- define "starrez-housing.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create }}
-{{- default (include "starrez-chart.fullname" .) .Values.serviceAccount.name }}
+{{- default (include "starrez-housing.fullname" .) .Values.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}

@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: housing-app-config
+data:
+  app.env: "production"
+  log.level: "info"
+  nginx.worker.processes: "auto"
+  nginx.worker.connections: "1024"

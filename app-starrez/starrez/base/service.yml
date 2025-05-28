@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: housing-frontend-service
+spec:
+  selector:
+    app: housing-frontend
+  ports:
+  - name: http
+    protocol: TCP
+    port: 80
+    targetPort: http
+  type: ClusterIP
