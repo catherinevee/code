@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Meta tags for SEO and responsive design -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Modern lightweight webpage optimized for performance">
+    <meta name="theme-color" content="#667eea">
+    
+    <!-- Preload critical resources for performance -->
+    <link rel="preload" href="data:font/woff2;base64," as="font" type="font/woff2" crossorigin>
+    
+    <!-- Title with fallback -->
+    <title>Modern Lightweight App</title>
+    
+    <!-- Inline CSS for critical path optimization -->
+    <style>
+        /* CSS Reset and base styles for consistency across browsers */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        /* CSS Custom Properties for maintainable theming */
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --accent-color: #4f46e5;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f9fafb;
+            --border-color: #e5e7eb;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --border-radius: 12px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* Dark mode support with automatic detection */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --text-primary: #f9fafb;
+                --text-secondary: #d1d5db;
+                --bg-primary: #111827;
+                --bg-secondary: #1f2937;
+                --border-color: #374151;
+            }
+        }
+        
+        /* Base typography with system font stack for performance */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: var(--bg-primary);
+            font-size: 16px;
+            /* Smooth scrolling behavior */
+            scroll-behavior: smooth;
+            /* Improve font rendering */
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        /* Container with responsive max-width */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            width: 100%;
+        }
+        
+        /* Hero section with gradient background */
+        .hero {
+            background: var(--primary-gradient);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Animated background pattern */
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(circle at 25% 25%, rgba(255,255,255,0.1) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(255,255,255,0.1) 0%, transparent 50%);
+            animation: float 20s ease-in-out infinite;
+        }
+        
+        /* Floating animation for background elements */
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(30px, -30px) rotate(120deg); }
+            66% { transform: translate(-20px, 20px) rotate(240deg); }
+        }
+        
+        /* Hero content styling */
+        .hero-content {
+            text-align: center;
+            color: white;
+            z-index: 1;
+            position: relative;
+            max-width: 800px;
+            /* Fade-in animation */
+            animation: fadeInUp 1s ease-out;
+        }
+        
+        /* Fade-in animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Typography hierarchy */
+        .hero h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.025em;
+        }
+        
+        .hero p {
+            font-size: clamp(1.125rem, 2vw, 1.25rem);
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        /* Button group layout */
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+        
+        /* Modern button styling with hover effects */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 1rem;
+            min-width: 140px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Primary button variant */
+        .btn-primary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+        }
+        
+        .btn-primary:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Secondary button variant */
+        .btn-secondary {
+            background: white;
+            color: var(--accent-color);
+            border: 2px solid transparent;
+        }
+        
+        .btn-secondary:hover {
+            background: var(--bg-secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Content sections */
+        .section {
+            padding: 5rem 0;
+            position: relative;
+        }
+        
+        .section:nth-child(even) {
+            background: var(--bg-secondary);
+        }
+        
+        /* Feature cards grid */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        
+        /* Individual feature card */
+        .feature-card {
+            background: var(--bg-primary);
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        /* Feature card icon */
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--secondary-gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+        
+        /* Feature card typography */
+        .feature-card h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+        
+        .feature-card p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+        
+        /* Section headers */
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .section-header h2 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+        
+        .section-header p {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        /* Footer styling */
+        .footer {
+            background: var(--text-primary);
+            color: var(--bg-primary);
+            padding: 3rem 0;
+            text-align: center;
+        }
+        
+        .footer p {
+            opacity: 0.8;
+        }
+        
+        /* Loading spinner for dynamic content */
+        .spinner {
+            display: none;
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Error state styling */
+        .error-message {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            margin: 1rem 0;
+            display: none;
+        }
+        
+        /* Success state styling */
+        .success-message {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            color: #166534;
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            margin: 1rem 0;
+            display: none;
+        }
+        
+        /* Responsive design breakpoints */
+        @media (max-width: 768px) {
+            .button-group {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 280px;
+            }
+            
+            .features {
+                grid-template-columns: 1fr;
+            }
+            
+            .section {
+                padding: 3rem 0;
+            }
+        }
+        
+        /* Reduced motion preference support */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+        
+        /* High contrast mode support */
+        @media (prefers-contrast: high) {
+            :root {
+                --border-color: #000000;
+                --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            }
+        }
+        
+        /* Print styles */
+        @media print {
+            .hero {
+                background: none !important;
+                color: black !important;
+                min-height: auto;
+            }
+            
+            .btn {
+                display: none;
+            }
+            
+            .feature-card {
+                box-shadow: none;
+                border: 1px solid #ccc;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Skip link for accessibility -->
+    <a href="#main-content" class="sr-only">Skip to main content</a>
+    
+    <!-- Hero section -->
+    <section class="hero" role="banner">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Modern Web Experience</h1>
+                <p>A lightweight, performant, and accessible web application built with modern best practices and optimized for all devices.</p>
+                
+                <!-- Loading spinner for dynamic operations -->
+                <div class="spinner" id="loadingSpinner" aria-label="Loading"></div>
+                
+                <!-- Error and success message containers -->
+                <div class="error-message" id="errorMessage" role="alert" aria-live="polite"></div>
+                <div class="success-message" id="successMessage" role="alert" aria-live="polite"></div>
+                
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="handlePrimaryAction()" aria-describedby="primary-desc">
+                        Get Started
+                    </button>
+                    <button class="btn btn-secondary" onclick="handleSecondaryAction()" aria-describedby="secondary-desc">
+                        Learn More
+                    </button>
+                </div>
+                
+                <!-- Screen reader descriptions for buttons -->
+                <div id="primary-desc" class="sr-only">Begin your journey with our application</div>
+                <div id="secondary-desc" class="sr-only">Discover more about our features and capabilities</div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Main content area -->
+    <main id="main-content">
+        <!-- Features section -->
+        <section class="section">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Key Features</h2>
+                    <p>Discover what makes our application stand out from the rest</p>
+                </div>
+                
+                <div class="features">
+                    <article class="feature-card">
+                        <div class="feature-icon" aria-hidden="true">⚡</div>
+                        <h3>Lightning Fast</h3>
+                        <p>Optimized for performance with minimal load times and smooth interactions across all devices and network conditions.</p>
+                    </article>
+                    
+                    <article class="feature-card">
+                        <div class="feature-icon" aria-hidden="true">📱</div>
+                        <h3>Responsive Design</h3>
+                        <p>Seamlessly adapts to any screen size, from mobile phones to desktop monitors, providing an optimal viewing experience.</p>
+                    </article>
+                    
+                    <article class="feature-card">
+                        <div class="feature-icon" aria-hidden="true">🔒</div>
+                        <h3>Secure & Reliable</h3>
+                        <p>Built with security best practices and robust error handling to ensure your data stays safe and the app runs smoothly.</p>
+                    </article>
+                    
+                    <article class="feature-card">
+                        <div class="feature-icon" aria-hidden="true">♿</div>
+                        <h3>Accessible</h3>
+                        <p>Designed with accessibility in mind, supporting screen readers and keyboard navigation for all users.</p>
+                    </article>
+                    
+                    <article class="feature-card">
+                        <div class="feature-icon" aria-hidden="true">🌙</div>
+                        <h3>Dark Mode</h3>
+                        <p>Automatically adapts to your system preferences with beautiful light and dark themes for comfortable viewing.</p>
+                    </article>
+                    
+                    <article class="feature-card">
+                        <div class="feature-icon" aria-hidden="true">⚙️</div>
+                        <h3>Modern Tech</h3>
+                        <p>Built with cutting-edge web technologies and best practices for maintainability and future-proofing.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+        
+        <!-- About section -->
+        <section class="section">
+            <div class="container">
+                <div class="section-header">
+                    <h2>About This Application</h2>
+                    <p>Learn more about the technology and principles behind our lightweight web application</p>
+                </div>
+                
+                <div class="features">
+                    <article class="feature-card">
+                        <h3>Performance First</h3>
+                        <p>Every aspect of this application is optimized for speed, from the minimal CSS and JavaScript footprint to the efficient Docker container setup.</p>
+                    </article>
+                    
+                    <article class="feature-card">
+                        <h3>Best Practices</h3>
+                        <p>Implements modern web standards including semantic HTML, proper ARIA labels, CSP headers, and progressive enhancement techniques.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <!-- Footer -->
+    <footer class="footer" role="contentinfo">
+        <div class="container">
+            <p>&copy; 2025 Modern Lightweight App. Built with performance and accessibility in mind.</p>
+        </div>
+    </footer>
+    
+    <!-- Screen reader only class for accessibility -->
+    <style>
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+    </style>
+    
+    <!-- Minimal JavaScript for interactivity and error handling -->
+    <script>
+        // Application state management
+        const AppState = {
+            isLoading: false,
+            hasError: false,
+            lastAction: null
+        };
+        
+        // Utility functions for better error handling
+        function showSpinner() {
+            const spinner = document.getElementById('loadingSpinner');
+            if (spinner) {
+                spinner.style.display = 'block';
+                AppState.isLoading = true;
+            }
+        }
+        
+        function hideSpinner() {
+            const spinner = document.getElementById('loadingSpinner');
+            if (spinner) {
+                spinner.style.display = 'none';
+                AppState.isLoading = false;
+            }
+        }
+        
+        function showError(message) {
+            hideMessages(); // Clear any existing messages
+            const errorDiv = document.getElementById('errorMessage');
+            if (errorDiv) {
+                errorDiv.textContent = message;
+                errorDiv.style.display = 'block';
+                AppState.hasError = true;
+                
+                // Auto-hide error after 5 seconds
+                setTimeout(() => {
+                    hideMessages();
+                }, 5000);
+            }
+        }
+        
+        function showSuccess(message) {
+            hideMessages(); // Clear any existing messages
+            const successDiv = document.getElementById('successMessage');
+            if (successDiv) {
+                successDiv.textContent = message;
+                successDiv.style.display = 'block';
+                
+                // Auto-hide success message after 3 seconds
+                setTimeout(() => {
+                    hideMessages();
+                }, 3000);
+            }
+        }
+        
+        function hideMessages() {
+            const errorDiv = document.getElementById('errorMessage');
+            const successDiv = document.getElementById('successMessage');
+            
+            if (errorDiv) {
+                errorDiv.style.display = 'none';
+            }
+            if (successDiv) {
+                successDiv.style.display = 'none';
+            }
+            
+            AppState.hasError = false;
+        }
+        
+        // Simulate async operation with proper error handling
+        async function simulateAsyncOperation(operation) {
+            try {
+                showSpinner();
+                
+                // Simulate API call delay
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                
+                // Simulate occasional failures for demonstration
+                if (Math.random() < 0.2) {
+                    throw new Error(`Operation "${operation}" failed due to network issues. Please try again.`);
+                }
+                
+                return { success: true, operation };
+            } catch (error) {
+                console.error('Operation failed:', error);
+                throw error;
+            } finally {
+                hideSpinner();
+            }
+        }
+        
+        // Primary action handler with comprehensive error handling
+        async function handlePrimaryAction() {
+            try {
+                // Prevent multiple simultaneous operations
+                if (AppState.isLoading) {
+                    return;
+                }
+                
+                AppState.lastAction = 'primary';
+                hideMessages();
+                
+                const result = await simulateAsyncOperation('Get Started');
+                
+                if (result.success) {
+                    showSuccess('Welcome! Your journey has begun successfully.');
+                    
+                    // Log successful action for analytics (in a real app)
+                    console.log('Primary action completed successfully');
+                }
+                
+            } catch (error) {
+                showError(error.message || 'An unexpected error occurred. Please try again.');
+                
+                // Log error for debugging (in a real app, send to error tracking service)
+                console.error('Primary action failed:', error);
+            }
+        }
+        
+        // Secondary action handler
+        async function handleSecondaryAction() {
+            try {
+                if (AppState.isLoading) {
+                    return;
+                }
+                
+                AppState.lastAction = 'secondary';
+                hideMessages();
+                
+                const result = await simulateAsyncOperation('Learn More');
+                
+                if (result.success) {
+                    showSuccess('Great! Here\'s more information about our features.');
+                    console.log('Secondary action completed successfully');
+                }
+                
+            } catch (error) {
+                showError(error.message || 'Failed to load additional information. Please try again.');
+                console.error('Secondary action failed:', error);
+            }
+        }
+        
+        // Global error handler for uncaught errors
+        window.addEventListener('error', function(event) {
+            console.error('Global error caught:', event.error);
+            showError('An unexpected error occurred. Please refresh the page if the problem persists.');
+        });
+        
+        // Promise rejection handler
+        window.addEventListener('unhandledrejection', function(event) {
+            console.error('Unhandled promise rejection:', event.reason);
+            showError('A background operation failed. The application should continue to work normally.');
+            event.preventDefault(); // Prevent the default browser behavior
+        });
+        
+        // Page visibility API for performance optimization
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                // Page is hidden, pause any ongoing operations if needed
+                console.log('Page hidden - pausing operations');
+            } else {
+                // Page is visible again, resume operations
+                console.log('Page visible - resuming operations');
+            }
+        });
+        
+        // Performance monitoring
+        window.addEventListener('load', function() {
+            // Log performance metrics (in a real app, send to analytics)
+            if (typeof performance !== 'undefined' && performance.timing) {
+                const loadTime = performance.timing.loadEventEnd - performance.timing.navigationStart;
+                console.log(`Page load time: ${loadTime}ms`);
+                
+                // Mark as interactive for Lighthouse and other tools
+                if (performance.mark) {
+                    performance.mark('page-interactive');
+                }
+            }
+        });
+        
+        // Service worker registration for offline support (commented out for basic version)
+        /*
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(function(registration) {
+                        console.log('SW registered: ', registration);
+                    })
+                    .catch(function(registrationError) {
+                        console.log('SW registration failed: ', registrationError);
+                    });
+            });
+        }
+        */
+        
+        // Keyboard navigation support
+        document.addEventListener('keydown', function(event) {
+            // Handle escape key to close messages
+            if (event.key === 'Escape') {
+                hideMessages();
+            }
+            
+            // Handle enter key on buttons (backup for accessibility)
+            if (event.key === 'Enter' && event.target.classList.contains('btn')) {
+                event.target.click();
+            }
+        });
+        
+        // Initialize application
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Modern Lightweight App initialized successfully');
+            
+            // Check for any initialization errors
+            try {
+                // Verify all critical elements exist
+                const criticalElements = [
+                    'loadingSpinner',
+                    'errorMessage', 
+                    'successMessage'
+                ];
+                
+                for (const elementId of criticalElements) {
+                    if (!document.getElementById(elementId)) {
+                        throw new Error(`Critical element missing: ${elementId}`);
+                    }
+                }
+                
+                console.log('All critical elements verified');
+                
+            } catch (error) {
+                console.error('Initialization error:', error);
+                // Fallback behavior - app should still work without these elements
+            }
+        });
+    </script>
+</body>
+</html>
