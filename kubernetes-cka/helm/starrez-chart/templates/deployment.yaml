@@ -1,78 +1,97 @@
+# It manages the desired state for your pods, ensuring a specified number of replica pods are running.
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "starrez-chart.fullname" . }}
+  name: {{ include "catherine.starrez.com.fullname" . }} # Full name for the deployment, derived from helper.
   labels:
-    {{- include "starrez-chart.labels" . | nindent 4 }}
+    {{- include "catherine.starrez.com.labels" . | nindent 4 }} # Common labels for all resources.
 spec:
-  {{- if not .Values.autoscaling.enabled }}
-  replicas: {{ .Values.replicaCount }}
-  {{- end }}
+  replicas: {{ .Values.replicaCount }} # Number of desired replica pods.
   selector:
     matchLabels:
-      {{- include "starrez-chart.selectorLabels" . | nindent 6 }}
+      {{- include "catherine.starrez.com.selectorLabels" . | nindent 6 }} # Selector to match pods managed by this deployment.
+  strategy:
+    type: RollingUpdate # Deployment strategy. RollingUpdate ensures zero downtime updates.
+    rollingUpdate:
+      maxUnavailable: 25% # Max percentage of pods unavailable during update.
+      maxSurge: 25% # Max percentage of pods that can be created above desired replica count.
   template:
     metadata:
       {{- with .Values.podAnnotations }}
       annotations:
-        {{- toYaml . | nindent 8 }}
+        {{- toYaml . | nindent 8 }} # Optional annotations for the pod (e.g., Prometheus).
       {{- end }}
       labels:
-        {{- include "starrez-chart.labels" . | nindent 8 }}
-        {{- with .Values.podLabels }}
-        {{- toYaml . | nindent 8 }}
-        {{- end }}
+        {{- include "dorm-website.selectorLabels" . | nindent 8 }} # Labels for the pod template.
     spec:
-      {{- with .Values.imagePullSecrets }}
-      imagePullSecrets:
-        {{- toYaml . | nindent 8 }}
+      {{- if .Values.serviceAccount.create }}
+      serviceAccountName: {{ include "catherine.starrez.com.fullname" . }} # Assigns a service account to the pod.
+      {{- else if .Values.serviceAccount.name }}
+      serviceAccountName: {{ .Values.serviceAccount.name }}
       {{- end }}
-      serviceAccountName: {{ include "starrez-chart.serviceAccountName" . }}
-      {{- with .Values.podSecurityContext }}
+      {{- with .Values.securityContext }}
       securityContext:
-        {{- toYaml . | nindent 8 }}
+        {{- toYaml . | nindent 8 }} # Pod-level security context.
       {{- end }}
       containers:
-        - name: {{ .Chart.Name }}
-          {{- with .Values.securityContext }}
+        - name: {{ .Values.app.name }} # Name of the container.
+          image: "{{ .Values.app.image.repository }}:{{ .Values.app.image.tag }}" # Full image name and tag.
+          imagePullPolicy: {{ .Values.app.image.pullPolicy }} # Image pull policy.
+          {{- with .Values.containerSecurityContext }}
           securityContext:
-            {{- toYaml . | nindent 12 }}
+            {{- toYaml . | nindent 12 }} # Container-level security context.
           {{- end }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
-            - name: http
-              containerPort: {{ .Values.service.port }}
+            - name: http # Name of the port.
+              containerPort: {{ .Values.service.targetPort }} # Port the container listens on.
               protocol: TCP
-          {{- with .Values.livenessProbe }}
+          env:
+            # Environment variables from ConfigMap
+            {{- range $key, $value := .Values.config }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
+            # Environment variables from Secret
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "catherine.starrez.com.fullname" . }} # Name of the Secret.
+                  key: DATABASE_URL # Key within the Secret.
+            - name: API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "catherine.starrez.com.fullname" . }}
+                  key: API_KEY
+          {{- if .Values.livenessProbe }}
           livenessProbe:
-            {{- toYaml . | nindent 12 }}
+            {{- toYaml .Values.livenessProbe | nindent 12 }} # Liveness probe configuration.
           {{- end }}
-          {{- with .Values.readinessProbe }}
+          {{- if .Values.readinessProbe }}
           readinessProbe:
-            {{- toYaml . | nindent 12 }}
+            {{- toYaml .Values.readinessProbe | nindent 12 }} # Readiness probe configuration.
           {{- end }}
-          {{- with .Values.resources }}
           resources:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
-          {{- with .Values.volumeMounts }}
+            {{- toYaml .Values.resources | nindent 12 }} # Resource requests and limits.
+          {{- if .Values.persistence.enabled }}
           volumeMounts:
-            {{- toYaml . | nindent 12 }}
+            - name: data-volume
+              mountPath: {{ .Values.persistence.mountPath }}
           {{- end }}
-      {{- with .Values.volumes }}
-      volumes:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.nodeSelector }}
+      {{- if .Values.nodeSelector }}
       nodeSelector:
-        {{- toYaml . | nindent 8 }}
+        {{- toYaml .Values.nodeSelector | nindent 8 }} # Node selector to schedule pods on specific nodes.
       {{- end }}
-      {{- with .Values.affinity }}
-      affinity:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.tolerations }}
+      {{- if .Values.tolerations }}
       tolerations:
-        {{- toYaml . | nindent 8 }}
+        {{- toYaml .Values.tolerations | nindent 8 }} # Tolerations for tainted nodes.
+      {{- end }}
+      {{- if .Values.affinity }}
+      affinity:
+        {{- toYaml .Values.affinity | nindent 8 }} # Pod affinity and anti-affinity rules.
+      {{- end }}
+      {{- if .Values.persistence.enabled }}
+      volumes:
+        - name: data-volume
+          persistentVolumeClaim:
+            claimName: {{ include "catherine.starrez.com.fullname" . }}-pvc # Name of the PVC created for persistence.
       {{- end }}

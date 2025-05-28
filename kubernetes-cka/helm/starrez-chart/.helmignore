@@ -21,3 +21,15 @@
 .idea/
 *.tmproj
 .vscode/
+
+# Files
+.DS_Store
+.terraform/
+terraform.tfstate*
+*.swp
+*.bak
+*.tmp
+*.log
+
+# Helm-specific files
+Chart.lock

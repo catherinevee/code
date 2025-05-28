@@ -1,6 +1,15 @@
+# configmap.yaml
+#
+# This file defines a Kubernetes ConfigMap for the dorm website application.
+# ConfigMaps are used to store non-sensitive configuration data as key-value pairs.
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ .Release.Name }}-configmap
+  name: {{ include "catherine.starrez.com.fullname" . }} # Full name for the ConfigMap.
+  labels:
+    {{- include "catherine.starrez.com.labels" . | nindent 4 }} # Common labels.
 data:
-  myvalue: "Hello World"
+  # Iterate over values.config and add them as key-value pairs to the ConfigMap.
+  {{- range $key, $value := .Values.config }}
+  {{ $key }}: {{ $value | quote }}
+  {{- end }}
