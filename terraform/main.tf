@@ -71,10 +71,11 @@ provider "local" {}
 provider "azuredevops" {
   use_msi = true
 }
-provider "kubernetes" {
-  config_path = "kubernetes/kubeconfig.yaml"
+
+#provider "kubernetes" {
+#  config_path = "kubernetes/kubeconfig.yaml"
   #config_context = ""
-}
+#}
 
 
 provider "spotinst" {
@@ -95,6 +96,10 @@ module "google_module" {
 
 #==============================
 #AWS
+
+module "aws_module-apne1" {
+  source ="./aws/ap-northeast-1/"
+}
 
 #module "aws_module-apse1" {
 #  source ="./aws/ap-southeast-1/"
@@ -122,9 +127,9 @@ module "google_module" {
 #  source ="./azure/francecentral"
 #}
 
-module "azure_mexicocentral_module" {
-  source ="./azure/mexicocentral"
-}
+#module "azure_mexicocentral_module" {
+#  source ="./azure/mexicocentral"
+#}
 
 
 #module "azure_westus_module" {
