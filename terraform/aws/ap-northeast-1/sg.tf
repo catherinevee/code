@@ -34,3 +34,4 @@ resource "aws_security_group" "web" {
       description = "SSH access"
     }
   }
+}
