@@ -97,9 +97,9 @@ module "google_module" {
 #==============================
 #AWS
 
-module "aws_module-apne1" {
-  source ="./aws/ap-northeast-1/"
-}
+#module "aws_module-apne1" {
+#  source ="./aws/ap-northeast-1/"
+#}
 
 #module "aws_module-apse1" {
 #  source ="./aws/ap-southeast-1/"
