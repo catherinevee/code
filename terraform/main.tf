@@ -101,6 +101,10 @@ module "google_module" {
 #  source ="./aws/ap-northeast-1/"
 #}
 
+module "aws_module-apne2" {
+  source ="./aws/ap-northeast-2/"
+}
+
 #module "aws_module-apse1" {
 #  source ="./aws/ap-southeast-1/"
 #}
