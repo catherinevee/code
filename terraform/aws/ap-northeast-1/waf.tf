@@ -1,7 +1,6 @@
 locals {
-  is_production = var.app_config.environment == "production"
   # Production gets enhanced features
-  enable_waf = var.app_config.features.waf_protection && local.is_production
+  enable_waf = var.app_config.features.waf_protection && var.environment == "production"
 }
 
 
