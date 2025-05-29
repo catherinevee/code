@@ -1,7 +1,7 @@
 
 resource "aws_ebs_volume" "backup_storage" {
   for_each = {
-    for env, config in var.environments : env => config
+    for env, config in var.workstations : env => config
     if config.backup_days > 0
   }
 
