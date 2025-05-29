@@ -99,6 +99,8 @@ module "google_module" {
 
 module "aws_module-apne1" {
   source ="./aws/ap-northeast-1/"
+  app_config = "dfgfgd"
+  security_rules = "dfgdfg"
 }
 
 #module "aws_module-apse1" {

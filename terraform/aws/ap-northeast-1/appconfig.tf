@@ -6,7 +6,6 @@ resource "aws_autoscaling_group" "app" {
   vpc_zone_identifier = data.aws_subnets.private.ids
   target_group_arns   = [aws_lb_target_group.app.arn]
   health_check_type   = "ELB"
-
   min_size         = var.app_config.scaling.min_instances
   max_size         = var.app_config.scaling.max_instances
   desired_capacity = var.app_config.scaling.min_instances
