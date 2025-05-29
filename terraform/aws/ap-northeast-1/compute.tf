@@ -1,5 +1,5 @@
 module "ubuntu_24_04_latest" {
-  source = "modules/get-ami"
+  source = "./modules/get-ami"
 }
 
 locals {
