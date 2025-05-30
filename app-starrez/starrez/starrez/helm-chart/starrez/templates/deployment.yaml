@@ -1,0 +1,10 @@
+# Ensure proper labels and selectors
+# Add health checks:
+livenessProbe:
+  httpGet:
+    path: /
+    port: http
+readinessProbe:
+  httpGet:
+    path: /
+    port: http

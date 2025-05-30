@@ -1,0 +1,9 @@
+# Create a new volume
+docker volume create mysql-data-restored
+
+# Restore the backup
+docker run --rm \
+  -v mysql-data-restored:/target \
+  -v $(pwd):/backup \
+  alpine:latest \
+  sh -c "tar xzvf /backup/mysql-backup.tar.gz -C /target"

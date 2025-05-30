@@ -1,0 +1,6 @@
+docker run -d \
+  --name dev-environment \
+  -p 3000:3000 \
+  -v $(pwd):/app \
+  node:18-alpine \
+  sh -c "cd /app && npm install && npm start"

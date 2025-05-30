@@ -1,0 +1,11 @@
+# Create volumes for content and configuration
+docker volume create web-content
+docker volume create web-config
+
+# Run nginx with both volumes
+docker run -d \
+  --name web-server \
+  -p 8080:80 \
+  -v web-content:/usr/share/nginx/html \
+  -v web-config:/etc/nginx/conf.d \
+  nginx:latest

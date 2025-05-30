@@ -1,0 +1,14 @@
+# Create a shared volume
+docker volume create shared-data
+
+# Run container 1
+docker run -d \
+  --name app1 \
+  -v shared-data:/data \
+  myapp:latest
+
+# Run container 2
+docker run -d \
+  --name app2 \
+  -v shared-data:/data \
+  myapp:latest

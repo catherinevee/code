@@ -1,0 +1,12 @@
+# Create a data container
+docker create \
+  --name data-container \
+  -v data-volume:/data \
+  alpine:latest \
+  /bin/true
+
+# Use volumes from the data container
+docker run -d \
+  --name app1 \
+  --volumes-from data-container \
+  myapp:latest

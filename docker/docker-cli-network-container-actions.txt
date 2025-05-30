@@ -1,0 +1,5 @@
+docker run -d --name web --network my-network nginx:latest
+
+docker network connect my-network db
+
+docker network disconnect my-network db

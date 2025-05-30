@@ -1,0 +1,6 @@
+# Backup
+docker run --rm \
+  -v mysql-data:/source:ro \
+  -v $(pwd):/backup \
+  alpine:latest \
+  tar czvf /backup/mysql-backup.tar.gz -C /source .

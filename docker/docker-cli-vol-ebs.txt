@@ -1,0 +1,11 @@
+# Create a volume using a specific driver
+docker volume create --driver=rexray/ebs \
+  --opt size=10 \
+  --opt volumetype=gp2 \
+  remote-storage
+
+# Use the volume with a container
+docker run -d \
+  --name remote-data-app \
+  -v remote-storage:/data \
+  myapp:latest
