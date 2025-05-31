@@ -1,0 +1,7 @@
+Forgotten Development Environments: Temporary environments created for testing that never get cleaned up.
+
+Orphaned Load Balancers: Load balancers that continue running after their target instances are terminated.
+
+Unused Storage Volumes: EBS volumes, S3 buckets, or database snapshots that are no longer attached to active resources.
+
+Idle Databases: Database instances that were created for testing and left running indefinitely.

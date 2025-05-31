@@ -1,0 +1,6 @@
+# Example: Using AWS CLI to get daily cost breakdown by service
+aws ce get-cost-and-usage \
+  --time-period Start=2025-01-01,End=2025-01-15 \
+  --granularity DAILY \
+  --metrics BlendedCost \
+  --group-by Type=DIMENSION,Key=SERVICE

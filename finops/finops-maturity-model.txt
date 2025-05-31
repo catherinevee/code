@@ -1,0 +1,19 @@
+Organizations typically progress through three maturity levels:
+
+Crawl: Basic cost visibility and manual optimization
+
+    Monthly cost reports
+    Manual resource cleanup
+    Basic tagging implementation
+
+Walk: Automated optimization and proactive cost management
+
+    Real-time cost monitoring
+    Automated resource scheduling
+    Cost attribution by team or project
+
+Run: Advanced optimization and cost-aware culture
+
+    Predictive cost modeling
+    Automated optimization at scale
+    Cost considerations in all engineering decisions

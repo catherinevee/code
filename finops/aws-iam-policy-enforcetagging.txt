@@ -1,0 +1,18 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Deny",
+      "Action": ["ec2:RunInstances"],
+      "Resource": ["arn:aws:ec2:*:*:instance/*"],
+      "Condition": {
+        "Null": {
+          "aws:RequestedRegion": "false",
+          "ec2:ResourceTag/Project": "true",
+          "ec2:ResourceTag/Environment": "true",
+          "ec2:ResourceTag/Team": "true"
+        }
+      }
+    }
+  ]
+}

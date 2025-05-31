@@ -1,0 +1,9 @@
+# AWS CLI command to get EC2 CPU utilization for the last 30 days
+aws cloudwatch get-metric-statistics \
+  --namespace AWS/EC2 \
+  --metric-name CPUUtilization \
+  --dimensions Name=InstanceId,Value=i-1234567890abcdef0 \
+  --start-time $(date -d '30 days ago' -u +%Y-%m-%dT%H:%M:%S) \
+  --end-time $(date -u +%Y-%m-%dT%H:%M:%S) \
+  --period 3600 \
+  --statistics Average,Maximum

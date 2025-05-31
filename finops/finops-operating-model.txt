@@ -1,0 +1,26 @@
+nform Phase: Building Awareness
+
+The inform phase focuses on creating cost transparency and building organizational awareness. For DevOps teams, this means:
+
+    Setting up cost monitoring dashboards
+    Implementing proper resource tagging
+    Creating cost allocation reports
+    Establishing baseline metrics
+
+Optimize Phase: Taking Action
+
+Once you have visibility, the optimize phase involves taking specific actions to reduce costs:
+
+    Right-sizing underutilized resources
+    Eliminating waste and unused resources
+    Implementing automated cost optimization
+    Negotiating better rates with cloud providers
+
+Operate Phase: Establishing Continuous Practices
+
+The operate phase embeds cost optimization into regular operations:
+
+    Regular cost reviews and optimization cycles
+    Automated cost controls and governance
+    Cultural changes that make cost awareness routine
+    Continuous improvement of FinOps practices

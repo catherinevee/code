@@ -1,0 +1,5 @@
+Fear of Performance Issues: Teams often choose larger instance sizes to avoid potential slowdowns, especially for customer-facing applications.
+
+Lack of Right-Sizing Knowledge: Without clear usage data, teams make educated guesses that tend toward over-allocation.
+
+One-Size-Fits-All Approaches: Using the same instance type for all environments, even when development and staging don't need production-level resources.

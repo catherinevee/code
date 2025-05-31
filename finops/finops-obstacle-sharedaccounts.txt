@@ -1,0 +1,5 @@
+Inconsistent Tagging: Teams use different tagging conventions or forget to tag resources entirely.
+
+Shared Resources: Infrastructure components like networking or monitoring that serve multiple applications.
+
+Resource Sprawl: As teams scale, keeping track of resource ownership becomes increasingly difficult.
