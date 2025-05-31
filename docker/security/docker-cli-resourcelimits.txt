@@ -1,0 +1,4 @@
+docker run -d --name starrez \
+  --memory="500m" --memory-swap="1g" \
+  --cpus="0.5" \
+  myapp:latest

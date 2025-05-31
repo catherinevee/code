@@ -1,0 +1,2 @@
+#these values come from runtime variables in the ci/cd pipeline
+JWT_SECRET= $(JWT_SECRET) POSTGRES_PASSWORD=$(POSTGRES_PASSWORD) docker-compose up

@@ -1,0 +1,1 @@
+docker run -d --name host-nginx --network host nginx:latest

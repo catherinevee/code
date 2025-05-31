@@ -1,0 +1,5 @@
+# Enable content trust
+export DOCKER_CONTENT_TRUST=1
+
+# Now docker pull/push will verify signatures
+docker pull nginx:latest

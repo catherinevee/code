@@ -1,0 +1,5 @@
+# Large base image (~940MB)
+FROM node:18
+
+# Smaller base image (~180MB)
+FROM node:18-alpine

@@ -1,0 +1,13 @@
+docker inspect --format='{{json .NetworkSettings}}' web | jq
+
+# Check network connectivity from inside a container
+docker exec -it container-name ping other-container
+
+# Examine container network interfaces
+docker exec -it container-name ip addr show
+
+# Trace network path
+docker exec -it container-name traceroute other-container
+
+# Analyze network traffic
+docker exec -it container-name tcpdump -i eth0

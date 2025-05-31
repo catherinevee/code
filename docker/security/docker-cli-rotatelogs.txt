@@ -1,0 +1,5 @@
+docker run -d --name app \
+  --log-driver=json-file \
+  --log-opt max-size=10m \
+  --log-opt max-file=3 \
+  myapp:latest

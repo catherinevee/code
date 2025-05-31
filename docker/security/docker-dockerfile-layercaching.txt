@@ -1,0 +1,12 @@
+FROM node:18-alpine
+
+# These layers change less frequently
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+
+# These layers change more frequently
+COPY . .
+RUN npm run build
+
+CMD ["npm", "start"]

@@ -1,0 +1,17 @@
+services:
+  backend:
+    networks:
+      - backend-network
+      - db-network
+
+  db:
+    networks:
+      - db-network
+
+networks:
+  backend-network:
+  db-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24

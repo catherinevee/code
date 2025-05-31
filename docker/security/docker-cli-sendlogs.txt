@@ -1,0 +1,4 @@
+docker run -d --name app \
+  --log-driver=fluentd \
+  --log-opt fluentd-address=localhost:24224 \
+  myapp:latest

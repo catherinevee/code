@@ -1,0 +1,7 @@
+# BAD: No specific version
+FROM node
+RUN npm install express
+
+# GOOD: Pinned versions
+FROM node:18.17.1-alpine3.18
+RUN npm install express@4.18.2
