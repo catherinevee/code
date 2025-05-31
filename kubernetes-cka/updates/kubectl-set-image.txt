@@ -1,0 +1,1 @@
+kubectl set image deployment/myapp container=myapp:2.0

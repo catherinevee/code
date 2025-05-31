@@ -1,0 +1,13 @@
+# Dockerfile.dev
+FROM node:18
+
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+
+# Expose debug port
+EXPOSE 3000 9229
+
+# Command with debugging enabled
+CMD ["node", "--inspect=0.0.0.0:9229", "index.js"]

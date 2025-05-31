@@ -1,0 +1,1 @@
+docker exec db-container pg_dump -U postgres mydb > backup_$(date +%Y%m%d).sql
