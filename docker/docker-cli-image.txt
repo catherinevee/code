@@ -1,0 +1,2 @@
+# Clean up unused images
+docker image prune -a --filter "until=24h"
