@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Move-in Tips - Sunflower State College</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+    <meta name="description" content="Complete move-in guide and interactive checklist for new students at Sunflower State College">
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-college-blue shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <img class="h-8 w-8" src="images/logo.png" alt="Sunflower State College Logo">
+                        <h1 class="ml-2 text-xl font-bold text-white inline">Sunflower State College</h1>
+                    </div>
+                </div>
+                
+                <!-- Desktop Navigation -->
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="index.html" class="text-white hover:bg-college-gold hover:text-college-blue px-3 py-2 rounded-md text-sm font-medium">Home</a>
+                        <a href="dorms.html" class="text-white hover:bg-college-gold hover:text-college-blue px-3 py-2 rounded-md text-sm font-medium">Dorms</a>
+                        <a href="study-areas.html" class="text-white hover:bg-college-gold hover:text-college-blue px-3 py-2 rounded-md text-sm font-medium">Study Areas</a>
+                        <a href="weekend-hours.html" class="text-white hover:bg-college-gold hover:text-college-blue px-3 py-2 rounded-md text-sm font-medium">Weekend Hours</a>
+                        <a href="move-in-tips.html" class="bg-college-gold text-college-blue px-3 py-2 rounded-md text-sm font-medium">Move-in Tips</a>
+                        <a href="wifi.html" class="text-white hover:bg-college-gold hover:text-college-blue px-3 py-2 rounded-md text-sm font-medium">WiFi</a>
+                    </div>
+                </div>
+                
+                <!-- Mobile menu button -->
+                <div class="md:hidden">
+                    <button type="button" class="mobile-menu-button inline-flex items-center justify-center p-2 rounded-md text-white hover:bg-college-gold hover:text-college-blue focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
+                        <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Menu -->
+        <div class="mobile-menu hidden md:hidden">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="index.html" class="text-white hover:bg-college-gold hover:text-college-blue block px-3 py-2 rounded-md text-base font-medium">Home</a>
+                <a href="dorms.html" class="text-white hover:bg-college-gold hover:text-college-blue block px-3 py-2 rounded-md text-base font-medium">Dorms</a>
+                <a href="study-areas.html" class="text-white hover:bg-college-gold hover:text-college-blue block px-3 py-2 rounded-md text-base font-medium">Study Areas</a>
+                <a href="weekend-hours.html" class="text-white hover:bg-college-gold hover:text-college-blue block px-3 py-2 rounded-md text-base font-medium">Weekend Hours</a>
+                <a href="move-in-tips.html" class="bg-college-gold text-college-blue block px-3 py-2 rounded-md text-base font-medium">Move-in Tips</a>
+                <a href="wifi.html" class="text-white hover:bg-college-gold hover:text-college-blue block px-3 py-2 rounded-md text-base font-medium">WiFi</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="bg-white shadow">
+        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+            <div class="md:flex md:items-center md:justify-between">
+                <div class="flex-1 min-w-0">
+                    <h1 class="text-3xl font-bold text-gray-900">Move-in Tips & Checklist</h1>
+                    <p class="mt-2 text-lg text-gray-600">Your complete guide to a smooth transition to campus life</p>
+                </div>
+                <div class="mt-4 md:mt-0 md:ml-4">
+                    <div class="bg-college-blue text-white px-4 py-2 rounded-lg">
+                        <div class="text-center">
+                            <div class="text-sm">Move-in Progress</div>
+                            <div class="text-lg font-bold"><span id="checklist-progress">0</span>% Complete</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <div class="px-4 py-6 sm:px-0">
+            
+            <!-- Quick Action Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="ml-4 flex-1">
+                            <h3 class="text-lg font-medium text-gray-900">Interactive Checklist</h3>
+                            <p class="text-sm text-gray-500">Track your move-in progress</p>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <button onclick="document.getElementById('checklist-container').scrollIntoView({behavior: 'smooth'})" 
+                                class="w-full bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition-colors">
+                            Start Checklist
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="ml-4 flex-1">
+                            <h3 class="text-lg font-medium text-gray-900">Timeline Planner</h3>
+                            <p class="text-sm text-gray-500">When to do what</p>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <button onclick="document.getElementById('timeline-section').scrollIntoView({behavior: 'smooth'})" 
+                                class="w-full bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">
+                            View Timeline
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
+                                <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="ml-4 flex-1">
+                            <h3 class="text-lg font-medium text-gray-900">Need Help?</h3>
+                            <p class="text-sm text-gray-500">Get support and answers</p>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <button onclick="moveInHelper.showHelpResources()" 
+                                class="w-full bg-yellow-600 text-white px-4 py-2 rounded hover:bg-yellow-700 transition-colors">
+                            Get Help
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Timeline Overview -->
+            <div id="timeline-section" class="bg-white rounded-lg shadow-lg p-6 mb-8">
+                <h2 class="text-xl font-semibold text-gray-900 mb-6">Move-in Timeline</h2>
+                
+                <div class="relative">
+                    <div class="absolute left-4 top-0 bottom-0 w-0.5 bg-gray-300"></div>
+                    
+                    <div class="space-y-8">
+                        <div class="relative flex items-start">
+                            <div class="flex-shrink-0">
+                                <div class="flex items-center justify-center w-8 h-8 bg-college-blue text-white rounded-full text-sm font-medium">
+                                    1
+                                </div>
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="text-lg font-medium text-gray-900">2-4 Weeks Before</h3>
+                                <p class="text-gray-600">Complete housing paperwork, order supplies, and prepare documents</p>
+                                <div class="mt-2 text-sm text-college-blue">
+                                    <span id="timeline-progress-1" class="font-medium">0% complete</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="relative flex items-start">
+                            <div class="flex-shrink-0">
+                                <div class="flex items-center justify-center w-8 h-8 bg-college-blue text-white rounded-full text-sm font-medium">
+                                    2
+                                </div>
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="text-lg font-medium text-gray-900">1 Week Before</h3>
+                                <p class="text-gray-600">Pack belongings, confirm move-in time, and prepare for travel</p>
+                                <div class="mt-2 text-sm text-college-blue">
+                                    <span id="timeline-progress-2" class="font-medium">0% complete</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="relative flex items-start">
+                            <div class="flex-shrink-0">
+                                <div class="flex items-center justify-center w-8 h-8 bg-college-blue text-white rounded-full text-sm font-medium">
+                                    3
+                                </div>
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="text-lg font-medium text-gray-900">Move-in Day</h3>
+                                <p class="text-gray-600">Check in, set up room, meet neighbors, and attend orientation</p>
+                                <div class="mt-2 text-sm text-college-blue">
+                                    <span id="timeline-progress-3" class="font-medium">0% complete</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="relative flex items-start">
+                            <div class="flex-shrink-0">
+                                <div class="flex items-center justify-center w-8 h-8 bg-college-blue text-white rounded-full text-sm font-medium">
+                                    4
+                                </div>
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="text-lg font-medium text-gray-900">First Week</h3>
+                                <p class="text-gray-600">Get WiFi setup, explore campus, and settle into routines</p>
+                                <div class="mt-2 text-sm text-college-blue">
+                                    <span id="timeline-progress-4" class="font-medium">0% complete</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interactive Checklist -->
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-xl font-semibold text-gray-900">Interactive Move-in Checklist</h2>
+                    <div class="flex space-x-2">
+                        <button id="save-progress" class="bg-college-blue text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors text-sm">
+                            Save Progress
+                        </button>
+                        <button id="reset-checklist" class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 transition-colors text-sm">
+                            Reset
+                        </button>
+                        <button onclick="moveInHelper.exportChecklist()" class="bg-college-gold text-college-blue px-4 py-2 rounded hover:bg-yellow-400 transition-colors text-sm">
+                            Export PDF
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Progress Bar -->
+                <div class="mb-6">
+                    <div class="flex items-center justify-between text-sm text-gray-600 mb-2">
+                        <span>Overall Progress</span>
+                        <span><span id="completed-count">0</span> of <span id="total-count">0</span> completed</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-3">
+                        <div id="progress-bar" class="bg-college-blue h-3 rounded-full transition-all duration-300" style="width: 0%"></div>
+                    </div>
+                </div>
+                
+                <!-- Filter Options -->
+                <div class="mb-6 flex flex-wrap gap-2">
+                    <button onclick="moveInHelper.filterByCategory('all')" class="filter-btn active px-3 py-1 text-sm rounded-full border border-gray-300 hover:bg-gray-50">
+                        All Tasks
+                    </button>
+                    <button onclick="moveInHelper.filterByCategory('incomplete')" class="filter-btn px-3 py-1 text-sm rounded-full border border-gray-300 hover:bg-gray-50">
+                        Incomplete
+                    </button>
+                    <button onclick="moveInHelper.filterByCategory('completed')" class="filter-btn px-3 py-1 text-sm rounded-full border border-gray-300 hover:bg-gray-50">
+                        Completed
+                    </button>
+                    <button onclick="moveInHelper.filterByCategory('priority')" class="filter-btn px-3 py-1 text-sm rounded-full border border-gray-300 hover:bg-gray-50">
+                        High Priority
+                    </button>
+                </div>
+                
+                <!-- Checklist Categories -->
+                <div id="checklist-container">
+                    <!-- Checklist items will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Move-in Day Schedule -->
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+                <h2 class="text-xl font-semibold text-gray-900 mb-4">Move-in Day Schedule</h2>
+                <p class="text-gray-600 mb-6">Typical move-in day timeline to help you plan your arrival</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="font-medium text-gray-900 mb-3">Morning (8:00 AM - 12:00 PM)</h3>
+                        <div class="space-y-3 text-sm">
+                            <div class="flex items-center p-3 bg-gray-50 rounded">
+                                <div class="w-16 text-gray-500 font-medium">8:00 AM</div>
+                                <div>Check-in opens, receive room keys and welcome packet</div>
+                            </div>
+                            <div class="flex items-center p-3 bg-gray-50 rounded">
+                                <div class="w-16 text-gray-500 font-medium">9:00 AM</div>
+                                <div>Unload vehicles, use provided move-in carts</div>
+                            </div>
+                            <div class="flex items-center p-3 bg-gray-50 rounded">
+                                <div class="w-16 text-gray-500 font-medium">10:00 AM</div>
+                                <div>Set up room basics, meet roommate</div>
+                            </div>
+                            <div class="flex items-center p-3 bg-gray-50 rounded">
+                                <div class="w-16 text-gray-500 font-medium">11:00 AM</div>
+                                <div>Campus tour for families</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 class="font-medium text-gray-900 mb-3">Afternoon (12:00 PM - 6:00 PM)</h3>
+                        <div class="space-y-3 text-sm">
+                            <div class="flex items-center p-3 bg-gray-50 rounded">
+                                <div class="w-16 text-gray-500 font-medium">12:00 PM</div>
+                                <div>Lunch break, dining hall introduction</div>
+                            </div>
+                            <div class="flex items-center p-3 bg-gray-50 rounded">
+                                <div class="w-16 text-gray-500 font-medium">1:00 PM</div>
+                                <div>Student ID photos and card pickup</div>
+                            </div>
+                            <div class="flex items-center p-3 bg-gray-50 rounded">
+                                <div class="w-16 text-gray-500 font-medium">2:00 PM</div>
+                                <div>Residence hall meeting and floor introductions</div>
+                            </div>
+                            <div class="flex items-center p-3 bg-gray-50 rounded">
+                                <div class="w-16 text-gray-500 font-medium">3:00 PM</div>
+                                <div>WiFi setup and tech support</div>
+                            </div>
+                            <div class="flex items-center p-3 bg-gray-50 rounded">
+                                <div class="w-16 text-gray-500 font-medium">4:00 PM</div>
+                                <div>Family farewell activities</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Helpful Resources -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
+                    <div class="flex items-center mb-4">
+                        <div class="flex-shrink-0">
+                            <svg class="h-8 w-8 text-college-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-lg font-medium text-gray-900">Campus Map</h3>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-4">Interactive campus map with parking, dining, and building locations.</p>
+                    <button onclick="moveInHelper.showCampusMap()" class="w-full bg-college-blue text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">
+                        View Map
+                    </button>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
+                    <div class="flex items-center mb-4">
+                        <div class="flex-shrink-0">
+                            <svg class="h-8 w-8 text-college-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                            </svg>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-lg font-medium text-gray-900">Shopping List</h3>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-4">Essential items you'll need for your dorm room and campus life.</p>
+                    <button onclick="moveInHelper.showShoppingList()" class="w-full bg-college-gold text-college-blue px-4 py-2 rounded hover:bg-yellow-400 transition-colors">
+                        View List
+                    </button>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
+                    <div class="flex items-center mb-4">
+                        <div class="flex-shrink-0">
+                            <svg class="h-8 w-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                            </svg>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-lg font-medium text-gray-900">Budget Planner</h3>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-4">Plan your move-in and semester expenses with our budget calculator.</p>
+                    <button onclick="moveInHelper.showBudgetPlanner()" class="w-full bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition-colors">
+                        Start Planning
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal Container -->
+    <div id="modal-container"></div>
+
+    <!-- Footer -->
+    <footer class="bg-college-blue text-white mt-12">
+        <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Residence Life</h3>
+                    <p>Student Services Building<br>
+                    Room 150<br>
+                    (555) 123-4560<br>
+                    reslife@sunflower.edu</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Move-in Support</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="hover:text-college-gold">Move-in Day Volunteers</a></li>
+                        <li><a href="#" class="hover:text-college-gold">Cart Rental</a></li>
+                        <li><a href="#" class="hover:text-college-gold">Storage Solutions</a></li>
+                        <li><a href="#" class="hover:text-college-gold">Family Resources</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Emergency Contacts</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="hover:text-college-gold">Campus Security: (555) 123-4911</a></li>
+                        <li><a href="#" class="hover:text-college-gold">Health Center: (555) 123-4920</a></li>
+                        <li><a href="#" class="hover:text-college-gold">Maintenance: (555) 123-4930</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-blue-800 mt-8 pt-8 text-center">
+                <p>&copy; 2025 Sunflower State College. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Include all necessary JavaScript files -->
+    <script src="js/main.js"></script>
+    <script src="js/content-loader.js"></script>
+    <script src="js/performance-error-system.js"></script>
+    <script>
+        // Move-in Helper System
+        class MoveInHelper {
+            constructor() {
+                this.checklistData = this.generateChecklistData();
+                this.completedItems = new Set();
+                this.totalItems = 0;
+                this.currentFilter = 'all';
+                
+                this.init();
+            }
+            
+            init() {
+                this.loadSavedProgress();
+                this.renderChecklist();
+                this.updateProgress();
+                this.updateTimelineProgress();
+                this.attachEventListeners();
+            }
+            
+            generateChecklistData() {
+                return [
+                    {
+                        category: "2-4 Weeks Before Move-in",
+                        color: "blue",
+                        timelinePhase: 1,
+                        items: [
+                            {
+                                id: "housing-contract",
+                                text: "Complete and submit housing contract",
+                                description: "Log into student portal and complete all housing paperwork",
+                                priority: "high",
+                                estimatedTime: "30 minutes"
+                            },
+                            {
+                                id: "meal-plan",
+                                text: "Select meal plan",
+                                description: "Choose the meal plan that best fits your lifestyle and dietary needs",
+                                priority: "high",
+                                estimatedTime: "15 minutes"
+                            },
+                            {
+                                id: "roommate-contact",
+                                text: "Contact your roommate",
+                                description: "Reach out to coordinate who brings what and get to know each other",
+                                priority: "medium",
+                                estimatedTime: "60 minutes"
+                            },
+                            {
+                                id: "medical-records",
+                                text: "Submit health records to Health Center",
+                                description: "Upload immunization records and complete health forms",
+                                priority: "high",
+                                estimatedTime: "45 minutes"
+                            },
+                            {
+                                id: "financial-aid",
+                                text: "Finalize financial aid and payment plans",
+                                description: "Ensure all financial matters are resolved before move-in",
+                                priority: "high",
+                                estimatedTime: "90 minutes"
+                            }
+                        ]
+                    },
+                    {
+                        category
+{
+                        category: "1 Week Before Move-in",
+                        color: "yellow",
+                        timelinePhase: 2,
+                        items: [
+                            {
+                                id: "packing-start",
+                                text: "Start packing non-essentials",
+                                description: "Pack items you won't need in the final week",
+                                priority: "medium",
+                                estimatedTime: "3 hours"
+                            },
+                            {
+                                id: "moving-supplies",
+                                text: "Gather moving supplies (boxes, tape, labels)",
+                                description: "Get all materials needed for efficient packing and moving",
+                                priority: "high",
+                                estimatedTime: "1 hour"
+                            },
+                            {
+                                id: "travel-plans",
+                                text: "Confirm travel arrangements",
+                                description: "Book transportation and accommodations if coming from far away",
+                                priority: "high",
+                                estimatedTime: "45 minutes"
+                            },
+                            {
+                                id: "important-docs",
+                                text: "Prepare important documents",
+                                description: "Gather ID, insurance cards, bank info, and academic records",
+                                priority: "high",
+                                estimatedTime: "30 minutes"
+                            },
+                            {
+                                id: "address-change",
+                                text: "Update mailing address",
+                                description: "Change address with bank, subscriptions, and important services",
+                                priority: "medium",
+                                estimatedTime: "60 minutes"
+                            }
+                        ]
+                    },
+                    {
+                        category: "Move-in Day",
+                        color: "green",
+                        timelinePhase: 3,
+                        items: [
+                            {
+                                id: "early-arrival",
+                                text: "Arrive during assigned time slot",
+                                description: "Check your move-in time and arrive within your window",
+                                priority: "high",
+                                estimatedTime: "N/A"
+                            },
+                            {
+                                id: "check-in",
+                                text: "Complete check-in process",
+                                description: "Get room keys, welcome packet, and complete any final paperwork",
+                                priority: "high",
+                                estimatedTime: "30 minutes"
+                            },
+                            {
+                                id: "room-inspection",
+                                text: "Inspect room and document any issues",
+                                description: "Check for damages and report them to avoid charges later",
+                                priority: "high",
+                                estimatedTime: "15 minutes"
+                            },
+                            {
+                                id: "unpack-essentials",
+                                text: "Unpack essential items first",
+                                description: "Set up bed, toiletries, and immediate necessities",
+                                priority: "medium",
+                                estimatedTime: "2 hours"
+                            },
+                            {
+                                id: "meet-neighbors",
+                                text: "Introduce yourself to neighbors and RA",
+                                description: "Start building relationships with your floor community",
+                                priority: "medium",
+                                estimatedTime: "30 minutes"
+                            },
+                            {
+                                id: "family-goodbye",
+                                text: "Attend family farewell activities",
+                                description: "Participate in scheduled activities before family departure",
+                                priority: "low",
+                                estimatedTime: "1 hour"
+                            }
+                        ]
+                    },
+                    {
+                        category: "First Week on Campus",
+                        color: "purple",
+                        timelinePhase: 4,
+                        items: [
+                            {
+                                id: "wifi-setup",
+                                text: "Set up WiFi and technology",
+                                description: "Connect all devices to campus network and test connections",
+                                priority: "high",
+                                estimatedTime: "45 minutes"
+                            },
+                            {
+                                id: "campus-exploration",
+                                text: "Explore campus and locate important buildings",
+                                description: "Find your classrooms, dining halls, library, and other key locations",
+                                priority: "high",
+                                estimatedTime: "2 hours"
+                            },
+                            {
+                                id: "student-id",
+                                text: "Get student ID card and test access",
+                                description: "Pick up ID and ensure it works for buildings, dining, and services",
+                                priority: "high",
+                                estimatedTime: "30 minutes"
+                            },
+                            {
+                                id: "orientation-attendance",
+                                text: "Attend all orientation sessions",
+                                description: "Participate in academic and social orientation activities",
+                                priority: "high",
+                                estimatedTime: "6 hours"
+                            },
+                            {
+                                id: "routine-establishment",
+                                text: "Establish daily routines",
+                                description: "Set up study schedules, meal times, and sleep patterns",
+                                priority: "medium",
+                                estimatedTime: "Ongoing"
+                            },
+                            {
+                                id: "campus-involvement",
+                                text: "Join clubs or activities",
+                                description: "Attend club fairs and sign up for activities that interest you",
+                                priority: "low",
+                                estimatedTime: "2 hours"
+                            }
+                        ]
+                    }
+                ];
+            }
+            
+            renderChecklist() {
+                const container = document.getElementById('checklist-container');
+                const totalItems = this.checklistData.reduce((sum, category) => sum + category.items.length, 0);
+                this.totalItems = totalItems;
+                
+                document.getElementById('total-count').textContent = totalItems;
+                
+                const filteredData = this.getFilteredData();
+                
+                const checklistHTML = filteredData.map(category => {
+                    const colorClasses = {
+                        blue: 'border-blue-200 bg-blue-50',
+                        yellow: 'border-yellow-200 bg-yellow-50',
+                        green: 'border-green-200 bg-green-50',
+                        purple: 'border-purple-200 bg-purple-50'
+                    };
+                    
+                    const progressColor = {
+                        blue: 'bg-blue-500',
+                        yellow: 'bg-yellow-500',
+                        green: 'bg-green-500',
+                        purple: 'bg-purple-500'
+                    };
+                    
+                    const completedInCategory = category.items.filter(item => this.completedItems.has(item.id)).length;
+                    const categoryProgress = category.items.length > 0 ? (completedInCategory / category.items.length) * 100 : 0;
+                    
+                    return `
+                        <div class="border ${colorClasses[category.color]} rounded-lg p-6 mb-6 transition-all duration-300">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-lg font-semibold text-gray-900">${category.category}</h3>
+                                <div class="text-sm text-gray-600">
+                                    ${completedInCategory}/${category.items.length} completed
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="${progressColor[category.color]} h-2 rounded-full transition-all duration-300" 
+                                         style="width: ${categoryProgress}%"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="space-y-3">
+                                ${category.items.map(item => `
+                                    <div class="checklist-item flex items-start p-3 rounded-lg border border-gray-200 hover:bg-white transition-colors ${this.completedItems.has(item.id) ? 'opacity-75 bg-gray-50' : 'bg-white'}" data-item-id="${item.id}">
+                                        <div class="flex items-center h-5">
+                                            <input type="checkbox" 
+                                                   id="${item.id}"
+                                                   ${this.completedItems.has(item.id) ? 'checked' : ''}
+                                                   class="checklist-checkbox w-4 h-4 text-college-blue border-gray-300 rounded focus:ring-college-blue focus:ring-2"
+                                                   onchange="moveInHelper.toggleItem('${item.id}')">
+                                        </div>
+                                        <div class="ml-3 flex-1">
+                                            <div class="flex items-center justify-between">
+                                                <label for="${item.id}" class="text-sm font-medium text-gray-900 cursor-pointer ${this.completedItems.has(item.id) ? 'line-through text-gray-500' : ''}">
+                                                    ${item.text}
+                                                </label>
+                                                <div class="flex items-center space-x-2">
+                                                    ${item.priority === 'high' ? `
+                                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                                            High Priority
+                                                        </span>
+                                                    ` : ''}
+                                                    <span class="text-xs text-gray-500">${item.estimatedTime}</span>
+                                                </div>
+                                            </div>
+                                            <p class="text-xs text-gray-600 mt-1">${item.description}</p>
+                                        </div>
+                                        <button class="ml-2 text-gray-400 hover:text-gray-600"
+                                                onclick="moveInHelper.showItemDetails('${item.id}')"
+                                                title="More details">
+                                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+                container.innerHTML = checklistHTML;
+            }
+            
+            getFilteredData() {
+                let filteredData = [...this.checklistData];
+                
+                switch (this.currentFilter) {
+                    case 'incomplete':
+                        filteredData = filteredData.map(category => ({
+                            ...category,
+                            items: category.items.filter(item => !this.completedItems.has(item.id))
+                        })).filter(category => category.items.length > 0);
+                        break;
+                    case 'completed':
+                        filteredData = filteredData.map(category => ({
+                            ...category,
+                            items: category.items.filter(item => this.completedItems.has(item.id))
+                        })).filter(category => category.items.length > 0);
+                        break;
+                    case 'priority':
+                        filteredData = filteredData.map(category => ({
+                            ...category,
+                            items: category.items.filter(item => item.priority === 'high')
+                        })).filter(category => category.items.length > 0);
+                        break;
+                }
+                
+                return filteredData;
+            }
+            
+            filterByCategory(filter) {
+                this.currentFilter = filter;
+                
+                // Update filter button states
+                document.querySelectorAll('.filter-btn').forEach(btn => {
+                    btn.classList.remove('active', 'bg-college-blue', 'text-white');
+                    btn.classList.add('border-gray-300', 'hover:bg-gray-50');
+                });
+                
+                event.target.classList.add('active', 'bg-college-blue', 'text-white');
+                event.target.classList.remove('border-gray-300', 'hover:bg-gray-50');
+                
+                this.renderChecklist();
+            }
+            
+            toggleItem(itemId) {
+                if (this.completedItems.has(itemId)) {
+                    this.completedItems.delete(itemId);
+                } else {
+                    this.completedItems.add(itemId);
+                    this.celebrateCompletion(itemId);
+                }
+                
+                this.updateItemVisual(itemId);
+                this.updateProgress();
+                this.updateTimelineProgress();
+                this.saveProgress();
+            }
+            
+            updateItemVisual(itemId) {
+                const itemElement = document.querySelector(`[data-item-id="${itemId}"]`);
+                if (!itemElement) return;
+                
+                const label = itemElement.querySelector('label');
+                const checkbox = itemElement.querySelector('input');
+                
+                if (this.completedItems.has(itemId)) {
+                    label.classList.add('line-through', 'text-gray-500');
+                    itemElement.classList.add('opacity-75', 'bg-gray-50');
+                    itemElement.classList.remove('bg-white');
+                } else {
+                    label.classList.remove('line-through', 'text-gray-500');
+                    itemElement.classList.remove('opacity-75', 'bg-gray-50');
+                    itemElement.classList.add('bg-white');
+                }
+            }
+            
+            updateProgress() {
+                const completedCount = this.completedItems.size;
+                const percentage = (completedCount / this.totalItems) * 100;
+                
+                document.getElementById('completed-count').textContent = completedCount;
+                document.getElementById('checklist-progress').textContent = Math.round(percentage);
+                document.getElementById('progress-bar').style.width = `${percentage}%`;
+            }
+            
+            updateTimelineProgress() {
+                for (let phase = 1; phase <= 4; phase++) {
+                    const phaseItems = this.checklistData
+                        .filter(category => category.timelinePhase === phase)
+                        .flatMap(category => category.items);
+                    
+                    const completedPhaseItems = phaseItems.filter(item => this.completedItems.has(item.id));
+                    const phaseProgress = phaseItems.length > 0 ? Math.round((completedPhaseItems.length / phaseItems.length) * 100) : 0;
+                    
+                    const progressElement = document.getElementById(`timeline-progress-${phase}`);
+                    if (progressElement) {
+                        progressElement.textContent = `${phaseProgress}% complete`;
+                    }
+                }
+            }
+            
+            celebrateCompletion(itemId) {
+                const itemElement = document.querySelector(`[data-item-id="${itemId}"]`);
+                
+                // Add celebration animation
+                const celebration = document.createElement('div');
+                celebration.className = 'absolute -top-2 -right-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full animate-bounce z-10';
+                celebration.textContent = '✓';
+                
+                itemElement.style.position = 'relative';
+                itemElement.appendChild(celebration);
+                
+                setTimeout(() => {
+                    if (celebration.parentElement) {
+                        celebration.remove();
+                    }
+                }, 2000);
+                
+                // Check if this completes a category
+                const categoryElement = itemElement.closest('.border');
+                const categoryItems = categoryElement.querySelectorAll('.checklist-item');
+                const completedCategoryItems = categoryElement.querySelectorAll('input:checked');
+                
+                if (categoryItems.length === completedCategoryItems.length) {
+                    this.celebrateCategoryCompletion(categoryElement);
+                }
+            }
+            
+            celebrateCategoryCompletion(categoryElement) {
+                const categoryTitle = categoryElement.querySelector('h3');
+                const originalText = categoryTitle.textContent;
+                
+                categoryTitle.innerHTML = `🎉 ${originalText} - Complete!`;
+                categoryElement.classList.add('ring-2', 'ring-green-500');
+                
+                setTimeout(() => {
+                    categoryTitle.textContent = originalText;
+                    categoryElement.classList.remove('ring-2', 'ring-green-500');
+                }, 3000);
+            }
+            
+            showItemDetails(itemId) {
+                const item = this.findItemById(itemId);
+                if (!item) return;
+                
+                const modal = document.createElement('div');
+                modal.className = 'fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50';
+                modal.innerHTML = `
+                    <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-1/2 lg:w-1/3 shadow-lg rounded-md bg-white">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-bold text-gray-900">Task Details</h3>
+                            <button class="close-modal text-gray-400 hover:text-gray-600">
+                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <h4 class="font-medium text-gray-900">${item.text}</h4>
+                                <p class="text-gray-600 mt-2">${item.description}</p>
+                            </div>
+                            
+                            <div class="grid grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <span class="font-medium text-gray-900">Priority:</span>
+                                    <span class="ml-2 capitalize ${item.priority === 'high' ? 'text-red-600' : item.priority === 'medium' ? 'text-yellow-600' : 'text-green-600'}">${item.priority}</span>
+                                </div>
+                                <div>
+                                    <span class="font-medium text-gray-900">Time:</span>
+                                    <span class="ml-2">${item.estimatedTime}</span>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                                <h5 class="font-medium text-blue-900 mb-2">Additional Tips:</h5>
+                                <ul class="text-blue-800 text-sm space-y-1">
+                                    ${this.getAdditionalTips(itemId).map(tip => `<li>• ${tip}</li>`).join('')}
+                                </ul>
+                            </div>
+                            
+                            <div class="flex space-x-3">
+                                <button onclick="moveInHelper.toggleItem('${itemId}'); document.body.removeChild(this.closest('.fixed'))" 
+                                        class="flex-1 ${this.completedItems.has(itemId) ? 'bg-gray-600' : 'bg-green-600'} text-white px-4 py-2 rounded hover:opacity-90 transition-colors">
+                                    ${this.completedItems.has(itemId) ? 'Mark Incomplete' : 'Mark Complete'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(modal);
+                
+                // Close modal functionality
+                modal.querySelector('.close-modal').addEventListener('click', () => {
+                    document.body.removeChild(modal);
+                });
+                
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        document.body.removeChild(modal);
+                    }
+                });
+            }
+            
+            findItemById(itemId) {
+                for (const category of this.checklistData) {
+                    const item = category.items.find(item => item.id === itemId);
+                    if (item) return item;
+                }
+                return null;
+            }
+            
+            getAdditionalTips(itemId) {
+                const tips = {
+                    'housing-contract': [
+                        'Double-check all personal information for accuracy',
+                        'Save a copy of your completed contract',
+                        'Note your move-in date and time slot'
+                    ],
+                    'roommate-contact': [
+                        'Discuss sleep schedules and study habits',
+                        'Coordinate decorating styles and colors',
+                        'Plan who brings shared items like TV or mini-fridge'
+                    ],
+                    'wifi-setup': [
+                        'Have your student ID ready for network authentication',
+                        'Download campus WiFi profile if available',
+                        'Test connection on all your devices'
+                    ],
+                    'campus-exploration': [
+                        'Use the campus map app for turn-by-turn directions',
+                        'Time your walks between classes',
+                        'Note the locations of bathrooms and water fountains'
+                    ]
+                };
+                
+                return tips[itemId] || [
+                    'Contact the appropriate campus office if you need help',
+                    'Don\'t hesitate to ask other students for advice',
+                    'Check the student portal for additional resources'
+                ];
+            }
+            
+            exportChecklist() {
+                // Simulate PDF export functionality
+                const completedItems = Array.from(this.completedItems);
+                const totalItems = this.totalItems;
+                const progress = Math.round((completedItems.length / totalItems) * 100);
+                
+                const exportData = {
+                    studentName: 'Student Name', // Would come from user profile
+                    exportDate: new Date().toLocaleDateString(),
+                    progress: progress,
+                    completedCount: completedItems.length,
+                    totalCount: totalItems,
+                    checklist: this.checklistData.map(category => ({
+                        category: category.category,
+                        items: category.items.map(item => ({
+                            text: item.text,
+                            completed: this.completedItems.has(item.id),
+                            priority: item.priority
+                        }))
+                    }))
+                };
+                
+                // In a real app, this would generate and download a PDF
+                alert(`PDF Export Ready!\n\nProgress: ${progress}%\nCompleted: ${completedItems.length}/${totalItems} tasks\n\nIn a real application, your checklist would be downloaded as a PDF.`);
+                
+                console.log('Export data:', exportData);
+            }
+            
+            showHelpResources() {
+                const modal = document.getElementById('modal-container');
+                modal.innerHTML = `
+                    <div class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+                        <div class="relative top-10 mx-auto p-5 border w-11/12 md:w-2/3 lg:w-1/2 shadow-lg rounded-md bg-white">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-xl font-bold text-gray-900">Move-in Help & Resources</h3>
+                                <button onclick="document.getElementById('modal-container').innerHTML=''" class="text-gray-400 hover:text-gray-600">
+                                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                            
+                            <div class="space-y-6">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                                        <h4 class="font-semibold text-blue-900 mb-3">Emergency Contacts</h4>
+                                        <div class="space-y-2 text-blue-800 text-sm">
+                                            <p><strong>Campus Security:</strong> (555) 123-4911</p>
+                                            <p><strong>Residence Life:</strong> (555) 123-4560</p>
+                                            <p><strong>IT Help Desk:</strong> (555) 123-4590</p>
+                                            <p><strong>Health Center:</strong> (555) 123-4920</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                                        <h4 class="font-semibold text-green-900 mb-3">Move-in Day Support</h4>
+                                        <div class="space-y-2 text-green-800 text-sm">
+                                            <p><strong>Volunteer Helpers:</strong> Available 8am-6pm</p>
+                                            <p><strong>Cart Rental:</strong> Free at each residence hall</p>
+                                            <p><strong>Parking:</strong> Temporary permits provided</p>
+                                            <p><strong>Info Desk:</strong> Student Center lobby</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                                    <h4 class="font-semibold text-yellow-900 mb-3">Frequently Asked Questions</h4>
+                                    <div class="space-y-3 text-yellow-800 text-sm">
+                                        <div>
+                                            <p class="font-medium">Q: What if I arrive outside my assigned time?</p>
+                                            <p>A: Check-in is flexible, but arriving during your slot helps avoid wait times.</p>
+                                        </div>
+                                        <div>
+                                            <p class="font-medium">Q: Can family members help move me in?</p>
+                                            <p>A: Yes! Family is welcome and volunteer helpers are available to assist.</p>
+                                        </div>
+                                        <div>
+                                            <p class="font-medium">Q: What if my roommate hasn't arrived yet?</p>
+                                            <p>A: You can still move in and set up your side of the room.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex space-x-4">
+                                    <button onclick="window.open('tel:5551234560')" class="flex-1 bg-college-blue text-white px-4 py-2 rounded hover:bg-blue-700">
+                                        Call Residence Life
+                                    </button>
+                                    <button onclick="window.open('mailto:reslife@sunflower.edu')" class="flex-1 bg-college-gold text-college-blue px-4 py-2 rounded hover:bg-yellow-400">
+                                        Send Email
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            showCampusMap() {
+                alert('Campus Map would open here! In a real application, this would show an interactive map with move-in locations, parking areas, and important buildings highlighted.');
+            }
+            
+            showShoppingList() {
+                const modal = document.getElementById('modal-container');
+                modal.innerHTML = `
+                    <div class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+                        <div class="relative top-10 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-xl font-bold text-gray-900">Dorm Room Shopping List</h3>
+                                <button onclick="document.getElementById('modal-container').innerHTML=''" class="text-gray-400 hover:text-gray-600">
+                                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                            
+                            <div class="max-h-96 overflow-y-auto">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <h4 class="font-semibold text-gray-900 mb-3">Bedding & Linens</h4>
+                                        <ul class="text-sm space-y-1 text-gray-600">
+                                            <li>• Twin XL sheets (2 sets)</li>
+                                            <li>• Pillows and pillowcases</li>
+                                            <li>• Comforter or duvet</li>
+                                            <li>• Mattress pad/topper</li>
+                                            <li>• Towels (bath and hand)</li>
+                                            <li>• Blanket for extra warmth</li>
+                                        </ul>
+                                    </div>
+                                    
+                                    <div>
+                                        <h4 class="font-semibold text-gray-900 mb-3">Personal Care</h4>
+                                        <ul class="text-sm space-y-1 text-gray-600">
+                                            <li>• Toiletries and personal hygiene items</li>
+                                            <li>• Shower caddy</li>
+                                            <li>• Flip-flops for shower</li>
+                                            <li>• First aid kit</li>
+                                            <li>• Medications</li>
+                                            <li>• Laundry detergent and supplies</li>
+                                        </ul>
+                                    </div>
+                                    
+                                    <div>
+                                        <h4 class="font-semibold text-gray-900 mb-3">Room Organization</h4>
+                                        <ul class="text-sm space-y-1 text-gray-600">
+                                            <li>• Storage bins and containers</li>
+                                            <li>• Hangers</li>
+                                            <li>• Desk organizers</li>
+                                            <li>• Under-bed storage</li>
+                                            <li>• Over-door hooks</li>
+                                            <li>• Command strips and hooks</li>
+                                        </ul>
+                                    </div>
+                                    
+                                    <div>
+                                        <h4 class="font-semibold text-gray-900 mb-3">Technology & Study</h4>
+                                        <ul class="text-sm space-y-1 text-gray-600">
+                                            <li>• Laptop and charger</li>
+                                            <li>• Power strips and extension cords</li>
+                                            <li>• Desk lamp</li>
+                                            <li>• School supplies</li>
+                                            <li>• Printer (if desired)</li>
+                                            <li>• Ethernet cable</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                
+                                <div class="mt-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                                    <h4 class="font-medium text-yellow-900 mb-2">💡 Money-Saving Tips</h4>
+                                    <ul class="text-yellow-800 text-sm space-y-1">
+                                        <li>• Coordinate with roommate to avoid duplicates</li>
+                                        <li>• Check if items are provided (micro-fridge, etc.)</li>
+                                        <li>• Shop end-of-summer sales in July-August</li>
+                                        <li>• Consider buying some items after arrival</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            showBudgetPlanner() {
+                const modal = document.getElementById('modal-container');
+                modal.innerHTML = `
+                    <div class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+                        <div class="relative top-10 mx-auto p-5 border w-11/12 md:w-2/3 lg:w-1/2 shadow-lg rounded-md bg-white">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-xl font-bold text-gray-900">Move-in Budget Planner</h3>
+                                <button onclick="document.getElementById('modal-container').innerHTML=''" class="text-gray-400 hover:text-gray-600">
+                                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                            
+                            <div class="space-y-6">
+                                <div>
+                                    <h4 class="font-semibold text-gray-900 mb-3">Estimated Costs</h4>
+                                    <div class="bg-gray-50 rounded-lg p-4">
+                                        <div class="grid grid-cols-2 gap-4 text-sm">
+                                            <div class="flex justify-between">
+                                                <span>Bedding & Linens:</span>
+                                                <span class="font-medium">$150-300</span>
+                                            </div>
+                                            <div class="flex justify-between">
+                                                <span>Personal Care Items:</span>
+                                                <span class="font-medium">$50-100</span>
+                                            </div>
+                                            <div class="flex justify-between">
+                                                <span>Room Organization:</span>
+                                                <span class="font-medium">$100-200</span>
+                                            </div>
+                                            <div class="flex justify-between">
+                                                <span>Technology:</span>
+                                                <span class="font-medium">$100-500</span>
+                                            </div>
+                                            <div class="flex justify-between">
+                                                <span>Decorations:</span>
+                                                <span class="font-medium">$50-150</span>
+                                            </div>
+                                            <div class="flex justify-between">
+                                                <span>Miscellaneous:</span>
+                                                <span class="font-medium">$75-125</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="border-t mt-4 pt-4">
+                                            <div class="flex justify-between font-semibold">
+                                                <span>Total Estimated Cost:</span>
+                                                <span class="text-college-blue">$525-1,375</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                                    <h4 class="font-medium text-green-900 mb-2">💰 Budget-Friendly Options</h4>
+                                    <ul class="text-green-800 text-sm space-y-1">
+                                        <li>• Buy generic/store brand items when possible</li>
+                                        <li>• Check thrift stores and discount retailers</li>
+                                        <li>• Use items you already have at home</li>
+                                        <li>• Share costs with roommate for shared items</li>
+                                        <li>• Wait to buy non-essential items until after arrival</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            saveProgress() {
+                const progressData = {
+                    completedItems: Array.from(this.completedItems),
+                    savedAt: new Date().toISOString()
+                };
+                localStorage.setItem('moveInProgress', JSON.stringify(progressData));
+                
+                // Show save confirmation
+                const saveButton = document.getElementById('save-progress');
+                const originalText = saveButton.textContent;
+                saveButton.textContent = 'Saved!';
+                saveButton.classList.add('bg-green-600');
+                saveButton.classList.remove('bg-college-blue');
+                
+                setTimeout(() => {
+                    saveButton.textContent = originalText;
+                    saveButton.classList.remove('bg-green-600');
+                    saveButton.classList.add('bg-college-blue');
+                }, 1500);
+            }
+            
+            loadSavedProgress() {
+                const saved = localStorage.getItem('moveInProgress');
+                if (saved) {
+                    try {
+                        const progressData = JSON.parse(saved);
+                        this.completedItems = new Set(progressData.completedItems || []);
+                    } catch (error) {
+                        console.error('Error loading saved progress:', error);
+                    }
+                }
+            }
+            
+            resetChecklist() {
+                if (confirm('Are you sure you want to reset all progress? This cannot be undone.')) {
+                    this.completedItems.clear();
+                    localStorage.removeItem('moveInProgress');
+                    this.renderChecklist();
+                    this.updateProgress();
+                    this.updateTimelineProgress();
+                }
+            }
+            
+            attachEventListeners() {
+                document.getElementById('save-progress').addEventListener('click', () => {
+                    this.saveProgress();
+                });
+                
+                document.getElementById('reset-checklist').addEventListener('click', () => {
+                    this.resetChecklist();
+                });
+            }
+        }
+        
+        // Initialize Move-in Helper
+        let moveInHelper;
+        document.addEventListener('DOMContentLoaded', () => {
+            moveInHelper = new MoveInHelper();
+        });
+    </script>
+</body>
+</html>

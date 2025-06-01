@@ -1,10 +1,200 @@
-# Ensure proper labels and selectors
-# Add health checks:
-livenessProbe:
-  httpGet:
-    path: /
-    port: http
-readinessProbe:
-  httpGet:
-    path: /
-    port: http
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "college-website.fullname" . }}
+  labels:
+    {{- include "college-website.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "college-website.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "college-website.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "college-website.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          # Health checks for better reliability
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+          # Startup probe to handle initial container startup
+          startupProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 30
+          # Resource limits and requests
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          # Environment variables for configuration
+          env:
+            - name: COLLEGE_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "college-website.fullname" . }}-config
+                  key: college.name
+            - name: ENVIRONMENT
+              value: {{ .Values.environment | default "development" }}
+            - name: LOG_LEVEL
+              value: {{ .Values.logLevel | default "info" }}
+          # Volume mounts for content and configuration
+          volumeMounts:
+            - name: content-data
+              mountPath: /usr/share/nginx/html/data
+              readOnly: true
+            - name: nginx-config
+              mountPath: /etc/nginx/conf.d
+              readOnly: true
+            {{- if .Values.customContent.enabled }}
+            - name: custom-content
+              mountPath: /usr/share/nginx/html/custom
+              readOnly: true
+            {{- end }}
+      # Volumes definition
+      volumes:
+        # ConfigMap containing JSON data files (dorms.json, study-areas.json, etc.)
+        - name: content-data
+          configMap:
+            name: {{ include "college-website.fullname" . }}-content
+            defaultMode: 0644
+        # ConfigMap containing nginx configuration
+        - name: nginx-config
+          configMap:
+            name: {{ include "college-website.fullname" . }}-nginx-config
+            defaultMode: 0644
+        {{- if .Values.customContent.enabled }}
+        # Optional: Custom content volume for environment-specific content
+        - name: custom-content
+          configMap:
+            name: {{ include "college-website.fullname" . }}-custom-content
+            optional: true
+        {{- end }}
+      # Pod scheduling preferences
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      # Pod disruption budget support
+      {{- if .Values.podDisruptionBudget.enabled }}
+      # This would be in a separate PodDisruptionBudget resource
+      {{- end }}
+---
+# Optional: nginx configuration ConfigMap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "college-website.fullname" . }}-nginx-config
+  labels:
+    {{- include "college-website.labels" . | nindent 4 }}
+data:
+  default.conf: |
+    server {
+        listen 80;
+        server_name localhost;
+        root /usr/share/nginx/html;
+        index index.html;
+        
+        # Security headers
+        add_header X-Frame-Options "SAMEORIGIN" always;
+        add_header X-Content-Type-Options "nosniff" always;
+        add_header X-XSS-Protection "1; mode=block" always;
+        add_header Referrer-Policy "no-referrer-when-downgrade" always;
+        
+        # Gzip compression
+        gzip on;
+        gzip_vary on;
+        gzip_min_length 1024;
+        gzip_proxied expired no-cache no-store private auth;
+        gzip_types
+            text/plain
+            text/css
+            text/xml
+            text/javascript
+            application/javascript
+            application/xml+rss
+            application/json;
+        
+        # Cache static assets
+        location ~* \.(css|js|jpg|jpeg|png|gif|ico|svg)$ {
+            expires 1y;
+            add_header Cache-Control "public, immutable";
+        }
+        
+        # API endpoints for JSON data
+        location /data/ {
+            add_header Access-Control-Allow-Origin *;
+            add_header Content-Type application/json;
+            expires 1h;
+        }
+        
+        # Main location block
+        location / {
+            try_files $uri $uri/ =404;
+            
+            # Add security headers for HTML pages
+            add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self';" always;
+        }
+        
+        # Health check endpoint
+        location /health {
+            access_log off;
+            return 200 "healthy\n";
+            add_header Content-Type text/plain;
+        }
+        
+        # Error pages
+        error_page 404 /404.html;
+        error_page 500 502 503 504 /50x.html;
+        
+        location = /50x.html {
+            root /usr/share/nginx/html;
+        }
+    }

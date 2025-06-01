@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Housing - Sunflower State College</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+    <meta name="description" content="Explore our flower-themed residence halls: Rose Hall, Lily Commons, and Jasmine House at Sunflower State College">
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-college-blue shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <img class="h-8 w-8" src="images/logo.png" alt="Sunflower State College Logo">
+                        <h1 class="ml-2 text-xl font-bold text-white inline">Sunflower State College</h1>
+                    </div>
+                </div>
+                
+                <!-- Desktop Navigation -->
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="index.html" class="text-white hover:bg-college-gold hover:text-college-blue px-3 py-2 rounded-md text-sm font-medium">Home</a>
+                        <a href="dorms.html" class="bg-college-gold text-college-blue px-3 py-2 rounded-md text-sm font-medium">Dorms</a>
+                        <a href="study-areas.html" class="text-white hover:bg-college-gold hover:text-college-blue px-3 py-2 rounded-md text-sm font-medium">Study Areas</a>
+                        <a href="weekend-hours.html" class="text-white hover:bg-college-gold hover:text-college-blue px-3 py-2 rounded-md text-sm font-medium">Weekend Hours</a>
+                        <a href="move-in-tips.html" class="text-white hover:bg-college-gold hover:text-college-blue px-3 py-2 rounded-md text-sm font-medium">Move-in Tips</a>
+                        <a href="wifi.html" class="text-white hover:bg-college-gold hover:text-college-blue px-3 py-2 rounded-md text-sm font-medium">WiFi</a>
+                    </div>
+                </div>
+                
+                <!-- Mobile menu button -->
+                <div class="md:hidden">
+                    <button type="button" class="mobile-menu-button inline-flex items-center justify-center p-2 rounded-md text-white hover:bg-college-gold hover:text-college-blue focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
+                        <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Menu -->
+        <div class="mobile-menu hidden md:hidden">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="index.html" class="text-white hover:bg-college-gold hover:text-college-blue block px-3 py-2 rounded-md text-base font-medium">Home</a>
+                <a href="dorms.html" class="bg-college-gold text-college-blue block px-3 py-2 rounded-md text-base font-medium">Dorms</a>
+                <a href="study-areas.html" class="text-white hover:bg-college-gold hover:text-college-blue block px-3 py-2 rounded-md text-base font-medium">Study Areas</a>
+                <a href="weekend-hours.html" class="text-white hover:bg-college-gold hover:text-college-blue block px-3 py-2 rounded-md text-base font-medium">Weekend Hours</a>
+                <a href="move-in-tips.html" class="text-white hover:bg-college-gold hover:text-college-blue block px-3 py-2 rounded-md text-base font-medium">Move-in Tips</a>
+                <a href="wifi.html" class="text-white hover:bg-college-gold hover:text-college-blue block px-3 py-2 rounded-md text-base font-medium">WiFi</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="bg-white shadow">
+        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+            <div class="md:flex md:items-center md:justify-between">
+                <div class="flex-1 min-w-0">
+                    <h1 class="text-3xl font-bold text-gray-900">Campus Housing</h1>
+                    <p class="mt-2 text-lg text-gray-600">Find your home away from home in our flower-themed residence halls</p>
+                </div>
+                <div class="mt-4 md:mt-0 md:ml-4">
+                    <div class="flex items-center text-sm text-gray-500">
+                        <svg class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                        430 students housed across 3 residence halls
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <div class="px-4 py-6 sm:px-0">
+            
+            <!-- Search Component -->
+            <div id="dorms-search"></div>
+            
+            <!-- Loading State -->
+            <div id="loading-state" class="text-center py-12">
+                <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-college-blue"></div>
+                <p class="mt-2 text-gray-600">Loading residence halls...</p>
+            </div>
+            
+            <!-- No Results State -->
+            <div id="no-results" class="hidden text-center py-12">
+                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+                <h3 class="mt-2 text-sm font-medium text-gray-900">No residence halls found</h3>
+                <p class="mt-1 text-sm text-gray-500">Try adjusting your search or filters.</p>
+            </div>
+            
+            <!-- Dorms Grid -->
+            <div id="dorms-container" class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
+                <!-- Dorm cards will be populated by JavaScript -->
+            </div>
+            
+            <!-- Comparison Tool -->
+            <div id="comparison-tool" class="hidden mt-12 bg-white rounded-lg shadow-lg p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-lg font-semibold text-gray-900">Compare Residence Halls</h3>
+                    <button id="clear-comparison" class="text-sm text-college-blue hover:text-college-gold">
+                        Clear all
+                    </button>
+                </div>
+                <div id="comparison-content" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Comparison cards will be added here -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-college-blue text-white mt-12">
+        <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Housing Office</h3>
+                    <p>Student Services Building<br>
+                    Room 201<br>
+                    (555) 123-4570<br>
+                    housing@sunflower.edu</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="hover:text-college-gold">Housing Application</a></li>
+                        <li><a href="#" class="hover:text-college-gold">Room Assignment</a></li>
+                        <li><a href="#" class="hover:text-college-gold">Dining Plans</a></li>
+                        <li><a href="move-in-tips.html" class="hover:text-college-gold">Move-in Tips</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Resources</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="hover:text-college-gold">Residence Life</a></li>
+                        <li><a href="#" class="hover:text-college-gold">Community Standards</a></li>
+                        <li><a href="wifi.html" class="hover:text-college-gold">WiFi Setup</a></li>
+                        <li><a href="study-areas.html" class="hover:text-college-gold">Study Spaces</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-blue-800 mt-8 pt-8 text-center">
+                <p>&copy; 2025 Sunflower State College. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/content-loader.js"></script>
+    <script src="js/search-component.js"></script>
+    <script>
+        // Dorms page initialization
+        class DormsPage {
+            constructor() {
+                this.allDorms = [];
+                this.filteredDorms = [];
+                this.comparisonList = new Set();
+                this.searchComponent = null;
+                
+                this.init();
+            }
+            
+            async init() {
+                try {
+                    await this.loadDorms();
+                    this.initializeSearch();
+                    this.displayDorms(this.allDorms);
+                    this.hideLoading();
+                } catch (error) {
+                    console.error('Error initializing dorms page:', error);
+                    this.showError();
+                }
+            }
+            
+            async loadDorms() {
+                const dormsData = await contentLoader.loadDorms();
+                if (dormsData && dormsData.dorms) {
+                    this.allDorms = dormsData.dorms;
+                    this.filteredDorms = [...this.allDorms];
+                } else {
+                    throw new Error('Failed to load dorms data');
+                }
+            }
+            
+            initializeSearch() {
+                const searchCategories = [
+                    { label: 'Single Rooms', value: 'single' },
+                    { label: 'Double Rooms', value: 'double' },
+                    { label: 'Suites', value: 'suite' },
+                    { label: 'Small (≤100)', value: 'small' },
+                    { label: 'Medium (101-200)', value: 'medium' },
+                    { label: 'Large (200+)', value: 'large' }
+                ];
+                
+                this.searchComponent = new SearchComponent('dorms-search', {
+                    placeholder: 'Search residence halls by name, amenities, or flower type...',
+                    categories: searchCategories,
+                    onSearch: (query, filters) => this.handleSearch(query, filters)
+                });
+            }
+            
+            handleSearch(query, filters) {
+                this.filteredDorms = SearchUtilities.searchDorms(this.allDorms, query, filters);
+                this.displayDorms(this.filteredDorms);
+                this.searchComponent.updateResultCount(this.filteredDorms.length);
+                
+                // Show/hide no results
+                const noResults = document.getElementById('no-results');
+                if (this.filteredDorms.length === 0 && (query || filters.length > 0)) {
+                    noResults.classList.remove('hidden');
+                } else {
+                    noResults.classList.add('hidden');
+                }
+            }
+            
+            displayDorms(dorms) {
+                const container = document.getElementById('dorms-container');
+                container.innerHTML = dorms.map(dorm => this.renderDormCard(dorm)).join('');
+                
+                // Attach event listeners for comparison
+                this.attachComparisonListeners();
+            }
+            
+            renderDormCard(dorm) {
+                const isInComparison = this.comparisonList.has(dorm.id);
+                
+                return `
+                    <div class="bg-white overflow-hidden shadow rounded-lg hover:shadow-xl transition-shadow duration-300">
+                        <div class="relative">
+                            <img class="h-48 w-full object-cover" src="${dorm.image}" alt="${dorm.name}">
+                            <div class="absolute top-2 right-2">
+                                <button class="compare-btn p-2 rounded-full ${isInComparison ? 'bg-college-gold text-college-blue' : 'bg-white text-gray-600'} hover:bg-college-gold hover:text-college-blue transition-colors"
+                                        data-dorm-id="${dorm.id}"
+                                        title="${isInComparison ? 'Remove from comparison' : 'Add to comparison'}">
+                                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <div class="flex items-center mb-4">
+                                <div class="flex-shrink-0">
+                                    <div class="h-10 w-10 bg-flower-pink rounded-full flex items-center justify-center">
+                                        <span class="text-white font-semibold">${dorm.flowerType[0]}</span>
+                                    </div>
+                                </div>
+                                <div class="ml-4">
+                                    <h3 class="text-lg font-medium text-gray-900">${dorm.name}</h3>
+                                    <p class="text-sm text-gray-500">Capacity: ${dorm.capacity} students • ${dorm.floors} floors</p>
+                                </div>
+                            </div>
+                            
+                            <p class="text-gray-600 mb-4">${dorm.description}</p>
+                            
+                            <div class="mb-4">
+                                <h4 class="text-sm font-medium text-gray-900 mb-2">Room Types:</h4>
+                                <div class="flex flex-wrap gap-1">
+                                    ${dorm.roomTypes.map(type => `
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                            ${type}
+                                        </span>
+                                    `).join('')}
+                                </div>
+                            </div>
+                            
+                            <div class="mb-6">
+                                <h4 class="text-sm font-medium text-gray-900 mb-2">Top Amenities:</h4>
+                                <ul class="text-sm text-gray-600 space-y-1">
+                                    ${dorm.amenities.slice(0, 4).map(amenity => `
+                                        <li class="flex items-center">
+                                            <svg class="h-4 w-4 text-green-500 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                            </svg>
+                                            ${amenity}
+                                        </li>
+                                    `).join('')}
+                                    ${dorm.amenities.length > 4 ? `
+                                        <li class="text-college-blue text-sm font-medium">
+                                            + ${dorm.amenities.length - 4} more amenities
+                                        </li>
+                                    ` : ''}
+                                </ul>
+                            </div>
+                            
+                            <div class="flex justify-between items-center">
+                                <div class="text-sm text-gray-500">
+                                    <p class="flex items-center">
+                                        <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                                        </svg>
+                                        ${dorm.contact.phone}
+                                    </p>
+                                    <p class="flex items-center mt-1">
+                                        <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                        </svg>
+                                        ${dorm.contact.email}
+                                    </p>
+                                </div>
+                                <div class="flex space-x-2">
+                                    <button class="view-details-btn bg-college-blue text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors text-sm"
+                                            data-dorm-id="${dorm.id}">
+                                        View Details
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            attachComparisonListeners() {
+                // Compare buttons
+                document.querySelectorAll('.compare-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const dormId = btn.dataset.dormId;
+                        this.toggleComparison(dormId);
+                    });
+                });
+                
+                // View details buttons
+                document.querySelectorAll('.view-details-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const dormId = btn.dataset.dormId;
+                        this.showDormDetails(dormId);
+                    });
+                });
+            }
+            
+            toggleComparison(dormId) {
+                if (this.comparisonList.has(dormId)) {
+                    this.comparisonList.delete(dormId);
+                } else {
+                    if (this.comparisonList.size >= 3) {
+                        alert('You can compare up to 3 residence halls at a time.');
+                        return;
+                    }
+                    this.comparisonList.add(dormId);
+                }
+                
+                this.updateComparisonTool();
+                this.displayDorms(this.filteredDorms); // Refresh to update button states
+            }
+            
+            updateComparisonTool() {
+                const tool = document.getElementById('comparison-tool');
+                const content = document.getElementById('comparison-content');
+                
+                if (this.comparisonList.size === 0) {
+                    tool.classList.add('hidden');
+                    return;
+                }
+                
+                tool.classList.remove('hidden');
+                
+                const compareItems = Array.from(this.comparisonList).map(dormId => {
+                    const dorm = this.allDorms.find(d => d.id === dormId);
+                    return this.renderComparisonCard(dorm);
+                }).join('');
+                
+                content.innerHTML = compareItems;
+                
+                // Clear comparison button
+                document.getElementById('clear-comparison').addEventListener('click', () => {
+                    this.comparisonList.clear();
+                    this.updateComparisonTool();
+                    this.displayDorms(this.filteredDorms);
+                });
+            }
+            
+            renderComparisonCard(dorm) {
+                return `
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <h4 class="font-medium text-gray-900">${dorm.name}</h4>
+                            <button class="text-gray-400 hover:text-red-500" onclick="dormsPage.toggleComparison('${dorm.id}')">
+                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Capacity:</span>
+                                <span class="font-medium">${dorm.capacity}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Floors:</span>
+                                <span class="font-medium">${dorm.floors}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Room Types:</span>
+                                <span class="font-medium">${dorm.roomTypes.length}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Amenities:</span>
+                                <span class="font-medium">${dorm.amenities.length}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            showDormDetails(dormId) {
+                const dorm = this.allDorms.find(d => d.id === dormId);
+                if (!dorm) return;
+                
+                // Create modal for detailed view
+                const modal = document.createElement('div');
+                modal.className = 'fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50';
+                modal.innerHTML = `
+                    <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-bold text-gray-900">${dorm.name}</h3>
+                            <button class="close-modal text-gray-400 hover:text-gray-600">
+                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        <img class="w-full h-64 object-cover rounded-lg mb-4" src="${dorm.image}" alt="${dorm.name}">
+                        <div class="space-y-4">
+                            <p class="text-gray-600">${dorm.description}</p>
+                            
+                            <div>
+                                <h4 class="font-medium text-gray-900 mb-2">Complete Amenities List:</h4>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                    ${dorm.amenities.map(amenity => `
+                                        <div class="flex items-center">
+                                            <svg class="h-4 w-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                            </svg>
+                                            <span class="text-sm text-gray-600">${amenity}</span>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <h4 class="font-medium text-gray-900 mb-2">Building Details:</h4>
+                                    <ul class="text-sm text-gray-600 space-y-1">
+                                        <li>Capacity: ${dorm.capacity} students</li>
+                                        <li>Floors: ${dorm.floors}</li>
+                                        <li>Flower Theme: ${dorm.flowerType}</li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h4 class="font-medium text-gray-900 mb-2">Contact Information:</h4>
+                                    <ul class="text-sm text-gray-600 space-y-1">
+                                        <li>Phone: ${dorm.contact.phone}</li>
+                                        <li>Email: ${dorm.contact.email}</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(modal);
+                
+                // Close modal functionality
+                modal.querySelector('.close-modal').addEventListener('click', () => {
+                    document.body.removeChild(modal);
+                });
+                
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        document.body.removeChild(modal);
+                    }
+                });
+            }
+            
+            hideLoading() {
+                document.getElementById('loading-state').classList.add('hidden');
+            }
+            
+            showError() {
+                document.getElementById('loading-state').innerHTML = `
+                    <div class="text-center py-12">
+                        <svg class="mx-auto h-12 w-12 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.82 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                        </svg>
+                        <h3 class="mt-2 text-sm font-medium text-gray-900">Error loading residence halls</h3>
+                        <p class="mt-1 text-sm text-gray-500">Please try refreshing the page.</p>
+                    </div>
+                `;
+            }
+        }
+        
+        // Initialize the dorms page
+        let dormsPage;
+        document.addEventListener('DOMContentLoaded', () => {
+            dormsPage = new DormsPage();
+        });
+    </script>
+</body>
+</html>

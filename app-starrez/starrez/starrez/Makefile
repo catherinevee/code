@@ -1,8 +1,8 @@
 # Variables
-IMAGE_NAME = college-website
+IMAGE_NAME = starrez
 IMAGE_TAG = latest
-REGISTRY = your-registry-here
-NAMESPACE = college-dev
+REGISTRY = catherinevee/catherinevee
+NAMESPACE = starrez-dev
 
 # Build and push image
 build:

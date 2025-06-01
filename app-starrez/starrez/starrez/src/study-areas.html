@@ -1,0 +1,914 @@
+// Enhanced Study Areas Page with Advanced Filtering
+class EnhancedStudyAreas {
+    constructor() {
+        this.allStudyAreas = [];
+        this.filteredAreas = [];
+        this.searchComponent = null;
+        this.activeFilters = {
+            noiseLevel: null,
+            availability: null,
+            amenities: new Set(),
+            capacity: null,
+            location: null
+        };
+        this.favorites = new Set();
+        
+        this.init();
+    }
+    
+    async init() {
+        try {
+            await this.loadStudyAreas();
+            this.loadFavorites();
+            this.initializeEnhancedSearch();
+            this.displayStudyAreas(this.allStudyAreas);
+            this.hideLoading();
+        } catch (error) {
+            console.error('Error initializing study areas:', error);
+        }
+    }
+    
+    async loadStudyAreas() {
+        // Enhanced study areas data with more detailed information
+        this.allStudyAreas = [
+            {
+                id: 'main-library',
+                name: 'Henderson Memorial Library',
+                type: 'Library',
+                capacity: 300,
+                noise_level: 'Quiet',
+                location: 'Central Campus',
+                building: 'Library Building',
+                floor: 'Multiple Floors',
+                hours: {
+                    weekday: '7:00 AM - 11:00 PM',
+                    weekend: '9:00 AM - 9:00 PM'
+                },
+                amenities: [
+                    'Silent Study Rooms',
+                    'Group Study Rooms',
+                    'Computer Lab',
+                    'Printing Services',
+                    'Research Assistance',
+                    'Premium WiFi',
+                    'Charging Stations',
+                    'Vending Machines',
+                    'Individual Study Carrels',
+                    'Reference Materials'
+                ],
+                description: 'Our main library offers quiet study environments across multiple floors. The first floor allows collaborative work, while upper floors maintain stricter quiet policies.',
+                image: 'images/study-areas/main-library.jpg',
+                reservation_required: true,
+                reservation_url: 'https://library.sunflower.edu/reserve',
+                special_features: [
+                    '24/7 silent study room for cardholders',
+                    'Graduate student lounge on 3rd floor',
+                    'Rare books collection with study tables'
+                ],
+                accessibility: ['Wheelchair accessible', 'Elevator access', 'Accessible restrooms'],
+                current_occupancy: 65, // percentage
+                peak_hours: ['2:00 PM - 6:00 PM', '7:00 PM - 10:00 PM'],
+                wifi_quality: 'Excellent',
+                power_outlets: 'Abundant',
+                natural_light: 'Good',
+                climate_control: 'Individual zones'
+            },
+            {
+                id: 'student-center',
+                name: 'Monarch Student Center',
+                type: 'Student Center',
+                capacity: 150,
+                noise_level: 'Moderate',
+                location: 'North Campus',
+                building: 'Student Center',
+                floor: '2nd Floor',
+                hours: {
+                    weekday: '6:00 AM - 12:00 AM',
+                    weekend: '8:00 AM - 12:00 AM'
+                },
+                amenities: [
+                    'Collaborative Spaces',
+                    'Whiteboards',
+                    'Comfortable Seating',
+                    'Food Court Nearby',
+                    'Charging Stations',
+                    'High-Speed WiFi',
+                    'Presentation Equipment',
+                    'Lounge Areas',
+                    'Coffee Shop',
+                    'Lockers'
+                ],
+                description: 'Perfect for group projects and collaborative learning. The atmosphere is more relaxed with comfortable seating and easy access to food and beverages.',
+                image: 'images/study-areas/student-center.jpg',
+                reservation_required: false,
+                special_features: [
+                    'Late-night study area stays open until midnight',
+                    'Presentation practice rooms',
+                    'Gaming lounge for study breaks'
+                ],
+                accessibility: ['Wheelchair accessible', 'Accessible parking nearby', 'Sign language interpreters available'],
+                current_occupancy: 45,
+                peak_hours: ['11:00 AM - 2:00 PM', '6:00 PM - 9:00 PM'],
+                wifi_quality: 'Excellent',
+                power_outlets: 'Adequate',
+                natural_light: 'Excellent',
+                climate_control: 'Central system'
+            },
+            {
+                id: 'garden-pavilion',
+                name: 'Sunflower Garden Pavilion',
+                type: 'Outdoor Study',
+                capacity: 50,
+                noise_level: 'Quiet',
+                location: 'South Campus',
+                building: 'Outdoor Pavilion',
+                floor: 'Ground Level',
+                hours: {
+                    weekday: 'Sunrise - Sunset',
+                    weekend: 'Sunrise - Sunset'
+                },
+                amenities: [
+                    'Natural Setting',
+                    'Weather Protection',
+                    'Outdoor WiFi',
+                    'Solar Charging Stations',
+                    'Garden Views',
+                    'Fresh Air',
+                    'Picnic Tables',
+                    'Individual Study Pods',
+                    'Bird Watching',
+                    'Meditation Space'
+                ],
+                description: 'Study surrounded by beautiful sunflower gardens. This outdoor pavilion provides a unique study environment that connects you with nature.',
+                image: 'images/study-areas/garden-pavilion.jpg',
+                reservation_required: false,
+                seasonal: 'Weather Dependent',
+                special_features: [
+                    'Heated pavilion extends season into fall/winter',
+                    'Rain covers for sudden weather changes',
+                    'Pollinator garden provides natural sounds'
+                ],
+                accessibility: ['Level access paths', 'Accessible tables', 'Close parking'],
+                current_occupancy: 20,
+                peak_hours: ['10:00 AM - 12:00 PM', '3:00 PM - 5:00 PM'],
+                wifi_quality: 'Good',
+                power_outlets: 'Solar powered',
+                natural_light: 'Excellent',
+                climate_control: 'Natural ventilation'
+            },
+            {
+                id: 'tech-learning-center',
+                name: 'Technology Learning Center',
+                type: 'Computer Lab',
+                capacity: 80,
+                noise_level: 'Moderate',
+                location: 'Tech Building',
+                building: 'Technology Center',
+                floor: '1st Floor',
+                hours: {
+                    weekday: '8:00 AM - 10:00 PM',
+                    weekend: '10:00 AM - 6:00 PM'
+                },
+                amenities: [
+                    'High-End Computers',
+                    'Specialized Software',
+                    'Printing Services',
+                    'Scanner Access',
+                    'Technical Support',
+                    'Premium WiFi',
+                    'Multiple Monitors',
+                    'Graphics Tablets',
+                    'Video Editing Suites',
+                    'Coding Environment'
+                ],
+                description: 'State-of-the-art computer lab with specialized software for engineering, design, and computer science students. Technical support available during operating hours.',
+                image: 'images/study-areas/tech-center.jpg',
+                reservation_required: true,
+                reservation_url: 'https://tech.sunflower.edu/lab-booking',
+                special_features: [
+                    'Virtual reality development station',
+                    '3D printing access',
+                    'Professional software licenses'
+                ],
+                accessibility: ['Wheelchair accessible', 'Adjustable height desks', 'Screen readers available'],
+                current_occupancy: 70,
+                peak_hours: ['1:00 PM - 5:00 PM', '7:00 PM - 9:00 PM'],
+                wifi_quality: 'Excellent',
+                power_outlets: 'Every station',
+                natural_light: 'Limited',
+                climate_control: 'Precision cooling'
+            },
+            {
+                id: 'science-study-hall',
+                name: 'Science Study Hall',
+                type: 'Academic Building',
+                capacity: 120,
+                noise_level: 'Quiet',
+                location: 'Science Complex',
+                building: 'Peterson Science Center',
+                floor: '2nd Floor',
+                hours: {
+                    weekday: '7:00 AM - 10:00 PM',
+                    weekend: '9:00 AM - 8:00 PM'
+                },
+                amenities: [
+                    'Scientific Calculators',
+                    'Periodic Tables',
+                    'Reference Materials',
+                    'Study Groups Allowed',
+                    'Whiteboards',
+                    'Premium WiFi',
+                    'Charging Stations',
+                    'Laboratory Access',
+                    'Molecular Models',
+                    'Research Databases'
+                ],
+                description: 'Dedicated study space for science students with access to scientific resources and laboratory equipment. Popular among pre-med and engineering students.',
+                image: 'images/study-areas/science-hall.jpg',
+                reservation_required: false,
+                special_features: [
+                    'Access to digital microscopes',
+                    'Chemistry simulation software',
+                    'Physics problem-solving workshops'
+                ],
+                accessibility: ['Wheelchair accessible', 'Laboratory safety equipment', 'Emergency stations'],
+                current_occupancy: 55,
+                peak_hours: ['3:00 PM - 7:00 PM', '8:00 PM - 10:00 PM'],
+                wifi_quality: 'Excellent',
+                power_outlets: 'Laboratory grade',
+                natural_light: 'Good',
+                climate_control: 'Laboratory standard'
+            },
+            {
+                id: 'business-lounge',
+                name: 'Business Student Lounge',
+                type: 'Academic Building',
+                capacity: 60,
+                noise_level: 'Moderate',
+                location: 'Business Building',
+                building: 'Carver Business Center',
+                floor: '3rd Floor',
+                hours: {
+                    weekday: '6:00 AM - 11:00 PM',
+                    weekend: '8:00 AM - 10:00 PM'
+                },
+                amenities: [
+                    'Executive Seating',
+                    'Presentation Screens',
+                    'Financial Databases',
+                    'Meeting Rooms',
+                    'Professional Atmosphere',
+                    'Premium WiFi',
+                    'Coffee Station',
+                    'Business Journals',
+                    'Bloomberg Terminal',
+                    'Interview Practice Rooms'
+                ],
+                description: 'Professional environment designed for business students. Features executive-style furniture and access to financial databases and business resources.',
+                image: 'images/study-areas/business-lounge.jpg',
+                reservation_required: true,
+                reservation_url: 'https://business.sunflower.edu/lounge',
+                special_features: [
+                    'Mock trading floor for finance students',
+                    'Career services satellite office',
+                    'Professional networking events'
+                ],
+                accessibility: ['Wheelchair accessible', 'Professional accommodations', 'Assistive technology'],
+                current_occupancy: 40,
+                peak_hours: ['9:00 AM - 11:00 AM', '2:00 PM - 4:00 PM'],
+                wifi_quality: 'Excellent',
+                power_outlets: 'Conference style',
+                natural_light: 'Excellent',
+                climate_control: 'Premium system'
+            }
+        ];
+        this.filteredAreas = [...this.allStudyAreas];
+    }
+    
+    initializeEnhancedSearch() {
+        const searchCategories = [
+            { label: 'Quiet Areas', value: 'quiet' },
+            { label: 'Moderate Noise', value: 'moderate' },
+            { label: 'Collaborative', value: 'collaborative' },
+            { label: 'Library', value: 'library' },
+            { label: 'Computer Lab', value: 'computer-lab' },
+            { label: 'Outdoor', value: 'outdoor' },
+            { label: 'No Reservation', value: 'no-reservation' },
+            { label: 'Group Study', value: 'group-study' },
+            { label: 'Individual Study', value: 'individual' },
+            { label: 'Available Now', value: 'available-now' }
+        ];
+        
+        this.searchComponent = new SearchComponent('study-areas-search', {
+            placeholder: 'Search study areas by name, amenities, or location...',
+            categories: searchCategories,
+            onSearch: (query, filters) => this.handleSearch(query, filters)
+        });
+        
+        this.renderAdvancedFilters();
+    }
+    
+    renderAdvancedFilters() {
+        const filtersHTML = `
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Advanced Filters</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Noise Level Filter -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Noise Level</label>
+                        <select id="noise-filter" class="w-full border border-gray-300 rounded-md px-3 py-2">
+                            <option value="">Any Level</option>
+                            <option value="Quiet">Quiet</option>
+                            <option value="Moderate">Moderate</option>
+                            <option value="Collaborative">Collaborative</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Capacity Filter -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Minimum Capacity</label>
+                        <select id="capacity-filter" class="w-full border border-gray-300 rounded-md px-3 py-2">
+                            <option value="">Any Size</option>
+                            <option value="50">50+ people</option>
+                            <option value="100">100+ people</option>
+                            <option value="200">200+ people</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Location Filter -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Campus Area</label>
+                        <select id="location-filter" class="w-full border border-gray-300 rounded-md px-3 py-2">
+                            <option value="">Any Location</option>
+                            <option value="Central Campus">Central Campus</option>
+                            <option value="North Campus">North Campus</option>
+                            <option value="South Campus">South Campus</option>
+                            <option value="Science Complex">Science Complex</option>
+                            <option value="Business Building">Business Building</option>
+                            <option value="Tech Building">Tech Building</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Availability Filter -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Availability</label>
+                        <select id="availability-filter" class="w-full border border-gray-300 rounded-md px-3 py-2">
+                            <option value="">Any Time</option>
+                            <option value="low">Low Occupancy (&lt;40%)</option>
+                            <option value="medium">Medium Occupancy (40-70%)</option>
+                            <option value="high">High Occupancy (&gt;70%)</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Amenities Filter -->
+                <div class="mt-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-3">Required Amenities</label>
+                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                        <label class="flex items-center">
+                            <input type="checkbox" value="Premium WiFi" class="amenity-checkbox mr-2">
+                            <span class="text-sm">Premium WiFi</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" value="Charging Stations" class="amenity-checkbox mr-2">
+                            <span class="text-sm">Charging Stations</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" value="Printing Services" class="amenity-checkbox mr-2">
+                            <span class="text-sm">Printing</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" value="Group Study Rooms" class="amenity-checkbox mr-2">
+                            <span class="text-sm">Group Rooms</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" value="Whiteboards" class="amenity-checkbox mr-2">
+                            <span class="text-sm">Whiteboards</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" value="Food Court Nearby" class="amenity-checkbox mr-2">
+                            <span class="text-sm">Food Nearby</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" value="Natural Setting" class="amenity-checkbox mr-2">
+                            <span class="text-sm">Natural Setting</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" value="Computer Lab" class="amenity-checkbox mr-2">
+                            <span class="text-sm">Computer Access</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="mt-6 flex space-x-4">
+                    <button id="apply-filters" class="bg-college-blue text-white px-6 py-2 rounded hover:bg-blue-700 transition-colors">
+                        Apply Filters
+                    </button>
+                    <button id="clear-filters" class="bg-gray-600 text-white px-6 py-2 rounded hover:bg-gray-700 transition-colors">
+                        Clear All
+                    </button>
+                    <button id="save-preferences" class="bg-college-gold text-college-blue px-6 py-2 rounded hover:bg-yellow-400 transition-colors">
+                        Save Preferences
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        // Insert after search component
+        const searchContainer = document.getElementById('study-areas-search');
+        searchContainer.insertAdjacentHTML('afterend', filtersHTML);
+        
+        this.attachFilterListeners();
+    }
+    
+    attachFilterListeners() {
+        document.getElementById('apply-filters').addEventListener('click', () => {
+            this.applyAdvancedFilters();
+        });
+        
+        document.getElementById('clear-filters').addEventListener('click', () => {
+            this.clearAllFilters();
+        });
+        
+        document.getElementById('save-preferences').addEventListener('click', () => {
+            this.saveFilterPreferences();
+        });
+        
+        // Auto-apply filters on change
+        ['noise-filter', 'capacity-filter', 'location-filter', 'availability-filter'].forEach(id => {
+            document.getElementById(id).addEventListener('change', () => {
+                this.applyAdvancedFilters();
+            });
+        });
+        
+        // Amenity checkboxes
+        document.querySelectorAll('.amenity-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', () => {
+                this.applyAdvancedFilters();
+            });
+        });
+    }
+    
+    applyAdvancedFilters() {
+        let filtered = [...this.allStudyAreas];
+        
+        // Noise level filter
+        const noiseLevel = document.getElementById('noise-filter').value;
+        if (noiseLevel) {
+            filtered = filtered.filter(area => area.noise_level === noiseLevel);
+        }
+        
+        // Capacity filter
+        const minCapacity = document.getElementById('capacity-filter').value;
+        if (minCapacity) {
+            filtered = filtered.filter(area => area.capacity >= parseInt(minCapacity));
+        }
+        
+        // Location filter
+        const location = document.getElementById('location-filter').value;
+        if (location) {
+            filtered = filtered.filter(area => area.location === location || area.building.includes(location));
+        }
+        
+        // Availability filter
+        const availability = document.getElementById('availability-filter').value;
+        if (availability) {
+            filtered = filtered.filter(area => {
+                const occupancy = area.current_occupancy;
+                switch (availability) {
+                    case 'low': return occupancy < 40;
+                    case 'medium': return occupancy >= 40 && occupancy <= 70;
+                    case 'high': return occupancy > 70;
+                    default: return true;
+                }
+            });
+        }
+        
+        // Amenities filter
+        const selectedAmenities = Array.from(document.querySelectorAll('.amenity-checkbox:checked')).map(cb => cb.value);
+        if (selectedAmenities.length > 0) {
+            filtered = filtered.filter(area => {
+                return selectedAmenities.every(amenity => 
+                    area.amenities.some(areaAmenity => areaAmenity.includes(amenity))
+                );
+            });
+        }
+        
+        this.filteredAreas = filtered;
+        this.displayStudyAreas(filtered);
+        this.updateResultsCount(filtered.length);
+    }
+    
+    clearAllFilters() {
+        document.getElementById('noise-filter').value = '';
+        document.getElementById('capacity-filter').value = '';
+        document.getElementById('location-filter').value = '';
+        document.getElementById('availability-filter').value = '';
+        
+        document.querySelectorAll('.amenity-checkbox').forEach(checkbox => {
+            checkbox.checked = false;
+        });
+        
+        this.filteredAreas = [...this.allStudyAreas];
+        this.displayStudyAreas(this.allStudyAreas);
+        this.updateResultsCount(this.allStudyAreas.length);
+    }
+    
+    saveFilterPreferences() {
+        const preferences = {
+            noiseLevel: document.getElementById('noise-filter').value,
+            capacity: document.getElementById('capacity-filter').value,
+            location: document.getElementById('location-filter').value,
+            availability: document.getElementById('availability-filter').value,
+            amenities: Array.from(document.querySelectorAll('.amenity-checkbox:checked')).map(cb => cb.value)
+        };
+        
+        localStorage.setItem('studyAreaPreferences', JSON.stringify(preferences));
+        
+        // Show confirmation
+        const saveButton = document.getElementById('save-preferences');
+        const originalText = saveButton.textContent;
+        saveButton.textContent = 'Saved!';
+        saveButton.classList.add('bg-green-600');
+        saveButton.classList.remove('bg-college-gold');
+        
+        setTimeout(() => {
+            saveButton.textContent = originalText;
+            saveButton.classList.remove('bg-green-600');
+            saveButton.classList.add('bg-college-gold');
+        }, 2000);
+    }
+    
+    updateResultsCount(count) {
+        // Update search component if it exists
+        if (this.searchComponent) {
+            this.searchComponent.updateResultCount(count);
+        }
+    }
+    
+    // Additional methods for enhanced functionality...
+    toggleFavorite(areaId) {
+        if (this.favorites.has(areaId)) {
+            this.favorites.delete(areaId);
+        } else {
+            this.favorites.add(areaId);
+        }
+        
+        this.saveFavorites();
+        this.updateFavoriteButtons();
+    }
+    
+    saveFavorites() {
+        localStorage.setItem('favoriteStudyAreas', JSON.stringify(Array.from(this.favorites)));
+    }
+    
+    loadFavorites() {
+        const saved = localStorage.getItem('favoriteStudyAreas');
+        if (saved) {
+            this.favorites = new Set(JSON.parse(saved));
+        }
+    }
+    
+    displayStudyAreas(areas) {
+        const container = document.getElementById('study-areas-container');
+        if (!areas.length) {
+            container.innerHTML = `
+                <div class="col-span-full text-center py-12">
+                    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                    <h3 class="mt-2 text-sm font-medium text-gray-900">No study areas found</h3>
+                    <p class="mt-1 text-sm text-gray-500">Try adjusting your search criteria or filters.</p>
+                </div>
+            `;
+            return;
+        }
+        
+        container.innerHTML = areas.map(area => this.renderStudyAreaCard(area)).join('');
+        this.updateFavoriteButtons();
+    }
+    
+    renderStudyAreaCard(area) {
+        const isFavorite = this.favorites.has(area.id);
+        const occupancyColor = area.current_occupancy < 40 ? 'green' : 
+                              area.current_occupancy < 70 ? 'yellow' : 'red';
+        
+        return `
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                <div class="relative">
+                    <img class="h-48 w-full object-cover" src="${area.image}" alt="${area.name}">
+                    <div class="absolute top-2 right-2 flex space-x-2">
+                        <button class="favorite-btn p-2 rounded-full ${isFavorite ? 'bg-red-500 text-white' : 'bg-white text-gray-600'} hover:bg-red-500 hover:text-white transition-colors"
+                                data-area-id="${area.id}"
+                                onclick="enhancedStudyAreas.toggleFavorite('${area.id}')">
+                            <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
+                            </svg>
+                        </button>
+                        <div class="occupancy-indicator px-2 py-1 rounded-full text-xs font-medium ${occupancyColor === 'green' ? 'bg-green-100 text-green-800' : occupancyColor === 'yellow' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'}">
+                            ${area.current_occupancy}% full
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="p-6">
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="text-lg font-semibold text-gray-900">${area.name}</h3>
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            ${area.noise_level}
+                        </span>
+                    </div>
+                    
+                    <div class="space-y-2 text-sm text-gray-600 mb-4">
+                        <div class="flex items-center">
+                            <svg class="h-4 w-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                            </svg>
+                            ${area.location} • ${area.building}
+                        </div>
+                        <div class="flex items-center">
+                            <svg class="h-4 w-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                            </svg>
+                            Capacity: ${area.capacity} people
+                        </div>
+                        <div class="flex items-center">
+                            <svg class="h-4 w-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            ${area.hours.weekday}
+                        </div>
+                    </div>
+                    
+                    <p class="text-gray-600 text-sm mb-4">${area.description}</p>
+                    
+                    <div class="mb-4">
+                        <h4 class="text-sm font-medium text-gray-900 mb-2">Key Amenities</h4>
+                        <div class="flex flex-wrap gap-1">
+                            ${area.amenities.slice(0, 4).map(amenity => `
+                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                    ${amenity}
+                                </span>
+                            `).join('')}
+                            ${area.amenities.length > 4 ? `
+                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-college-blue text-white">
+                                    +${area.amenities.length - 4} more
+                                </span>
+                            ` : ''}
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4 mb-4 text-xs">
+                        <div class="text-center p-2 bg-gray-50 rounded">
+                            <div class="font-medium text-gray-900">WiFi Quality</div>
+                            <div class="text-gray-600">${area.wifi_quality}</div>
+                        </div>
+                        <div class="text-center p-2 bg-gray-50 rounded">
+                            <div class="font-medium text-gray-900">Natural Light</div>
+                            <div class="text-gray-600">${area.natural_light}</div>
+                        </div>
+                    </div>
+                    
+                    ${area.peak_hours ? `
+                        <div class="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                            <div class="text-xs font-medium text-yellow-900">Peak Hours</div>
+                            <div class="text-xs text-yellow-800">${area.peak_hours.join(', ')}</div>
+                        </div>
+                    ` : ''}
+                    
+                    <div class="flex space-x-2">
+                        <button class="flex-1 bg-college-blue text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors text-sm"
+                                onclick="enhancedStudyAreas.showAreaDetails('${area.id}')">
+                            View Details
+                        </button>
+                        ${area.reservation_required ? `
+                            <button class="flex-1 bg-college-gold text-college-blue px-4 py-2 rounded hover:bg-yellow-400 transition-colors text-sm"
+                                    onclick="enhancedStudyAreas.makeReservation('${area.id}')">
+                                Reserve
+                            </button>
+                        ` : `
+                            <button class="flex-1 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition-colors text-sm"
+                                    onclick="enhancedStudyAreas.getDirections('${area.id}')">
+                                Directions
+                            </button>
+                        `}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    
+    updateFavoriteButtons() {
+        document.querySelectorAll('.favorite-btn').forEach(btn => {
+            const areaId = btn.dataset.areaId;
+            const isFavorite = this.favorites.has(areaId);
+            
+            if (isFavorite) {
+                btn.classList.add('bg-red-500', 'text-white');
+                btn.classList.remove('bg-white', 'text-gray-600');
+            } else {
+                btn.classList.remove('bg-red-500', 'text-white');
+                btn.classList.add('bg-white', 'text-gray-600');
+            }
+        });
+    }
+    
+    showAreaDetails(areaId) {
+        const area = this.allStudyAreas.find(a => a.id === areaId);
+        if (!area) return;
+        
+        const modal = document.createElement('div');
+        modal.className = 'fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50';
+        modal.innerHTML = `
+            <div class="relative top-10 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white max-h-screen overflow-y-auto">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xl font-bold text-gray-900">${area.name}</h3>
+                    <button class="close-modal text-gray-400 hover:text-gray-600">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                
+                <img class="w-full h-64 object-cover rounded-lg mb-6" src="${area.image}" alt="${area.name}">
+                
+                <div class="space-y-6">
+                    <div>
+                        <h4 class="font-semibold text-gray-900 mb-2">Description</h4>
+                        <p class="text-gray-600">${area.description}</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h4 class="font-semibold text-gray-900 mb-3">Location Details</h4>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Building:</span>
+                                    <span class="font-medium">${area.building}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Floor:</span>
+                                    <span class="font-medium">${area.floor}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Campus Area:</span>
+                                    <span class="font-medium">${area.location}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Current Occupancy:</span>
+                                    <span class="font-medium">${area.current_occupancy}%</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h4 class="font-semibold text-gray-900 mb-3">Environment</h4>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Noise Level:</span>
+                                    <span class="font-medium">${area.noise_level}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">WiFi Quality:</span>
+                                    <span class="font-medium">${area.wifi_quality}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Natural Light:</span>
+                                    <span class="font-medium">${area.natural_light}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Power Outlets:</span>
+                                    <span class="font-medium">${area.power_outlets}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h4 class="font-semibold text-gray-900 mb-3">Hours</h4>
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <span class="font-medium">Weekdays:</span>
+                                    <span class="ml-2">${area.hours.weekday}</span>
+                                </div>
+                                <div>
+                                    <span class="font-medium">Weekends:</span>
+                                    <span class="ml-2">${area.hours.weekend}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h4 class="font-semibold text-gray-900 mb-3">All Amenities</h4>
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
+                            ${area.amenities.map(amenity => `
+                                <div class="flex items-center">
+                                    <svg class="h-4 w-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    <span class="text-sm">${amenity}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    
+                    ${area.special_features ? `
+                        <div>
+                            <h4 class="font-semibold text-gray-900 mb-3">Special Features</h4>
+                            <ul class="list-disc list-inside space-y-1 text-sm text-gray-600">
+                                ${area.special_features.map(feature => `<li>${feature}</li>`).join('')}
+                            </ul>
+                        </div>
+                    ` : ''}
+                    
+                    ${area.accessibility ? `
+                        <div>
+                            <h4 class="font-semibold text-gray-900 mb-3">Accessibility</h4>
+                            <ul class="list-disc list-inside space-y-1 text-sm text-gray-600">
+                                ${area.accessibility.map(feature => `<li>${feature}</li>`).join('')}
+                            </ul>
+                        </div>
+                    ` : ''}
+                    
+                    ${area.peak_hours ? `
+                        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                            <h4 class="font-semibold text-yellow-900 mb-2">Peak Hours</h4>
+                            <p class="text-yellow-800 text-sm">This area tends to be busiest during: ${area.peak_hours.join(', ')}</p>
+                        </div>
+                    ` : ''}
+                    
+                    <div class="flex space-x-3">
+                        ${area.reservation_required ? `
+                            <button onclick="enhancedStudyAreas.makeReservation('${area.id}')" 
+                                    class="flex-1 bg-college-gold text-college-blue px-4 py-2 rounded hover:bg-yellow-400 transition-colors">
+                                Make Reservation
+                            </button>
+                        ` : ''}
+                        <button onclick="enhancedStudyAreas.getDirections('${area.id}')" 
+                                class="flex-1 bg-college-blue text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">
+                            Get Directions
+                        </button>
+                        <button onclick="enhancedStudyAreas.toggleFavorite('${area.id}'); this.textContent = enhancedStudyAreas.favorites.has('${area.id}') ? 'Remove from Favorites' : 'Add to Favorites'" 
+                                class="flex-1 ${this.favorites.has(area.id) ? 'bg-red-600' : 'bg-gray-600'} text-white px-4 py-2 rounded hover:opacity-90 transition-colors">
+                            ${this.favorites.has(area.id) ? 'Remove from Favorites' : 'Add to Favorites'}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+        // Close modal functionality
+        modal.querySelector('.close-modal').addEventListener('click', () => {
+            document.body.removeChild(modal);
+        });
+        
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                document.body.removeChild(modal);
+            }
+        });
+    }
+    
+    makeReservation(areaId) {
+        const area = this.allStudyAreas.find(a => a.id === areaId);
+        if (area && area.reservation_url) {
+            window.open(area.reservation_url, '_blank');
+        } else {
+            alert('Reservation system coming soon! Contact the location directly for now.');
+        }
+    }
+    
+    getDirections(areaId) {
+        const area = this.allStudyAreas.find(a => a.id === areaId);
+        if (area) {
+            // In a real app, this would integrate with campus map system
+            alert(`Directions to ${area.name}:\n\nBuilding: ${area.building}\nFloor: ${area.floor}\nLocation: ${area.location}\n\nCheck the campus map for detailed directions.`);
+        }
+    }
+    
+    handleSearch(query, filters) {
+        let filtered = SearchUtilities.searchStudyAreas(this.allStudyAreas, query, filters);
+        
+        // Apply advanced filters on top of search
+        this.filteredAreas = filtered;
+        this.applyAdvancedFilters();
+    }
+    
+    hideLoading() {
+        const loadingElement = document.getElementById('loading-state');
+        if (loadingElement) {
+            loadingElement.classList.add('hidden');
+        }
+    }
+}
+
+// Initialize Enhanced Study Areas
+let enhancedStudyAreas;
+document.addEventListener('DOMContentLoaded', () => {
+    enhancedStudyAreas = new EnhancedStudyAreas();
+});

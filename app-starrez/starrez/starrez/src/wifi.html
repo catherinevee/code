@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus WiFi - Sunflower State College</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+    <meta name="description" content="Connect to campus WiFi and troubleshoot connection issues at Sunflower State College">
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-college-blue shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <img class="h-8 w-8" src="images/logo.png" alt="Sunflower State College Logo">
+                        <h1 class="ml-2 text-xl font-bold text-white inline">Sunflower State College</h1>
+                    </div>
+                </div>
+                
+                <!-- Desktop Navigation -->
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="index.html" class="text-white hover:bg-college-gold hover:text-college-blue px-3 py-2 rounded-md text-sm font-medium">Home</a>
+                        <a href="dorms.html" class="text-white hover:bg-college-gold hover:text-college-blue px-3 py-2 rounded-md text-sm font-medium">Dorms</a>
+                        <a href="study-areas.html" class="text-white hover:bg-college-gold hover:text-college-blue px-3 py-2 rounded-md text-sm font-medium">Study Areas</a>
+                        <a href="weekend-hours.html" class="text-white hover:bg-college-gold hover:text-college-blue px-3 py-2 rounded-md text-sm font-medium">Weekend Hours</a>
+                        <a href="move-in-tips.html" class="text-white hover:bg-college-gold hover:text-college-blue px-3 py-2 rounded-md text-sm font-medium">Move-in Tips</a>
+                        <a href="wifi.html" class="bg-college-gold text-college-blue px-3 py-2 rounded-md text-sm font-medium">WiFi</a>
+                    </div>
+                </div>
+                
+                <!-- Mobile menu button -->
+                <div class="md:hidden">
+                    <button type="button" class="mobile-menu-button inline-flex items-center justify-center p-2 rounded-md text-white hover:bg-college-gold hover:text-college-blue focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
+                        <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Menu -->
+        <div class="mobile-menu hidden md:hidden">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="index.html" class="text-white hover:bg-college-gold hover:text-college-blue block px-3 py-2 rounded-md text-base font-medium">Home</a>
+                <a href="dorms.html" class="text-white hover:bg-college-gold hover:text-college-blue block px-3 py-2 rounded-md text-base font-medium">Dorms</a>
+                <a href="study-areas.html" class="text-white hover:bg-college-gold hover:text-college-blue block px-3 py-2 rounded-md text-base font-medium">Study Areas</a>
+                <a href="weekend-hours.html" class="text-white hover:bg-college-gold hover:text-college-blue block px-3 py-2 rounded-md text-base font-medium">Weekend Hours</a>
+                <a href="move-in-tips.html" class="text-white hover:bg-college-gold hover:text-college-blue block px-3 py-2 rounded-md text-base font-medium">Move-in Tips</a>
+                <a href="wifi.html" class="bg-college-gold text-college-blue block px-3 py-2 rounded-md text-base font-medium">WiFi</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="bg-white shadow">
+        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+            <div class="md:flex md:items-center md:justify-between">
+                <div class="flex-1 min-w-0">
+                    <h1 class="text-3xl font-bold text-gray-900">Campus WiFi</h1>
+                    <p class="mt-2 text-lg text-gray-600">Get connected and troubleshoot network issues</p>
+                </div>
+                <div class="mt-4 md:mt-0 md:ml-4">
+                    <div class="flex items-center space-x-4">
+                        <div id="connection-status" class="flex items-center text-sm">
+                            <div class="connection-indicator w-3 h-3 rounded-full mr-2"></div>
+                            <span id="status-text">Checking connection...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <div class="px-4 py-6 sm:px-0">
+            
+            <!-- Quick Setup Section -->
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+                <h2 class="text-xl font-semibold text-gray-900 mb-4">Quick Setup</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Students -->
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <div class="flex items-center mb-3">
+                            <div class="flex-shrink-0">
+                                <svg class="h-8 w-8 text-college-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                                </svg>
+                            </div>
+                            <div class="ml-3">
+                                <h3 class="text-lg font-medium text-gray-900">Students</h3>
+                                <p class="text-sm text-gray-500">Residential & commuter students</p>
+                            </div>
+                        </div>
+                        <div class="space-y-2 text-sm">
+                            <div><strong>Network:</strong> SunflowerState-Student</div>
+                            <div><strong>Username:</strong> Your student ID</div>
+                            <div><strong>Password:</strong> Your portal password</div>
+                        </div>
+                        <button class="mt-4 w-full bg-college-blue text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
+                                onclick="wifiHelper.startSetupWizard('student')">
+                            Setup Student WiFi
+                        </button>
+                    </div>
+                    
+                    <!-- Guests -->
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <div class="flex items-center mb-3">
+                            <div class="flex-shrink-0">
+                                <svg class="h-8 w-8 text-college-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                                </svg>
+                            </div>
+                            <div class="ml-3">
+                                <h3 class="text-lg font-medium text-gray-900">Guests</h3>
+                                <p class="text-sm text-gray-500">Visitors & temporary access</p>
+                            </div>
+                        </div>
+                        <div class="space-y-2 text-sm">
+                            <div><strong>Network:</strong> SunflowerState-Guest</div>
+                            <div><strong>Access:</strong> No password required</div>
+                            <div><strong>Duration:</strong> 24 hours</div>
+                        </div>
+                        <button class="mt-4 w-full bg-college-gold text-college-blue px-4 py-2 rounded hover:bg-yellow-400 transition-colors"
+                                onclick="wifiHelper.startSetupWizard('guest')">
+                            Connect as Guest
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Troubleshooting Wizard -->
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+                <h2 class="text-xl font-semibold text-gray-900 mb-4">Having Connection Issues?</h2>
+                <p class="text-gray-600 mb-6">Let our interactive troubleshooting guide help you diagnose and fix common WiFi problems.</p>
+                
+                <button id="start-troubleshooting" 
+                        class="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-colors"
+                        onclick="wifiHelper.startTroubleshooting()">
+                    Start Troubleshooting
+                </button>
+            </div>
+
+            <!-- Dynamic Content Area -->
+            <div id="wifi-wizard" class="hidden">
+                <!-- WiFi setup and troubleshooting wizards will appear here -->
+            </div>
+
+            <!-- Network Status -->
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+                <h2 class="text-xl font-semibold text-gray-900 mb-4">Network Status</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="text-center p-4 bg-green-50 rounded-lg">
+                        <div class="text-2xl font-bold text-green-600">99.8%</div>
+                        <div class="text-sm text-green-800">Network Uptime</div>
+                    </div>
+                    <div class="text-center p-4 bg-blue-50 rounded-lg">
+                        <div class="text-2xl font-bold text-blue-600">1,247</div>
+                        <div class="text-sm text-blue-800">Active Connections</div>
+                    </div>
+                    <div class="text-center p-4 bg-purple-50 rounded-lg">
+                        <div class="text-2xl font-bold text-purple-600">850 Mbps</div>
+                        <div class="text-sm text-purple-800">Average Speed</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQ Section -->
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-xl font-semibold text-gray-900 mb-4">Frequently Asked Questions</h2>
+                
+                <div class="space-y-4">
+                    <div class="faq-item border-b border-gray-200 pb-4">
+                        <button class="faq-question w-full text-left font-medium text-gray-900 hover:text-college-blue"
+                                onclick="wifiHelper.toggleFAQ(this)">
+                            How do I connect my gaming console or smart TV?
+                            <svg class="faq-arrow inline-block ml-2 h-4 w-4 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div class="faq-answer hidden mt-2 text-gray-600">
+                            <p>Gaming consoles and smart TVs require device registration. Visit the IT Help Desk with your device's MAC address, or use our online device registration portal at <strong>wifi.sunflower.edu/register</strong>.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item border-b border-gray-200 pb-4">
+                        <button class="faq-question w-full text-left font-medium text-gray-900 hover:text-college-blue"
+                                onclick="wifiHelper.toggleFAQ(this)">
+                            Why is my connection slow in my dorm room?
+                            <svg class="faq-arrow inline-block ml-2 h-4 w-4 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div class="faq-answer hidden mt-2 text-gray-600">
+                            <p>Dorm WiFi speed can be affected by:</p>
+                            <ul class="list-disc list-inside mt-2 space-y-1">
+                                <li>Peak usage times (evenings and weekends)</li>
+                                <li>Distance from access points</li>
+                                <li>Building construction materials</li>
+                                <li>Too many devices connected</li>
+                            </ul>
+                            <p class="mt-2">Try moving closer to common areas or use ethernet cables for the best speeds.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item border-b border-gray-200 pb-4">
+                        <button class="faq-question w-full text-left font-medium text-gray-900 hover:text-college-blue"
+                                onclick="wifiHelper.toggleFAQ(this)">
+                            What should I do if I forgot my password?
+                            <svg class="faq-arrow inline-block ml-2 h-4 w-4 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div class="faq-answer hidden mt-2 text-gray-600">
+                            <p>You can reset your password at <strong>portal.sunflower.edu</strong> using your student ID and the email address on file. If you need further assistance, contact the IT Help Desk at (555) 123-4590.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <button class="faq-question w-full text-left font-medium text-gray-900 hover:text-college-blue"
+                                onclick="wifiHelper.toggleFAQ(this)">
+                            Are there data limits on campus WiFi?
+                            <svg class="faq-arrow inline-block ml-2 h-4 w-4 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div class="faq-answer hidden mt-2 text-gray-600">
+                            <p>No, there are no data limits for students on campus WiFi. However, we do monitor for excessive usage that might affect other users and may contact you if your usage patterns are impacting network performance.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-college-blue text-white mt-12">
+        <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">IT Help Desk</h3>
+                    <p>Technology Center<br>
+                    Room 105<br>
+                    (555) 123-4590<br>
+                    ithelp@sunflower.edu</p>
+                    <p class="mt-2 text-sm text-blue-100">Mon-Fri: 8am-8pm<br>Weekend: 10am-4pm</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="hover:text-college-gold">Device Registration</a></li>
+                        <li><a href="#" class="hover:text-college-gold">Password Reset</a></li>
+                        <li><a href="#" class="hover:text-college-gold">Network Status</a></li>
+                        <li><a href="#" class="hover:text-college-gold">VPN Setup</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Emergency IT</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="hover:text-college-gold">After Hours Support: (555) 123-4911</a></li>
+                        <li><a href="#" class="hover:text-college-gold">Submit Ticket Online</a></li>
+                        <li><a href="#" class="hover:text-college-gold">Live Chat Support</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-blue-800 mt-8 pt-8 text-center">
+                <p>&copy; 2025 Sunflower State College. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script>
+        // WiFi Helper System
+        class WiFiHelper {
+            constructor() {
+                this.currentStep = 0;
+                this.userResponses = {};
+                this.troubleshootingActive = false;
+                
+                this.init();
+            }
+            
+            init() {
+                this.checkConnectionStatus();
+                // Update connection status every 30 seconds
+                setInterval(() => this.checkConnectionStatus(), 30000);
+            }
+            
+            checkConnectionStatus() {
+                // Simulate connection check
+                const isOnline = navigator.onLine;
+                const indicator = document.querySelector('.connection-indicator');
+                const statusText = document.getElementById('status-text');
+                
+                if (isOnline) {
+                    indicator.className = 'connection-indicator w-3 h-3 rounded-full mr-2 bg-green-500';
+                    statusText.textContent = 'Connected to internet';
+                } else {
+                    indicator.className = 'connection-indicator w-3 h-3 rounded-full mr-2 bg-red-500';
+                    statusText.textContent = 'No internet connection';
+                }
+            }
+            
+            startSetupWizard(userType) {
+                const wizardContainer = document.getElementById('wifi-wizard');
+                wizardContainer.classList.remove('hidden');
+                
+                let setupContent = '';
+                
+                if (userType === 'student') {
+                    setupContent = this.generateStudentSetup();
+                } else if (userType === 'guest') {
+                    setupContent = this.generateGuestSetup();
+                }
+                
+                wizardContainer.innerHTML = `
+                    <div class="bg-white rounded-lg shadow-lg p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <h2 class="text-xl font-semibold text-gray-900">WiFi Setup Wizard</h2>
+                            <button onclick="wifiHelper.closeWizard()" class="text-gray-400 hover:text-gray-600">
+                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        ${setupContent}
+                    </div>
+                `;
+                
+                // Scroll to wizard
+                wizardContainer.scrollIntoView({ behavior: 'smooth' });
+            }
+            
+            generateStudentSetup() {
+                return `
+                    <div class="space-y-6">
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                            <h3 class="font-medium text-blue-900 mb-2">Student Network Setup</h3>
+                            <p class="text-blue-800">Follow these steps to connect to SunflowerState-Student</p>
+                        </div>
+                        
+                        <div class="space-y-4">
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0 w-8 h-8 bg-college-blue text-white rounded-full flex items-center justify-center text-sm font-medium">1</div>
+                                <div class="ml-4">
+                                    <h4 class="font-medium text-gray-900">Open WiFi Settings</h4>
+                                    <p class="text-gray-600">On your device, open WiFi/Network settings and scan for available networks.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0 w-8 h-8 bg-college-blue text-white rounded-full flex items-center justify-center text-sm font-medium">2</div>
+                                <div class="ml-4">
+                                    <h4 class="font-medium text-gray-900">Select Network</h4>
+                                    <p class="text-gray-600 mb-2">Choose <strong>SunflowerState-Student</strong> from the list of available networks.</p>
+                                    <div class="bg-gray-100 p-2 rounded text-sm font-mono">Network: SunflowerState-Student</div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0 w-8 h-8 bg-college-blue text-white rounded-full flex items-center justify-center text-sm font-medium">3</div>
+                                <div class="ml-4">
+                                    <h4 class="font-medium text-gray-900">Enter Credentials</h4>
+                                    <div class="space-y-2">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700">Username</label>
+                                            <input type="text" placeholder="Your student ID (e.g., 12345678)" 
+                                                   class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700">Password</label>
+                                            <input type="password" placeholder="Your student portal password" 
+                                                   class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0 w-8 h-8 bg-college-blue text-white rounded-full flex items-center justify-center text-sm font-medium">4</div>
+                                <div class="ml-4">
+                                    <h4 class="font-medium text-gray-900">Test Connection</h4>
+                                    <p class="text-gray-600 mb-3">Click connect and test your internet access.</p>
+                                    <button class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition-colors"
+                                            onclick="wifiHelper.testConnection()">
+                                        Test My Connection
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                            <div class="flex">
+                                <svg class="h-5 w-5 text-yellow-400 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                </svg>
+                                <div class="ml-3">
+                                    <h4 class="text-sm font-medium text-yellow-800">Need Help?</h4>
+                                    <p class="text-sm text-yellow-700">If you're having trouble, contact the IT Help Desk at (555) 123-4590 or visit the Technology Center.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            generateGuestSetup() {
+                return `
+                    <div class="space-y-6">
+                        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                            <h3 class="font-medium text-yellow-900 mb-2">Guest Network Setup</h3>
+                            <p class="text-yellow-800">Connect to our guest network for temporary access</p>
+                        </div>
+                        
+                        <div class="space-y-4">
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0 w-8 h-8 bg-college-gold text-college-blue rounded-full flex items-center justify-center text-sm font-medium">1</div>
+                                <div class="ml-4">
+                                    <h4 class="font-medium text-gray-900">Select Guest Network</h4>
+                                    <p class="text-gray-600 mb-2">Choose <strong>SunflowerState-Guest</strong> from your WiFi settings.</p>
+                                    <div class="bg-gray-100 p-2 rounded text-sm font-mono">Network: SunflowerState-Guest</div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0 w-8 h-8 bg-college-gold text-college-blue rounded-full flex items-center justify-center text-sm font-medium">2</div>
+                                <div class="ml-4">
+                                    <h4 class="font-medium text-gray-900">Accept Terms</h4>
+                                    <p class="text-gray-600">You'll be redirected to a captive portal to accept our guest usage terms.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0 w-8 h-8 bg-college-gold text-college-blue rounded-full flex items-center justify-center text-sm font-medium">3</div>
+                                <div class="ml-4">
+                                    <h4 class="font-medium text-gray-900">Enjoy 24-Hour Access</h4>
+                                    <p class="text-gray-600">Your guest access is valid for 24 hours from connection time.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                            <h4 class="font-medium text-gray-900 mb-2">Guest Network Limitations</h4>
+                            <ul class="text-sm text-gray-600 space-y-1">
+                                <li>• Limited to basic web browsing and email</li>
+                                <li>• Streaming and gaming services may be restricted</li>
+                                <li>• 24-hour time limit per connection</li>
+                                <li>• No access to campus internal resources</li>
+                            </ul>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            startTroubleshooting() {
+                this.troubleshootingActive = true;
+                this.currentStep = 0;
+                this.userResponses = {};
+                
+                const wizardContainer = document.getElementById('wifi-wizard');
+                wizardContainer.classList.remove('hidden');
+                
+                this.showTroubleshootingStep();
+                wizardContainer.scrollIntoView({ behavior: 'smooth' });
+            }
+            
+            showTroubleshootingStep() {
+                const wizardContainer = document.getElementById('wifi-wizard');
+                const steps = [
+                    {
+                        question: "What type of device are you using?",
+                        options: [
+                            { value: "laptop", label: "Laptop (Windows/Mac)" },
+                            { value: "mobile", label: "Mobile Phone/Tablet" },
+                            { value: "gaming", label: "Gaming Console" },
+                            { value: "smart", label: "Smart TV/Streaming Device" }
+                        ]
+                    },
+                    {
+                        question: "What specific issue are you experiencing?",
+                        options: [
+                            { value: "no-networks", label: "Can't see any WiFi networks" },
+                            { value: "cant-connect", label: "Can see network but can't connect" },
+                            { value: "slow-speed", label: "Connected but very slow" },
+                            { value: "frequent-drops", label: "Keeps disconnecting" }
+                        ]
+                    },
+                    {
+                        question: "Have you tried restarting your device?",
+                        options: [
+                            { value: "yes", label: "Yes, I restarted my device" },
+                            { value: "no", label: "No, I haven't tried that yet" }
+                        ]
+                    }
+                ];
+                
+                if (this.currentStep < steps.length) {
+                    const step = steps[this.currentStep];
+                    wizardContainer.innerHTML = this.generateTroubleshootingStep(step);
+                } else {
+                    wizardContainer.innerHTML = this.generateTroubleshootingSolution();
+                }
+            }
+            
+            generateTroubleshootingStep(step) {
+                return `
+                    <div class="bg-white rounded-lg shadow-lg p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <h2 class="text-xl font-semibold text-gray-900">WiFi Troubleshooting</h2>
+                            <button onclick="wifiHelper.closeWizard()" class="text-gray-400 hover:text-gray-600">
+                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 w-8 h-8 bg-red-600 text-white rounded-full flex items-center justify-center text-sm font-medium">
+                                    ${this.currentStep + 1}
+                                </div>
+                                <div class="ml-4 flex-1">
+                                    <div class="w-full bg-gray-200 rounded-full h-2">
+                                        <div class="bg-red-600 h-2 rounded-full" style="width: ${((this.currentStep + 1) / 3) * 100}%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">${step.question}</h3>
+                        
+                        <div class="space-y-3">
+                            ${step.options.map(option => `
+                                <button class="troubleshooting-option w-full text-left p-4 border border-gray-300 rounded-lg hover:border-red-500 hover:bg-red-50 transition-colors"
+                                        onclick="wifiHelper.selectTroubleshootingOption('${option.value}')">
+                                    <div class="flex items-center">
+                                        <div class="flex-shrink-0 w-4 h-4 border border-gray-300 rounded-full mr-3"></div>
+                                        <span>${option.label}</span>
+                                    </div>
+                                </button>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            selectTroubleshootingOption(value) {
+                this.userResponses[`step_${this.currentStep}`] = value;
+                this.currentStep++;
+                
+                // Add visual feedback
+                const selectedButton = event.target.closest('.troubleshooting-option');
+                selectedButton.classList.add('border-red-500', 'bg-red-50');
+                const circle = selectedButton.querySelector('div > div');
+                circle.classList.add('bg-red-500');
+                
+                setTimeout(() => {
+                    this.showTroubleshootingStep();
+                }, 500);
+            }
+            
+            generateTroubleshootingSolution() {
+                const deviceType = this.userResponses.step_0;
+                const issueType = this.userResponses.step_1;
+                const hasRestarted = this.userResponses.step_2;
+                
+                let solution = this.getSolution(deviceType, issueType, hasRestarted);
+                
+                return `
+                    <div class="bg-white rounded-lg shadow-lg p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <h2 class="text-xl font-semibold text-gray-900">Recommended Solution</h2>
+                            <button onclick="wifiHelper.closeWizard()" class="text-gray-400 hover:text-gray-600">
+                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        
+                        ${solution}
+                        
+                        <div class="mt-6 flex space-x-4">
+                            <button class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition-colors"
+                                    onclick="wifiHelper.markResolved()">
+                                This Fixed My Issue
+                            </button>
+                            <button class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 transition-colors"
+                                    onclick="wifiHelper.startTroubleshooting()">
+                                Try Different Solution
+                            </button>
+                            <button class="bg-college-blue text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
+                                    onclick="wifiHelper.contactSupport()">
+                                Contact IT Support
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            getSolution(deviceType, issueType, hasRestarted) {
+                // Generate contextual solutions based on user responses
+                let solution = `<div class="space-y-4">`;
+                
+                if (hasRestarted === 'no') {
+                    solution += `
+                        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                            <h4 class="font-medium text-yellow-900 mb-2">First: Restart Your Device</h4>
+                            <p class="text-yellow-800">Many WiFi issues can be resolved by simply restarting your device. Please try this first before proceeding with other solutions.</p>
+                        </div>
+                    `;
+                }
+                
+                if (issueType === 'no-networks') {
+                    solution += `
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                            <h4 class="font-medium text-blue-900 mb-2">Can't See WiFi Networks</h4>
+                            <ol class="list-decimal list-inside space-y-2 text-blue-800">
+                                <li>Check if WiFi is enabled on your device</li>
+                                <li>Move closer to a building or common area</li>
+                                <li>Try forgetting and re-adding saved networks</li>
+                                <li>Reset network settings (advanced option)</li>
+                            </ol>
+                        </div>
+                    `;
+                }
+                
+                if (issueType === 'cant-connect') {
+                    solution += `
+                        <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                            <h4 class="font-medium text-red-900 mb-2">Can't Connect to Network</h4>
+                            <ol class="list-decimal list-inside space-y-2 text-red-800">
+                                <li>Verify your student ID and password are correct</li>
+                                <li>Try forgetting the network and reconnecting</li>
+                                <li>Check if your account is active in the student portal</li>
+                                <li>Clear your device's network cache</li>
+                            </ol>
+                        </div>
+                    `;
+                }
+                
+                if (issueType === 'slow-speed') {
+                    solution += `
+                        <div class="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                            <h4 class="font-medium text-purple-900 mb-2">Slow Internet Speed</h4>
+                            <ol class="list-decimal list-inside space-y-2 text-purple-800">
+                                <li>Move to a different location (closer to access points)</li>
+                                <li>Disconnect unnecessary devices</li>
+                                <li>Close bandwidth-heavy applications</li>
+                                <li>Try connecting during off-peak hours</li>
+                                <li>Use ethernet cable if available</li>
+                            </ol>
+                        </div>
+                    `;
+                }
+                
+                if (issueType === 'frequent-drops') {
+                    solution += `
+                        <div class="bg-orange-50 border border-orange-200 rounded-lg p-4">
+                            <h4 class="font-medium text-orange-900 mb-2">Frequent Disconnections</h4>
+                            <ol class="list-decimal list-inside space-y-2 text-orange-800">
+                                <li>Update your device's WiFi drivers</li>
+                                <li>Disable power saving mode for WiFi adapter</li>
+                                <li>Check for interference from other devices</li>
+                                <li>Try switching to a different WiFi band (2.4GHz vs 5GHz)</li>
+                            </ol>
+                        </div>
+                    `;
+                }
+                
+                if (deviceType === 'gaming' || deviceType === 'smart') {
+                    solution += `
+                        <div class="bg-indigo-50 border border-indigo-200 rounded-lg p-4">
+                            <h4 class="font-medium text-indigo-900 mb-2">Special Device Setup</h4>
+                            <p class="text-indigo-800 mb-2">Gaming consoles and smart devices require additional registration:</p>
+                            <ol class="list-decimal list-inside space-y-2 text-indigo-800">
+                                <li>Find your device's MAC address in network settings</li>
+                                <li>Visit <strong>wifi.sunflower.edu/register</strong></li>
+                                <li>Enter your student credentials and device MAC address</li>
+                                <li>Wait 10-15 minutes for registration to complete</li>
+                            </ol>
+                        </div>
+                    `;
+                }
+                
+                solution += `</div>`;
+                return solution;
+            }
+            
+            markResolved() {
+                const wizardContainer = document.getElementById('wifi-wizard');
+                wizardContainer.innerHTML = `
+                    <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+                        <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
+                            <svg class="h-6 w-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-medium text-gray-900 mb-2">Great! Problem Resolved</h3>
+                        <p class="text-gray-600 mb-4">We're glad we could help you get connected. Your feedback helps us improve our support.</p>
+                        <button onclick="wifiHelper.closeWizard()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition-colors">
+                            Close
+                        </button>
+                    </div>
+                `;
+            }
+            
+            contactSupport() {
+                const wizardContainer = document.getElementById('wifi-wizard');
+                wizardContainer.innerHTML = `
+                    <div class="bg-white rounded-lg shadow-lg p-6">
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Contact IT Support</h3>
+                        <div class="space-y-4">
+                            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                                <h4 class="font-medium text-blue-900 mb-2">IT Help Desk</h4>
+                                <div class="space-y-2 text-blue-800">
+                                    <p><strong>Phone:</strong> (555) 123-4590</p>
+                                    <p><strong>Email:</strong> ithelp@sunflower.edu</p>
+                                    <p><strong>Location:</strong> Technology Center, Room 105</p>
+                                    <p><strong>Hours:</strong> Mon-Fri 8am-8pm, Weekend 10am-4pm</p>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                                <h4 class="font-medium text-gray-900 mb-2">Online Support</h4>
+                                <div class="space-y-2">
+                                    <button class="w-full bg-college-blue text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">
+                                        Submit Support Ticket
+                                    </button>
+                                    <button class="w-full bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition-colors">
+                                        Start Live Chat
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-6 text-center">
+                            <button onclick="wifiHelper.closeWizard()" class="text-gray-500 hover:text-gray-700">
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            testConnection() {
+                // Simulate connection test
+                const button = event.target;
+                const originalText = button.textContent;
+                
+                button.textContent = 'Testing...';
+                button.disabled = true;
+                
+                setTimeout(() => {
+                    const isConnected = Math.random() > 0.3; // 70% success rate
+                    
+                    if (isConnected) {
+                        button.textContent = '✓ Connection Successful!';
+                        button.className = 'bg-green-600 text-white px-4 py-2 rounded';
+                        
+                        setTimeout(() => {
+                            const resultDiv = document.createElement('div');
+                            resultDiv.className = 'mt-4 bg-green-50 border border-green-200 rounded-lg p-4';
+                            resultDiv.innerHTML = `
+                                <div class="flex">
+                                    <svg class="h-5 w-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    <div class="ml-3">
+                                        <h4 class="text-sm font-medium text-green-800">Successfully Connected!</h4>
+                                        <p class="text-sm text-green-700">You're now connected to SunflowerState-Student. Speed test: 245 Mbps down, 89 Mbps up.</p>
+                                    </div>
+                                </div>
+                            `;
+                            button.parentNode.appendChild(resultDiv);
+                        }, 1000);
+                    } else {
+                        button.textContent = '✗ Connection Failed';
+                        button.className = 'bg-red-600 text-white px-4 py-2 rounded';
+                        
+                        setTimeout(() => {
+                            const resultDiv = document.createElement('div');
+                            resultDiv.className = 'mt-4 bg-red-50 border border-red-200 rounded-lg p-4';
+                            resultDiv.innerHTML = `
+                                <div class="flex">
+                                    <svg class="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    <div class="ml-3">
+                                        <h4 class="text-sm font-medium text-red-800">Connection Failed</h4>
+                                        <p class="text-sm text-red-700">Unable to connect. Please verify your credentials or try our troubleshooting guide.</p>
+                                        <button onclick="wifiHelper.startTroubleshooting()" class="mt-2 text-sm bg-red-100 text-red-800 px-3 py-1 rounded hover:bg-red-200">
+                                            Start Troubleshooting
+                                        </button>
+                                    </div>
+                                </div>
+                            `;
+                            button.parentNode.appendChild(resultDiv);
+                        }, 1000);
+                    }
+                }, 2000);
+            }
+            
+            toggleFAQ(element) {
+                const answer = element.nextElementSibling;
+                const arrow = element.querySelector('.faq-arrow');
+                
+                if (answer.classList.contains('hidden')) {
+                    answer.classList.remove('hidden');
+                    arrow.style.transform = 'rotate(180deg)';
+                } else {
+                    answer.classList.add('hidden');
+                    arrow.style.transform = 'rotate(0deg)';
+                }
+            }
+            
+            closeWizard() {
+                const wizardContainer = document.getElementById('wifi-wizard');
+                wizardContainer.classList.add('hidden');
+                this.troubleshootingActive = false;
+                this.currentStep = 0;
+                this.userResponses = {};
+            }
+        }
+        
+        // Initialize WiFi Helper
+        let wifiHelper;
+        document.addEventListener('DOMContentLoaded', () => {
+            wifiHelper = new WiFiHelper();
+        });
+    </script>
+</body>
+</html>

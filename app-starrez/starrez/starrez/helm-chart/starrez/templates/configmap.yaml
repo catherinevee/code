@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "college-website.fullname" . }}-content
+  labels:
+    {{- include "college-website.labels" . | nindent 4 }}
+data:
+  dorms.json: |
+{{ .Files.Get "data/dorms.json" | indent 4 }}
+  study-areas.json: |
+{{ .Files.Get "data/study-areas.json" | indent 4 }}
+  site-config.json: |
+    {
+      "collegeName": "{{ .Values.college.name }}",
+      "colors": {
+        "primary": "{{ .Values.college.colors.primary }}",
+        "secondary": "{{ .Values.college.colors.secondary }}"
+      },
+      "contact": {
+        "phone": "{{ .Values.college.contact.phone }}",
+        "email": "{{ .Values.college.contact.email }}",
+        "address": "{{ .Values.college.contact.address }}"
+      }
+    }

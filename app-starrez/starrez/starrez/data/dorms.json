@@ -1,0 +1,71 @@
+// Create data/dorms.json
+{
+  "dorms": [
+    {
+      "id": "rose-hall",
+      "name": "Rose Hall",
+      "flowerType": "Rose",
+      "capacity": 200,
+      "floors": 4,
+      "roomTypes": ["Single", "Double", "Suite"],
+      "amenities": [
+        "24/7 Front Desk",
+        "Study Lounges",
+        "Laundry Facilities",
+        "Vending Machines",
+        "Recreation Room",
+        "High-Speed WiFi"
+      ],
+      "description": "Our flagship residence hall, Rose Hall embodies the elegance and beauty of its namesake flower. Home to upperclassmen, this historic building features traditional double rooms with modern amenities.",
+      "image": "images/dorms/rose-hall.jpg",
+      "contact": {
+        "phone": "(555) 123-4571",
+        "email": "rosehall@sunflower.edu"
+      }
+    },
+    {
+      "id": "lily-commons",
+      "name": "Lily Commons",
+      "flowerType": "Lily",
+      "capacity": 150,
+      "floors": 3,
+      "roomTypes": ["Single", "Double"],
+      "amenities": [
+        "Community Kitchen",
+        "Study Rooms",
+        "Bike Storage",
+        "Outdoor Courtyard",
+        "Package Center",
+        "High-Speed WiFi"
+      ],
+      "description": "Lily Commons offers a close-knit community experience with its apartment-style living. Like the lily flower, this residence promotes growth and new beginnings for first-year students.",
+      "image": "images/dorms/lily-commons.jpg",
+      "contact": {
+        "phone": "(555) 123-4572",
+        "email": "lilycommons@sunflower.edu"
+      }
+    },
+    {
+      "id": "jasmine-house",
+      "name": "Jasmine House",
+      "flowerType": "Jasmine",
+      "capacity": 80,
+      "floors": 2,
+      "roomTypes": ["Single", "Suite"],
+      "amenities": [
+        "Honors Program Housing",
+        "Private Study Areas",
+        "Conference Room",
+        "Garden View Rooms",
+        "Premium WiFi",
+        "Quiet Hours Enforcement"
+      ],
+      "description": "Jasmine House provides an intimate, academic-focused environment. Like jasmine's sweet fragrance, this residence creates lasting memories for our honors students.",
+      "image": "images/dorms/jasmine-house.jpg",
+      "contact": {
+        "phone": "(555) 123-4573",
+        "email": "jasminehouse@sunflower.edu"
+      }
+    }
+  ]
+}s

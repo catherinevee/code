@@ -1,0 +1,352 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom CSS Variables for College Theme */
+:root {
+  --college-blue: #1E40AF;
+  --college-gold: #F59E0B;
+  --flower-pink: #EC4899;
+  --flower-purple: #8B5CF6;
+}
+
+/* Base Layer - Custom base styles */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.6;
+  }
+  
+  /* Focus styles for accessibility */
+  *:focus {
+    outline: 2px solid var(--college-blue);
+    outline-offset: 2px;
+  }
+  
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: var(--college-blue);
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: #1D4ED8;
+  }
+}
+
+/* Components Layer - Reusable component styles */
+@layer components {
+  /* College-themed color utilities */
+  .bg-college-blue {
+    background-color: var(--college-blue);
+  }
+  
+  .bg-college-gold {
+    background-color: var(--college-gold);
+  }
+  
+  .text-college-blue {
+    color: var(--college-blue);
+  }
+  
+  .text-college-gold {
+    color: var(--college-gold);
+  }
+  
+  .border-college-blue {
+    border-color: var(--college-blue);
+  }
+  
+  /* Button components */
+  .btn-primary {
+    @apply bg-college-blue text-white px-4 py-2 rounded-md font-medium transition-colors duration-200 hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
+  }
+  
+  .btn-secondary {
+    @apply bg-college-gold text-college-blue px-4 py-2 rounded-md font-medium transition-colors duration-200 hover:bg-yellow-400 focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2;
+  }
+  
+  .btn-outline {
+    @apply border-2 border-college-blue text-college-blue px-4 py-2 rounded-md font-medium transition-colors duration-200 hover:bg-college-blue hover:text-white focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
+  }
+  
+  /* Card components */
+  .card {
+    @apply bg-white rounded-lg shadow-lg overflow-hidden;
+  }
+  
+  .card-hover {
+    @apply transition-shadow duration-300 hover:shadow-xl;
+  }
+  
+  /* Navigation components */
+  .nav-link {
+    @apply text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 hover:bg-college-gold hover:text-college-blue;
+  }
+  
+  .nav-link-active {
+    @apply bg-college-gold text-college-blue;
+  }
+  
+  /* Form components */
+  .form-input {
+    @apply block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-college-blue focus:border-college-blue;
+  }
+  
+  .form-checkbox {
+    @apply w-4 h-4 text-college-blue border-gray-300 rounded focus:ring-college-blue focus:ring-2;
+  }
+  
+  /* Modal components */
+  .modal-overlay {
+    @apply fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50;
+  }
+  
+  .modal-content {
+    @apply relative top-20 mx-auto p-5 border w-11/12 md:w-1/2 lg:w-1/3 shadow-lg rounded-md bg-white;
+  }
+  
+  /* Progress components */
+  .progress-bar {
+    @apply w-full bg-gray-200 rounded-full h-3;
+  }
+  
+  .progress-fill {
+    @apply h-3 rounded-full transition-all duration-300 ease-in-out;
+  }
+  
+  /* Badge components */
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+  
+  .badge-primary {
+    @apply bg-blue-100 text-blue-800;
+  }
+  
+  .badge-secondary {
+    @apply bg-yellow-100 text-yellow-800;
+  }
+  
+  .badge-success {
+    @apply bg-green-100 text-green-800;
+  }
+  
+  .badge-danger {
+    @apply bg-red-100 text-red-800;
+  }
+  
+  /* Status indicators */
+  .status-open {
+    @apply bg-green-100 text-green-800;
+  }
+  
+  .status-closing-soon {
+    @apply bg-yellow-100 text-yellow-800;
+  }
+  
+  .status-closed {
+    @apply bg-red-100 text-red-800;
+  }
+  
+  /* Accessibility enhancements */
+  .keyboard-navigation *:focus {
+    @apply outline-2 outline-college-blue outline-offset-2;
+  }
+  
+  .high-contrast {
+    filter: contrast(1.5);
+  }
+  
+  .reduced-motion * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  /* Font size accessibility options */
+  .font-size-small {
+    font-size: 0.875rem;
+  }
+  
+  .font-size-normal {
+    font-size: 1rem;
+  }
+  
+  .font-size-large {
+    font-size: 1.125rem;
+  }
+  
+  .font-size-xlarge {
+    font-size: 1.25rem;
+  }
+}
+
+/* Utilities Layer - Custom utility classes */
+@layer utilities {
+  /* Animation utilities */
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+  }
+  
+  .animate-slide-in {
+    animation: slideIn 0.3s ease-out;
+  }
+  
+  .animate-bounce-in {
+    animation: bounceIn 0.6s ease-out;
+  }
+  
+  /* Gradient utilities */
+  .gradient-college {
+    background: linear-gradient(135deg, var(--college-blue) 0%, var(--college-gold) 100%);
+  }
+  
+  .gradient-flower {
+    background: linear-gradient(135deg, var(--flower-pink) 0%, var(--flower-purple) 100%);
+  }
+  
+  /* Shadow utilities */
+  .shadow-college {
+    box-shadow: 0 4px 6px -1px rgba(30, 64, 175, 0.1), 0 2px 4px -1px rgba(30, 64, 175, 0.06);
+  }
+  
+  /* Text utilities */
+  .text-shadow {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Layout utilities */
+  .min-h-screen-safe {
+    min-height: 100vh;
+    min-height: calc(var(--vh, 1vh) * 100);
+  }
+  
+  /* Loading states */
+  .loading-shimmer {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+  
+  /* Print utilities */
+  @media print {
+    .print-hidden {
+      display: none !important;
+    }
+    
+    .print-visible {
+      display: block !important;
+    }
+  }
+}
+
+/* Custom animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes bounceIn {
+  0% {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes bounce {
+  0%, 20%, 53%, 80%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  40%, 43% {
+    transform: translate3d(0, -30px, 0);
+  }
+  70% {
+    transform: translate3d(0, -15px, 0);
+  }
+  90% {
+    transform: translate3d(0, -4px, 0);
+  }
+}
+
+/* Dark mode support (if needed in future) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --college-blue: #3B82F6;
+    --college-gold: #FBBF24;
+  }
+}
+
+/* Responsive design helpers */
+@media (max-width: 640px) {
+  .mobile-stack > * + * {
+    margin-top: 1rem;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  :root {
+    --college-blue: #000080;
+    --college-gold: #FFD700;
+  }
+  
+  .card {
+    border: 2px solid #000;
+  }
+}

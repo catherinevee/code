@@ -27,3 +27,28 @@ resources:
   requests:
     cpu: 100m
     memory: 128Mi
+
+college:
+  name: "Sunflower State College"
+  colors:
+    primary: "#1E40AF"
+    secondary: "#F59E0B"
+  contact:
+    phone: "(555) 123-4567"
+    email: "info@sunflower.edu"
+    address: "123 Campus Drive, Sunflower, KS 67890"
+
+# Environment-specific overrides
+env:
+  development:
+    replicas: 1
+    resources:
+      requests:
+        memory: "64Mi"
+        cpu: "50m"
+  production:
+    replicas: 3
+    resources:
+      requests:
+        memory: "128Mi"
+        cpu: "100m"
