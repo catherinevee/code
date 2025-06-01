@@ -1,0 +1,650 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'AWS machine learning services cost tracking and budget management'
+
+Parameters:
+  EnvironmentName:
+    Type: String
+    Default: production
+    Description: Environment name for tagging and identification
+
+  MonthlyMLBudgetAmount:
+    Type: Number
+    Default: 3000
+    MinValue: 1
+    Description: Monthly budget amount for ML services in USD
+
+  AlertEmail:
+    Type: String
+    Description: Email address for ML cost alerts and notifications
+    AllowedPattern: '^[^\s@]+@[^\s@]+\.[^\s@]+$'
+
+  MLTagKey:
+    Type: String
+    Default: Environment
+    Description: Tag key to filter ML resources for cost tracking
+
+  MLTagValue:
+    Type: String
+    Default: production
+    Description: Tag value to filter ML resources for cost tracking
+
+  ComputeBudget:
+    Type: Number
+    Default: 2000
+    MinValue: 1
+    Description: Monthly budget for ML compute services (SageMaker, EC2) in USD
+
+  DataProcessingBudget:
+    Type: Number
+    Default: 500
+    MinValue: 1
+    Description: Monthly budget for data processing and storage in USD
+
+Resources:
+  # SNS Topic for ML cost alerts
+  MLCostAlertsTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: !Sub '${EnvironmentName}-ML-Cost-Alerts'
+      DisplayName: !Sub '${EnvironmentName} Machine Learning Cost Alerts'
+      Tags:
+        - Key: Name
+          Value: !Sub '${EnvironmentName}-ML-Cost-Alerts'
+        - Key: Environment
+          Value: !Ref EnvironmentName
+        - Key: Purpose
+          Value: MLCostManagement
+
+  # Email subscription for ML cost alerts
+  MLCostEmailSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      TopicArn: !Ref MLCostAlertsTopic
+      Protocol: email
+      Endpoint: !Ref AlertEmail
+
+  # Budget for Amazon SageMaker
+  MonthlySageMakerBudget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: !Sub '${EnvironmentName}-SageMaker-Monthly-Budget'
+        BudgetLimit:
+          Amount: !Ref MonthlyMLBudgetAmount
+          Unit: USD
+        TimeUnit: MONTHLY
+        BudgetType: COST
+        CostFilters:
+          Service:
+            - Amazon SageMaker
+          TagKey:
+            - !Ref MLTagKey
+          TagValue:
+            - !Ref MLTagValue
+        NotificationsWithSubscribers:
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 50
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref MLCostAlertsTopic
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 75
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref MLCostAlertsTopic
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 90
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref MLCostAlertsTopic
+          - Notification:
+              NotificationType: FORECASTED
+              ComparisonOperator: GREATER_THAN
+              Threshold: 100
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref MLCostAlertsTopic
+
+  # Budget for Amazon Bedrock (Generative AI)
+  MonthlyBedrockBudget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: !Sub '${EnvironmentName}-Bedrock-Monthly-Budget'
+        BudgetLimit:
+          Amount: 1500
+          Unit: USD
+        TimeUnit: MONTHLY
+        BudgetType: COST
+        CostFilters:
+          Service:
+            - Amazon Bedrock
+          TagKey:
+            - !Ref MLTagKey
+          TagValue:
+            - !Ref MLTagValue
+        NotificationsWithSubscribers:
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 60
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref MLCostAlertsTopic
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 85
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref MLCostAlertsTopic
+
+  # Budget for Amazon Comprehend (NLP)
+  MonthlyComprehendBudget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: !Sub '${EnvironmentName}-Comprehend-Monthly-Budget'
+        BudgetLimit:
+          Amount: 400
+          Unit: USD
+        TimeUnit: MONTHLY
+        BudgetType: COST
+        CostFilters:
+          Service:
+            - Amazon Comprehend
+          TagKey:
+            - !Ref MLTagKey
+          TagValue:
+            - !Ref MLTagValue
+        NotificationsWithSubscribers:
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 70
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref MLCostAlertsTopic
+
+  # Budget for Amazon Rekognition (Computer Vision)
+  MonthlyRekognitionBudget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: !Sub '${EnvironmentName}-Rekognition-Monthly-Budget'
+        BudgetLimit:
+          Amount: 600
+          Unit: USD
+        TimeUnit: MONTHLY
+        BudgetType: COST
+        CostFilters:
+          Service:
+            - Amazon Rekognition
+          TagKey:
+            - !Ref MLTagKey
+          TagValue:
+            - !Ref MLTagValue
+        NotificationsWithSubscribers:
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 75
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref MLCostAlertsTopic
+
+  # Budget for Amazon Textract (Document Analysis)
+  MonthlyTextractBudget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: !Sub '${EnvironmentName}-Textract-Monthly-Budget'
+        BudgetLimit:
+          Amount: 300
+          Unit: USD
+        TimeUnit: MONTHLY
+        BudgetType: COST
+        CostFilters:
+          Service:
+            - Amazon Textract
+          TagKey:
+            - !Ref MLTagKey
+          TagValue:
+            - !Ref MLTagValue
+        NotificationsWithSubscribers:
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 80
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref MLCostAlertsTopic
+
+  # Budget for Amazon Transcribe (Speech-to-Text)
+  MonthlyTranscribeBudget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: !Sub '${EnvironmentName}-Transcribe-Monthly-Budget'
+        BudgetLimit:
+          Amount: 250
+          Unit: USD
+        TimeUnit: MONTHLY
+        BudgetType: COST
+        CostFilters:
+          Service:
+            - Amazon Transcribe
+          TagKey:
+            - !Ref MLTagKey
+          TagValue:
+            - !Ref MLTagValue
+        NotificationsWithSubscribers:
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 75
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref MLCostAlertsTopic
+
+  # Budget for Amazon Polly (Text-to-Speech)
+  MonthlyPollyBudget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: !Sub '${EnvironmentName}-Polly-Monthly-Budget'
+        BudgetLimit:
+          Amount: 150
+          Unit: USD
+        TimeUnit: MONTHLY
+        BudgetType: COST
+        CostFilters:
+          Service:
+            - Amazon Polly
+          TagKey:
+            - !Ref MLTagKey
+          TagValue:
+            - !Ref MLTagValue
+        NotificationsWithSubscribers:
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 80
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref MLCostAlertsTopic
+
+  # Budget for Amazon Translate
+  MonthlyTranslateBudget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: !Sub '${EnvironmentName}-Translate-Monthly-Budget'
+        BudgetLimit:
+          Amount: 200
+          Unit: USD
+        TimeUnit: MONTHLY
+        BudgetType: COST
+        CostFilters:
+          Service:
+            - Amazon Translate
+          TagKey:
+            - !Ref MLTagKey
+          TagValue:
+            - !Ref MLTagValue
+        NotificationsWithSubscribers:
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 75
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref MLCostAlertsTopic
+
+  # Budget for Amazon Forecast
+  MonthlyForecastBudget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: !Sub '${EnvironmentName}-Forecast-Monthly-Budget'
+        BudgetLimit:
+          Amount: 800
+          Unit: USD
+        TimeUnit: MONTHLY
+        BudgetType: COST
+        CostFilters:
+          Service:
+            - Amazon Forecast
+          TagKey:
+            - !Ref MLTagKey
+          TagValue:
+            - !Ref MLTagValue
+        NotificationsWithSubscribers:
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 70
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref MLCostAlertsTopic
+
+  # Budget for Amazon Personalize
+  MonthlyPersonalizeBudget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: !Sub '${EnvironmentName}-Personalize-Monthly-Budget'
+        BudgetLimit:
+          Amount: 600
+          Unit: USD
+        TimeUnit: MONTHLY
+        BudgetType: COST
+        CostFilters:
+          Service:
+            - Amazon Personalize
+          TagKey:
+            - !Ref MLTagKey
+          TagValue:
+            - !Ref MLTagValue
+        NotificationsWithSubscribers:
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 75
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref MLCostAlertsTopic
+
+  # Budget for Amazon Kendra (Search)
+  MonthlyKendraBudget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: !Sub '${EnvironmentName}-Kendra-Monthly-Budget'
+        BudgetLimit:
+          Amount: 1000
+          Unit: USD
+        TimeUnit: MONTHLY
+        BudgetType: COST
+        CostFilters:
+          Service:
+            - Amazon Kendra
+          TagKey:
+            - !Ref MLTagKey
+          TagValue:
+            - !Ref MLTagValue
+        NotificationsWithSubscribers:
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 70
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref MLCostAlertsTopic
+
+  # Budget for Amazon Lex (Chatbots)
+  MonthlyLexBudget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: !Sub '${EnvironmentName}-Lex-Monthly-Budget'
+        BudgetLimit:
+          Amount: 300
+          Unit: USD
+        TimeUnit: MONTHLY
+        BudgetType: COST
+        CostFilters:
+          Service:
+            - Amazon Lex
+          TagKey:
+            - !Ref MLTagKey
+          TagValue:
+            - !Ref MLTagValue
+        NotificationsWithSubscribers:
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 80
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref MLCostAlertsTopic
+
+  # Budget for ML Compute (EC2 for ML workloads)
+  MonthlyMLComputeBudget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: !Sub '${EnvironmentName}-ML-Compute-Monthly-Budget'
+        BudgetLimit:
+          Amount: !Ref ComputeBudget
+          Unit: USD
+        TimeUnit: MONTHLY
+        BudgetType: COST
+        CostFilters:
+          Service:
+            - Amazon Elastic Compute Cloud - Compute
+          UsageType:
+            - BoxUsage:p3.2xlarge
+            - BoxUsage:p3.8xlarge
+            - BoxUsage:p3.16xlarge
+            - BoxUsage:p4d.24xlarge
+            - BoxUsage:g4dn.xlarge
+            - BoxUsage:g4dn.2xlarge
+            - BoxUsage:g4dn.4xlarge
+            - BoxUsage:g4dn.8xlarge
+            - BoxUsage:g4dn.12xlarge
+            - BoxUsage:g4dn.16xlarge
+          TagKey:
+            - !Ref MLTagKey
+          TagValue:
+            - !Ref MLTagValue
+        NotificationsWithSubscribers:
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 65
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref MLCostAlertsTopic
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 85
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref MLCostAlertsTopic
+
+  # Budget for ML Data Processing (S3, Glue, EMR)
+  MonthlyMLDataProcessingBudget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: !Sub '${EnvironmentName}-ML-DataProcessing-Monthly-Budget'
+        BudgetLimit:
+          Amount: !Ref DataProcessingBudget
+          Unit: USD
+        TimeUnit: MONTHLY
+        BudgetType: COST
+        CostFilters:
+          Service:
+            - Amazon Simple Storage Service
+            - AWS Glue
+            - Amazon EMR
+            - Amazon Kinesis
+          TagKey:
+            - !Ref MLTagKey
+          TagValue:
+            - !Ref MLTagValue
+        NotificationsWithSubscribers:
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 70
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref MLCostAlertsTopic
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 90
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref MLCostAlertsTopic
+
+  # Budget for Amazon QuickSight (ML-powered BI)
+  MonthlyQuickSightBudget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: !Sub '${EnvironmentName}-QuickSight-Monthly-Budget'
+        BudgetLimit:
+          Amount: 200
+          Unit: USD
+        TimeUnit: MONTHLY
+        BudgetType: COST
+        CostFilters:
+          Service:
+            - Amazon QuickSight
+          TagKey:
+            - !Ref MLTagKey
+          TagValue:
+            - !Ref MLTagValue
+        NotificationsWithSubscribers:
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 80
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref MLCostAlertsTopic
+
+  # Budget for Amazon Lookout services
+  MonthlyLookoutBudget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: !Sub '${EnvironmentName}-Lookout-Monthly-Budget'
+        BudgetLimit:
+          Amount: 500
+          Unit: USD
+        TimeUnit: MONTHLY
+        BudgetType: COST
+        CostFilters:
+          Service:
+            - Amazon Lookout for Vision
+            - Amazon Lookout for Equipment
+            - Amazon Lookout for Metrics
+          TagKey:
+            - !Ref MLTagKey
+          TagValue:
+            - !Ref MLTagValue
+        NotificationsWithSubscribers:
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 75
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref MLCostAlertsTopic
+
+Outputs:
+  MLCostAlertsTopicArn:
+    Description: ARN of the ML cost alerts SNS topic
+    Value: !Ref MLCostAlertsTopic
+    Export:
+      Name: !Sub '${EnvironmentName}-ML-Cost-Alerts-Topic-ARN'
+
+  SageMakerBudgetName:
+    Description: Name of the SageMaker monthly budget
+    Value: !Ref MonthlySageMakerBudget
+    Export:
+      Name: !Sub '${EnvironmentName}-SageMaker-Budget-Name'
+
+  BedrockBudgetName:
+    Description: Name of the Bedrock monthly budget
+    Value: !Ref MonthlyBedrockBudget
+    Export:
+      Name: !Sub '${EnvironmentName}-Bedrock-Budget-Name'
+
+  ComprehendBudgetName:
+    Description: Name of the Comprehend monthly budget
+    Value: !Ref MonthlyComprehendBudget
+    Export:
+      Name: !Sub '${EnvironmentName}-Comprehend-Budget-Name'
+
+  RekognitionBudgetName:
+    Description: Name of the Rekognition monthly budget
+    Value: !Ref MonthlyRekognitionBudget
+    Export:
+      Name: !Sub '${EnvironmentName}-Rekognition-Budget-Name'
+
+  TextractBudgetName:
+    Description: Name of the Textract monthly budget
+    Value: !Ref MonthlyTextractBudget
+    Export:
+      Name: !Sub '${EnvironmentName}-Textract-Budget-Name'
+
+  MLComputeBudgetName:
+    Description: Name of the ML compute monthly budget
+    Value: !Ref MonthlyMLComputeBudget
+    Export:
+      Name: !Sub '${EnvironmentName}-ML-Compute-Budget-Name'
+
+  MLDataProcessingBudgetName:
+    Description: Name of the ML data processing monthly budget
+    Value: !Ref MonthlyMLDataProcessingBudget
+    Export:
+      Name: !Sub '${EnvironmentName}-ML-DataProcessing-Budget-Name'
+
+  PersonalizeBudgetName:
+    Description: Name of the Personalize monthly budget
+    Value: !Ref MonthlyPersonalizeBudget
+    Export:
+      Name: !Sub '${EnvironmentName}-Personalize-Budget-Name'
+
+  KendraBudgetName:
+    Description: Name of the Kendra monthly budget
+    Value: !Ref MonthlyKendraBudget
+    Export:
+      Name: !Sub '${EnvironmentName}-Kendra-Budget-Name'
+
+  MLBudgetConfiguration:
+    Description: Summary of ML budget configuration
+    Value: !Sub |
+      Environment: ${EnvironmentName}
+      ML Budget: $${MonthlyMLBudgetAmount}
+      Compute Budget: $${ComputeBudget}
+      Data Processing Budget: $${DataProcessingBudget}
+      Tag Filter: ${MLTagKey}=${MLTagValue}
+      Alert Email: ${AlertEmail}
+      Services: SageMaker, Bedrock, Comprehend, Rekognition, Textract, Transcribe, Polly, Translate, Forecast, Personalize, Kendra, Lex, ML Compute, Data Processing, QuickSight, Lookout
+    Export:
+      Name: !Sub '${EnvironmentName}-ML-Budget-Configuration'

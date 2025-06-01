@@ -1,0 +1,294 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Database infrastructure with RDS, backups, and monitoring'
+
+# ============================================================================
+# PARAMETERS
+# ============================================================================
+Parameters:
+  EnvironmentName:
+    Description: Environment name that will be prefixed to resource names
+    Type: String
+
+  DatabaseUsername:
+    Description: Username for the RDS database
+    Type: String
+
+  DatabasePassword:
+    Description: Password for the RDS database
+    Type: String
+    NoEcho: true
+
+  DatabaseInstanceClass:
+    Description: RDS instance class
+    Type: String
+
+  VPC1Id:
+    Description: ID of VPC1 (Application Tier)
+    Type: String
+
+  DatabaseSubnetId:
+    Description: Database subnet ID
+    Type: String
+
+  PrivateSubnetId:
+    Description: Private subnet ID for multi-AZ
+    Type: String
+
+  DatabaseSecurityGroupId:
+    Description: Database security group ID
+    Type: String
+
+  DatabaseSecretArn:
+    Description: Database secret ARN from Secrets Manager
+    Type: String
+
+  RDSEnhancedMonitoringRoleArn:
+    Description: RDS Enhanced Monitoring Role ARN
+    Type: String
+    Default: ''
+
+# ============================================================================
+# CONDITIONS
+# ============================================================================
+Conditions:
+  IsProduction: !Equals [!Ref EnvironmentName, production]
+  HasMonitoringRole: !Not [!Equals [!Ref RDSEnhancedMonitoringRoleArn, '']]
+
+# ============================================================================
+# RESOURCES
+# ============================================================================
+Resources:
+
+  # ========================================================================
+  # RDS SUBNET GROUP - Required for RDS in VPC
+  # ========================================================================
+  DatabaseSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupName: !Sub ${EnvironmentName}-db-subnet-group
+      DBSubnetGroupDescription: Subnet group for RDS database
+      SubnetIds:
+        - !Ref DatabaseSubnetId
+        - !Ref PrivateSubnetId
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-DB-SubnetGroup
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
+  # ========================================================================
+  # RDS PARAMETER GROUP - Performance optimization
+  # ========================================================================
+  DatabaseParameterGroup:
+    Type: AWS::RDS::DBParameterGroup
+    Properties:
+      Description: !Sub ${EnvironmentName} MySQL parameter group
+      Family: mysql8.0
+      Parameters:
+        # Performance tuning parameters
+        innodb_buffer_pool_size: '{DBInstanceClassMemory*3/4}'
+        max_connections: 1000
+        slow_query_log: 1
+        long_query_time: 2
+        general_log: 0
+        # Security parameters
+        require_secure_transport: 1
+        # Backup and recovery parameters
+        binlog_format: ROW
+        log_bin_trust_function_creators: 1
+        # InnoDB settings
+        innodb_file_per_table: 1
+        innodb_flush_log_at_trx_commit: 1
+        innodb_log_buffer_size: 16777216
+        # Query cache (disabled in MySQL 8.0 but keeping for compatibility)
+        query_cache_type: 0
+        query_cache_size: 0
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-DB-ParameterGroup
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
+  # ========================================================================
+  # RDS OPTION GROUP - Additional database features
+  # ========================================================================
+  DatabaseOptionGroup:
+    Type: AWS::RDS::OptionGroup
+    Properties:
+      OptionGroupDescription: !Sub ${EnvironmentName} MySQL option group
+      EngineName: MySQL
+      MajorEngineVersion: '8.0'
+      OptionConfigurations: []  # Add options as needed
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-DB-OptionGroup
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
+  # ========================================================================
+  # RDS DATABASE INSTANCE
+  # ========================================================================
+  Database:
+    Type: AWS::RDS::DBInstance
+    DeletionPolicy: Snapshot
+    Properties:
+      DBInstanceIdentifier: !Sub ${EnvironmentName}-mysql-db
+      DBName: applicationdb
+      DBInstanceClass: !Ref DatabaseInstanceClass
+      AllocatedStorage: 20
+      MaxAllocatedStorage: 1000  # Enable storage autoscaling up to 1TB
+      StorageType: gp3  # Use GP3 for better performance
+      StorageEncrypted: true
+      Engine: MySQL
+      EngineVersion: 8.0.35
+      MasterUsername: !Ref DatabaseUsername
+      MasterUserPassword: !Ref DatabasePassword
+      VPCSecurityGroups:
+        - !Ref DatabaseSecurityGroupId
+      DBSubnetGroupName: !Ref DatabaseSubnetGroup
+      DBParameterGroupName: !Ref DatabaseParameterGroup
+      OptionGroupName: !Ref DatabaseOptionGroup
+      # Backup configuration
+      BackupRetentionPeriod: !If [IsProduction, 7, 1]
+      PreferredBackupWindow: "03:00-04:00"
+      PreferredMaintenanceWindow: "sun:04:00-sun:05:00"
+      DeleteAutomatedBackups: !If [IsProduction, false, true]
+      # High availability
+      MultiAZ: !If [IsProduction, true, false]
+      PubliclyAccessible: false
+      # Monitoring
+      MonitoringInterval: !If [IsProduction, 60, 0]
+      MonitoringRoleArn: !If 
+        - HasMonitoringRole
+        - !Ref RDSEnhancedMonitoringRoleArn
+        - !Ref 'AWS::NoValue'
+      EnablePerformanceInsights: !If [IsProduction, true, false]
+      PerformanceInsightsRetentionPeriod: !If [IsProduction, 7, !Ref 'AWS::NoValue']
+      # Security
+      DeletionProtection: !If [IsProduction, true, false]
+      CopyTagsToSnapshot: true
+      # Logging
+      EnableCloudwatchLogsExports:
+        - error
+        - general
+        - slow-query
+      # Auto minor version upgrade
+      AutoMinorVersionUpgrade: !If [IsProduction, false, true]
+      # Apply changes immediately for non-production
+      ApplyModifications: !If [IsProduction, false, true]
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-MySQL-Database
+        - Key: Environment
+          Value: !Ref EnvironmentName
+        - Key: BackupRequired
+          Value: !If [IsProduction, 'true', 'false']
+        - Key: Engine
+          Value: MySQL
+        - Key: Version
+          Value: '8.0.35'
+
+  # ========================================================================
+  # DATABASE SECRET ATTACHMENT
+  # ========================================================================
+  DatabaseSecretAttachment:
+    Type: AWS::SecretsManager::SecretTargetAttachment
+    Properties:
+      SecretId: !Ref DatabaseSecretArn
+      TargetId: !Ref Database
+      TargetType: AWS::RDS::DBInstance
+
+  # ========================================================================
+  # READ REPLICA (Production only)
+  # ========================================================================
+  DatabaseReadReplica:
+    Type: AWS::RDS::DBInstance
+    Condition: IsProduction
+    Properties:
+      DBInstanceIdentifier: !Sub ${EnvironmentName}-mysql-db-replica
+      DBInstanceClass: !Ref DatabaseInstanceClass
+      SourceDBInstanceIdentifier: !Ref Database
+      PubliclyAccessible: false
+      VPCSecurityGroups:
+        - !Ref DatabaseSecurityGroupId
+      # Monitoring
+      MonitoringInterval: 60
+      MonitoringRoleArn: !Ref RDSEnhancedMonitoringRoleArn
+      EnablePerformanceInsights: true
+      PerformanceInsightsRetentionPeriod: 7
+      # Auto minor version upgrade
+      AutoMinorVersionUpgrade: false
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-MySQL-Database-Replica
+        - Key: Environment
+          Value: !Ref EnvironmentName
+        - Key: Type
+          Value: ReadReplica
+
+  # ========================================================================
+  # DATABASE SNAPSHOT (Manual snapshot for important milestones)
+  # ========================================================================
+  DatabaseSnapshot:
+    Type: AWS::RDS::DBSnapshot
+    Condition: IsProduction
+    Properties:
+      DBSnapshotIdentifier: !Sub ${EnvironmentName}-initial-snapshot
+      DBInstanceIdentifier: !Ref Database
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-Initial-Snapshot
+        - Key: Environment
+          Value: !Ref EnvironmentName
+        - Key: Purpose
+          Value: InitialDeployment
+
+  # ========================================================================
+  # ELASTICACHE SUBNET GROUP (for Redis/Memcached if needed)
+  # ========================================================================
+  CacheSubnetGroup:
+    Type: AWS::ElastiCache::SubnetGroup
+    Properties:
+      Description: Subnet group for ElastiCache
+      SubnetIds:
+        - !Ref DatabaseSubnetId
+        - !Ref PrivateSubnetId
+      CacheSubnetGroupName: !Sub ${EnvironmentName}-cache-subnet-group
+
+  # ========================================================================
+  # ELASTICACHE PARAMETER GROUP
+  # ========================================================================
+  CacheParameterGroup:
+    Type: AWS::ElastiCache::ParameterGroup
+    Properties:
+      CacheParameterGroupFamily: redis7.x
+      Description: !Sub ${EnvironmentName} Redis parameter group
+      Properties:
+        maxmemory-policy: allkeys-lru
+        notify-keyspace-events: Ex
+        timeout: 300
+
+  # ========================================================================
+  # ELASTICACHE REDIS CLUSTER (for caching)
+  # ========================================================================
+  RedisCluster:
+    Type: AWS::ElastiCache::ReplicationGroup
+    Properties:
+      ReplicationGroupId: !Sub ${EnvironmentName}-redis
+      Description: Redis cluster for application caching
+      Engine: redis
+      EngineVersion: 7.0
+      CacheNodeType: cache.t3.micro
+      NumCacheClusters: !If [IsProduction, 2, 1]
+      CacheParameterGroupName: !Ref CacheParameterGroup
+      CacheSubnetGroupName: !Ref CacheSubnetGroup
+      SecurityGroupIds:
+        - !Ref DatabaseSecurityGroupId
+      # Security
+      AtRestEncryptionEnabled: true
+      TransitEncryptionEnabled: true
+      AuthToken: !Ref DatabasePassword  # Use same password for simplicity
+      # Backup
+      SnapshotRetentionLimit: !If [IsProduction, 5, 1]
+      SnapshotWindow: "03:30-04:30"
+      # Maintenance

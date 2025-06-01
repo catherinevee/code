@@ -1,0 +1,635 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Security infrastructure including IAM roles, security groups, and secrets'
+
+# ============================================================================
+# PARAMETERS
+# ============================================================================
+Parameters:
+  EnvironmentName:
+    Description: Environment name that will be prefixed to resource names
+    Type: String
+
+  VPC1Id:
+    Description: ID of VPC1 (Application Tier)
+    Type: String
+
+  VPC2Id:
+    Description: ID of VPC2 (Services Tier)
+    Type: String
+
+  VPC3Id:
+    Description: ID of VPC3 (Management Tier)
+    Type: String
+
+  DatabaseUsername:
+    Description: Username for the RDS database
+    Type: String
+
+  DatabasePassword:
+    Description: Password for the RDS database
+    Type: String
+    NoEcho: true
+
+# ============================================================================
+# CONDITIONS
+# ============================================================================
+Conditions:
+  IsProduction: !Equals [!Ref EnvironmentName, production]
+
+# ============================================================================
+# RESOURCES
+# ============================================================================
+Resources:
+
+  # ========================================================================
+  # SECURITY GROUPS - Network access control
+  # ========================================================================
+  # Database Security Group - Restrictive access
+  DatabaseSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub ${EnvironmentName}-Database-SG
+      GroupDescription: Security group for RDS database
+      VpcId: !Ref VPC1Id
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 3306
+          ToPort: 3306
+          SourceSecurityGroupId: !Ref ApplicationSecurityGroup
+          Description: MySQL access from application servers
+        - IpProtocol: tcp
+          FromPort: 5432
+          ToPort: 5432
+          SourceSecurityGroupId: !Ref ApplicationSecurityGroup
+          Description: PostgreSQL access from application servers
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-Database-SG
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
+  # Application Security Group
+  ApplicationSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub ${EnvironmentName}-Application-SG
+      GroupDescription: Security group for application servers
+      VpcId: !Ref VPC1Id
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+          Description: HTTP access from anywhere
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+          Description: HTTPS access from anywhere
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          SourceSecurityGroupId: !Ref ManagementSecurityGroup
+          Description: SSH access from management subnet
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          CidrIp: 0.0.0.0/0
+          Description: All outbound traffic
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-Application-SG
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
+  # Management Security Group
+  ManagementSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub ${EnvironmentName}-Management-SG
+      GroupDescription: Security group for management/bastion hosts
+      VpcId: !Ref VPC3Id
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+          Description: SSH access from anywhere (restrict as needed)
+        - IpProtocol: tcp
+          FromPort: 3389
+          ToPort: 3389
+          CidrIp: 0.0.0.0/0
+          Description: RDP access from anywhere (restrict as needed)
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-Management-SG
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
+  # Lambda Security Group
+  LambdaSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub ${EnvironmentName}-Lambda-SG
+      GroupDescription: Security group for Lambda functions
+      VpcId: !Ref VPC2Id
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          CidrIp: 0.0.0.0/0
+          Description: All outbound traffic for Lambda
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-Lambda-SG
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
+  # ========================================================================
+  # IAM ROLES AND POLICIES - Security and access management
+  # ========================================================================
+  # Lambda Execution Role
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub ${EnvironmentName}-Lambda-ExecutionRole
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: DatabaseAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - rds:DescribeDBInstances
+                  - rds:DescribeDBClusters
+                Resource: '*'
+        - PolicyName: SecretsManagerAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - secretsmanager:GetSecretValue
+                  - secretsmanager:DescribeSecret
+                Resource: !Ref DatabaseSecret
+        - PolicyName: CloudWatchLogs
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*'
+        - PolicyName: SQSAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - sqs:ReceiveMessage
+                  - sqs:DeleteMessage
+                  - sqs:GetQueueAttributes
+                  - sqs:SendMessage
+                Resource: '*'
+        - PolicyName: S3Access
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:PutObject
+                  - s3:DeleteObject
+                Resource: '*'
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-Lambda-ExecutionRole
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
+  # RDS Enhanced Monitoring Role (for production only)
+  RDSEnhancedMonitoringRole:
+    Type: AWS::IAM::Role
+    Condition: IsProduction
+    Properties:
+      RoleName: !Sub ${EnvironmentName}-RDS-MonitoringRole
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: monitoring.rds.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonRDSEnhancedMonitoringRole
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-RDS-MonitoringRole
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
+  # Application Role for EC2 instances
+  ApplicationRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub ${EnvironmentName}-Application-Role
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: S3Access
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:PutObject
+                  - s3:DeleteObject
+                Resource: !Sub 'arn:aws:s3:::${EnvironmentName}-${AWS::AccountId}-application-data/*'
+              - Effect: Allow
+                Action:
+                  - s3:ListBucket
+                Resource: !Sub 'arn:aws:s3:::${EnvironmentName}-${AWS::AccountId}-application-data'
+        - PolicyName: SecretsManagerAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - secretsmanager:GetSecretValue
+                Resource: !Ref DatabaseSecret
+        - PolicyName: CloudWatchLogs
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                  - logs:DescribeLogStreams
+                Resource: !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*'
+        - PolicyName: CloudWatchMetrics
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - cloudwatch:PutMetricData
+                  - cloudwatch:GetMetricStatistics
+                  - cloudwatch:ListMetrics
+                Resource: '*'
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-Application-Role
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
+  # Instance Profile for EC2 instances
+  ApplicationInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      InstanceProfileName: !Sub ${EnvironmentName}-Application-InstanceProfile
+      Roles:
+        - !Ref ApplicationRole
+
+  # CodeDeploy Service Role
+  CodeDeployServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub ${EnvironmentName}-CodeDeploy-ServiceRole
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: codedeploy.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSCodeDeployRole
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-CodeDeploy-ServiceRole
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
+  # CloudWatch Events Role for scheduled Lambda executions
+  CloudWatchEventsRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub ${EnvironmentName}-CloudWatchEvents-Role
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: events.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: LambdaInvokePolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - lambda:InvokeFunction
+                Resource: '*'
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-CloudWatchEvents-Role
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
+  # ========================================================================
+  # SECRETS MANAGER - Secure database credentials storage
+  # ========================================================================
+  DatabaseSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: !Sub ${EnvironmentName}/database/credentials
+      Description: Database credentials for application
+      GenerateSecretString:
+        SecretStringTemplate: !Sub '{"username": "${DatabaseUsername}"}'
+        GenerateStringKey: 'password'
+        PasswordLength: 32
+        ExcludeCharacters: '"@/\'
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-Database-Secret
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
+  # Application Configuration Secret
+  ApplicationSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: !Sub ${EnvironmentName}/application/config
+      Description: Application configuration secrets
+      SecretString: !Sub |
+        {
+          "api_key": "your-api-key-here",
+          "jwt_secret": "your-jwt-secret-here",
+          "encryption_key": "your-encryption-key-here",
+          "third_party_api_endpoint": "https://api.example.com",
+          "redis_connection_string": "redis://localhost:6379"
+        }
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-Application-Secret
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
+  # ========================================================================
+  # KMS - Encryption key management
+  # ========================================================================
+  ApplicationKMSKey:
+    Type: AWS::KMS::Key
+    Properties:
+      Description: !Sub ${EnvironmentName} Application encryption key
+      KeyPolicy:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: Enable IAM User Permissions
+            Effect: Allow
+            Principal:
+              AWS: !Sub 'arn:aws:iam::${AWS::AccountId}:root'
+            Action: 'kms:*'
+            Resource: '*'
+          - Sid: Allow use of the key for Lambda functions
+            Effect: Allow
+            Principal:
+              AWS: !GetAtt LambdaExecutionRole.Arn
+            Action:
+              - kms:Encrypt
+              - kms:Decrypt
+              - kms:ReEncrypt*
+              - kms:GenerateDataKey*
+              - kms:DescribeKey
+            Resource: '*'
+          - Sid: Allow use of the key for application instances
+            Effect: Allow
+            Principal:
+              AWS: !GetAtt ApplicationRole.Arn
+            Action:
+              - kms:Encrypt
+              - kms:Decrypt
+              - kms:ReEncrypt*
+              - kms:GenerateDataKey*
+              - kms:DescribeKey
+            Resource: '*'
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-Application-KMS-Key
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
+  ApplicationKMSKeyAlias:
+    Type: AWS::KMS::Alias
+    Properties:
+      AliasName: !Sub alias/${EnvironmentName}-application-key
+      TargetKeyId: !Ref ApplicationKMSKey
+
+  # ========================================================================
+  # NETWORK ACLs - Additional network security layer
+  # ========================================================================
+  DatabaseNetworkAcl:
+    Type: AWS::EC2::NetworkAcl
+    Properties:
+      VpcId: !Ref VPC1Id
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-Database-NACL
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
+  # Allow inbound MySQL/PostgreSQL from application subnet
+  DatabaseNetworkAclEntryInboundMySQL:
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+      NetworkAclId: !Ref DatabaseNetworkAcl
+      RuleNumber: 100
+      Protocol: 6
+      RuleAction: allow
+      PortRange:
+        From: 3306
+        To: 3306
+      CidrBlock: 10.0.0.0/8
+
+  DatabaseNetworkAclEntryInboundPostgreSQL:
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+      NetworkAclId: !Ref DatabaseNetworkAcl
+      RuleNumber: 110
+      Protocol: 6
+      RuleAction: allow
+      PortRange:
+        From: 5432
+        To: 5432
+      CidrBlock: 10.0.0.0/8
+
+  # Allow outbound responses
+  DatabaseNetworkAclEntryOutbound:
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+      NetworkAclId: !Ref DatabaseNetworkAcl
+      RuleNumber: 100
+      Protocol: 6
+      Egress: true
+      RuleAction: allow
+      PortRange:
+        From: 1024
+        To: 65535
+      CidrBlock: 10.0.0.0/8
+
+  # ========================================================================
+  # WAF - Web Application Firewall (for production)
+  # ========================================================================
+  WebACL:
+    Type: AWS::WAFv2::WebACL
+    Condition: IsProduction
+    Properties:
+      Name: !Sub ${EnvironmentName}-WebACL
+      Description: Web ACL for application protection
+      Scope: REGIONAL
+      DefaultAction:
+        Allow: {}
+      Rules:
+        - Name: AWSManagedRulesCommonRuleSet
+          Priority: 1
+          OverrideAction:
+            None: {}
+          Statement:
+            ManagedRuleGroupStatement:
+              VendorName: AWS
+              Name: AWSManagedRulesCommonRuleSet
+          VisibilityConfig:
+            SampledRequestsEnabled: true
+            CloudWatchMetricsEnabled: true
+            MetricName: CommonRuleSetMetric
+        - Name: AWSManagedRulesKnownBadInputsRuleSet
+          Priority: 2
+          OverrideAction:
+            None: {}
+          Statement:
+            ManagedRuleGroupStatement:
+              VendorName: AWS
+              Name: AWSManagedRulesKnownBadInputsRuleSet
+          VisibilityConfig:
+            SampledRequestsEnabled: true
+            CloudWatchMetricsEnabled: true
+            MetricName: KnownBadInputsRuleSetMetric
+        - Name: RateLimitRule
+          Priority: 3
+          Action:
+            Block: {}
+          Statement:
+            RateBasedStatement:
+              Limit: 2000
+              AggregateKeyType: IP
+          VisibilityConfig:
+            SampledRequestsEnabled: true
+            CloudWatchMetricsEnabled: true
+            MetricName: RateLimitRuleMetric
+      VisibilityConfig:
+        SampledRequestsEnabled: true
+        CloudWatchMetricsEnabled: true
+        MetricName: !Sub ${EnvironmentName}WebACL
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-WebACL
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
+# ============================================================================
+# OUTPUTS
+# ============================================================================
+Outputs:
+  # Security Group IDs
+  ApplicationSecurityGroupId:
+    Description: Application Security Group ID
+    Value: !Ref ApplicationSecurityGroup
+
+  DatabaseSecurityGroupId:
+    Description: Database Security Group ID
+    Value: !Ref DatabaseSecurityGroup
+
+  LambdaSecurityGroupId:
+    Description: Lambda Security Group ID
+    Value: !Ref LambdaSecurityGroup
+
+  ManagementSecurityGroupId:
+    Description: Management Security Group ID
+    Value: !Ref ManagementSecurityGroup
+
+  # IAM Role ARNs
+  LambdaExecutionRoleArn:
+    Description: Lambda Execution Role ARN
+    Value: !GetAtt LambdaExecutionRole.Arn
+
+  ApplicationRoleArn:
+    Description: Application Role ARN
+    Value: !GetAtt ApplicationRole.Arn
+
+  ApplicationInstanceProfileArn:
+    Description: Application Instance Profile ARN
+    Value: !GetAtt ApplicationInstanceProfile.Arn
+
+  CodeDeployServiceRoleArn:
+    Description: CodeDeploy Service Role ARN
+    Value: !GetAtt CodeDeployServiceRole.Arn
+
+  CloudWatchEventsRoleArn:
+    Description: CloudWatch Events Role ARN
+    Value: !GetAtt CloudWatchEventsRole.Arn
+
+  RDSEnhancedMonitoringRoleArn:
+    Description: RDS Enhanced Monitoring Role ARN
+    Value: !If 
+      - IsProduction
+      - !GetAtt RDSEnhancedMonitoringRole.Arn
+      - ''
+
+  # Secrets Manager ARNs
+  DatabaseSecretArn:
+    Description: Database Secret ARN in Secrets Manager
+    Value: !Ref DatabaseSecret
+
+  ApplicationSecretArn:
+    Description: Application Secret ARN in Secrets Manager
+    Value: !Ref ApplicationSecret
+
+  # KMS Key
+  ApplicationKMSKeyId:
+    Description: Application KMS Key ID
+    Value: !Ref ApplicationKMSKey
+
+  ApplicationKMSKeyArn:
+    Description: Application KMS Key ARN
+    Value: !GetAtt ApplicationKMSKey.Arn
+
+  # WAF (Production only)
+  WebACLArn:
+    Description: Web ACL ARN
+    Value: !If 
+      - IsProduction
+      - !GetAtt WebACL.Arn
+      - ''
+
+  # Network ACL
+  DatabaseNetworkAclId:
+    Description: Database Network ACL ID
+    Value: !Ref DatabaseNetworkAcl

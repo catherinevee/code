@@ -1,0 +1,639 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'AWS Lambda cost tracking and budget management'
+
+Parameters:
+  EnvironmentName:
+    Type: String
+    Default: production
+    Description: Environment name for tagging and identification
+
+  MonthlyLambdaBudgetAmount:
+    Type: Number
+    Default: 1000
+    MinValue: 1
+    Description: Monthly budget amount for Lambda services in USD
+
+  AlertEmail:
+    Type: String
+    Description: Email address for Lambda cost alerts and notifications
+    AllowedPattern: '^[^\s@]+@[^\s@]+\.[^\s@]+$'
+
+  LambdaTagKey:
+    Type: String
+    Default: Environment
+    Description: Tag key to filter Lambda resources for cost tracking
+
+  LambdaTagValue:
+    Type: String
+    Default: production
+    Description: Tag value to filter Lambda resources for cost tracking
+
+  RequestBudgetThreshold:
+    Type: Number
+    Default: 10000000
+    MinValue: 1000
+    Description: Monthly Lambda request count threshold (in millions)
+
+  StorageBudget:
+    Type: Number
+    Default: 200
+    MinValue: 1
+    Description: Monthly budget for Lambda storage and logs in USD
+
+Resources:
+  # SNS Topic for Lambda cost alerts
+  LambdaCostAlertsTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: !Sub '${EnvironmentName}-Lambda-Cost-Alerts'
+      DisplayName: !Sub '${EnvironmentName} Lambda Cost Alerts'
+      Tags:
+        - Key: Name
+          Value: !Sub '${EnvironmentName}-Lambda-Cost-Alerts'
+        - Key: Environment
+          Value: !Ref EnvironmentName
+        - Key: Purpose
+          Value: LambdaCostManagement
+
+  # Email subscription for Lambda cost alerts
+  LambdaCostEmailSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      TopicArn: !Ref LambdaCostAlertsTopic
+      Protocol: email
+      Endpoint: !Ref AlertEmail
+
+  # Budget for AWS Lambda compute costs
+  MonthlyLambdaComputeBudget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: !Sub '${EnvironmentName}-Lambda-Compute-Monthly-Budget'
+        BudgetLimit:
+          Amount: !Ref MonthlyLambdaBudgetAmount
+          Unit: USD
+        TimeUnit: MONTHLY
+        BudgetType: COST
+        CostFilters:
+          Service:
+            - AWS Lambda
+          TagKey:
+            - !Ref LambdaTagKey
+          TagValue:
+            - !Ref LambdaTagValue
+        NotificationsWithSubscribers:
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 50
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref LambdaCostAlertsTopic
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 75
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref LambdaCostAlertsTopic
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 90
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref LambdaCostAlertsTopic
+          - Notification:
+              NotificationType: FORECASTED
+              ComparisonOperator: GREATER_THAN
+              Threshold: 100
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref LambdaCostAlertsTopic
+
+  # Budget for Lambda request charges
+  MonthlyLambdaRequestsBudget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: !Sub '${EnvironmentName}-Lambda-Requests-Monthly-Budget'
+        BudgetLimit:
+          Amount: !Ref RequestBudgetThreshold
+          Unit: REQUESTS
+        TimeUnit: MONTHLY
+        BudgetType: USAGE
+        CostFilters:
+          Service:
+            - AWS Lambda
+          UsageType:
+            - Lambda-Requests
+          TagKey:
+            - !Ref LambdaTagKey
+          TagValue:
+            - !Ref LambdaTagValue
+        NotificationsWithSubscribers:
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 70
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref LambdaCostAlertsTopic
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 90
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref LambdaCostAlertsTopic
+
+  # Budget for Lambda execution duration (GB-seconds)
+  MonthlyLambdaDurationBudget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: !Sub '${EnvironmentName}-Lambda-Duration-Monthly-Budget'
+        BudgetLimit:
+          Amount: !Ref MonthlyLambdaBudgetAmount
+          Unit: USD
+        TimeUnit: MONTHLY
+        BudgetType: COST
+        CostFilters:
+          Service:
+            - AWS Lambda
+          UsageType:
+            - Lambda-GB-Second
+            - Lambda-GB-Second-ARM
+          TagKey:
+            - !Ref LambdaTagKey
+          TagValue:
+            - !Ref LambdaTagValue
+        NotificationsWithSubscribers:
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 60
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref LambdaCostAlertsTopic
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 85
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref LambdaCostAlertsTopic
+
+  # Budget for Lambda Provisioned Concurrency
+  MonthlyLambdaProvisionedConcurrencyBudget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: !Sub '${EnvironmentName}-Lambda-ProvisionedConcurrency-Monthly-Budget'
+        BudgetLimit:
+          Amount: 500
+          Unit: USD
+        TimeUnit: MONTHLY
+        BudgetType: COST
+        CostFilters:
+          Service:
+            - AWS Lambda
+          UsageType:
+            - Lambda-Provisioned-Concurrency
+            - Lambda-Provisioned-GB-Second
+          TagKey:
+            - !Ref LambdaTagKey
+          TagValue:
+            - !Ref LambdaTagValue
+        NotificationsWithSubscribers:
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 70
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref LambdaCostAlertsTopic
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 90
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref LambdaCostAlertsTopic
+
+  # Budget for Lambda@Edge
+  MonthlyLambdaEdgeBudget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: !Sub '${EnvironmentName}-LambdaEdge-Monthly-Budget'
+        BudgetLimit:
+          Amount: 300
+          Unit: USD
+        TimeUnit: MONTHLY
+        BudgetType: COST
+        CostFilters:
+          Service:
+            - AWS Lambda
+          UsageType:
+            - Lambda-Edge-Request
+            - Lambda-Edge-GB-Second
+          TagKey:
+            - !Ref LambdaTagKey
+          TagValue:
+            - !Ref LambdaTagValue
+        NotificationsWithSubscribers:
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 75
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref LambdaCostAlertsTopic
+
+  # Budget for Lambda storage and temporary files
+  MonthlyLambdaStorageBudget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: !Sub '${EnvironmentName}-Lambda-Storage-Monthly-Budget'
+        BudgetLimit:
+          Amount: !Ref StorageBudget
+          Unit: USD
+        TimeUnit: MONTHLY
+        BudgetType: COST
+        CostFilters:
+          Service:
+            - AWS Lambda
+          UsageType:
+            - Lambda-Storage-Duration
+            - Lambda-EFS-Duration
+          TagKey:
+            - !Ref LambdaTagKey
+          TagValue:
+            - !Ref LambdaTagValue
+        NotificationsWithSubscribers:
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 80
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref LambdaCostAlertsTopic
+
+  # Budget for CloudWatch Logs from Lambda
+  MonthlyLambdaLogsBudget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: !Sub '${EnvironmentName}-Lambda-Logs-Monthly-Budget'
+        BudgetLimit:
+          Amount: !Ref StorageBudget
+          Unit: USD
+        TimeUnit: MONTHLY
+        BudgetType: COST
+        CostFilters:
+          Service:
+            - Amazon CloudWatch Logs
+          TagKey:
+            - !Ref LambdaTagKey
+          TagValue:
+            - !Ref LambdaTagValue
+        NotificationsWithSubscribers:
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 75
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref LambdaCostAlertsTopic
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 90
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref LambdaCostAlertsTopic
+
+  # Budget for API Gateway (often used with Lambda)
+  MonthlyAPIGatewayBudget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: !Sub '${EnvironmentName}-APIGateway-Lambda-Monthly-Budget'
+        BudgetLimit:
+          Amount: 400
+          Unit: USD
+        TimeUnit: MONTHLY
+        BudgetType: COST
+        CostFilters:
+          Service:
+            - Amazon API Gateway
+          TagKey:
+            - !Ref LambdaTagKey
+          TagValue:
+            - !Ref LambdaTagValue
+        NotificationsWithSubscribers:
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 75
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref LambdaCostAlertsTopic
+
+  # Budget for EventBridge (Lambda triggers)
+  MonthlyEventBridgeBudget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: !Sub '${EnvironmentName}-EventBridge-Lambda-Monthly-Budget'
+        BudgetLimit:
+          Amount: 100
+          Unit: USD
+        TimeUnit: MONTHLY
+        BudgetType: COST
+        CostFilters:
+          Service:
+            - Amazon EventBridge
+          TagKey:
+            - !Ref LambdaTagKey
+          TagValue:
+            - !Ref LambdaTagValue
+        NotificationsWithSubscribers:
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 80
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref LambdaCostAlertsTopic
+
+  # Budget for SQS (Lambda message processing)
+  MonthlySQSBudget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: !Sub '${EnvironmentName}-SQS-Lambda-Monthly-Budget'
+        BudgetLimit:
+          Amount: 150
+          Unit: USD
+        TimeUnit: MONTHLY
+        BudgetType: COST
+        CostFilters:
+          Service:
+            - Amazon Simple Queue Service
+          TagKey:
+            - !Ref LambdaTagKey
+          TagValue:
+            - !Ref LambdaTagValue
+        NotificationsWithSubscribers:
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 80
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref LambdaCostAlertsTopic
+
+  # Budget for Step Functions (Lambda orchestration)
+  MonthlyStepFunctionsBudget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: !Sub '${EnvironmentName}-StepFunctions-Lambda-Monthly-Budget'
+        BudgetLimit:
+          Amount: 200
+          Unit: USD
+        TimeUnit: MONTHLY
+        BudgetType: COST
+        CostFilters:
+          Service:
+            - AWS Step Functions
+          TagKey:
+            - !Ref LambdaTagKey
+          TagValue:
+            - !Ref LambdaTagValue
+        NotificationsWithSubscribers:
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 75
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref LambdaCostAlertsTopic
+
+  # Budget for SNS (Lambda notifications)
+  MonthlySNSBudget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: !Sub '${EnvironmentName}-SNS-Lambda-Monthly-Budget'
+        BudgetLimit:
+          Amount: 50
+          Unit: USD
+        TimeUnit: MONTHLY
+        BudgetType: COST
+        CostFilters:
+          Service:
+            - Amazon Simple Notification Service
+          TagKey:
+            - !Ref LambdaTagKey
+          TagValue:
+            - !Ref LambdaTagValue
+        NotificationsWithSubscribers:
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 80
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref LambdaCostAlertsTopic
+
+  # Budget for X-Ray (Lambda tracing)
+  MonthlyXRayBudget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: !Sub '${EnvironmentName}-XRay-Lambda-Monthly-Budget'
+        BudgetLimit:
+          Amount: 75
+          Unit: USD
+        TimeUnit: MONTHLY
+        BudgetType: COST
+        CostFilters:
+          Service:
+            - AWS X-Ray
+          TagKey:
+            - !Ref LambdaTagKey
+          TagValue:
+            - !Ref LambdaTagValue
+        NotificationsWithSubscribers:
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 80
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref LambdaCostAlertsTopic
+
+  # Budget for Application Load Balancer (Lambda targets)
+  MonthlyALBBudget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: !Sub '${EnvironmentName}-ALB-Lambda-Monthly-Budget'
+        BudgetLimit:
+          Amount: 300
+          Unit: USD
+        TimeUnit: MONTHLY
+        BudgetType: COST
+        CostFilters:
+          Service:
+            - Elastic Load Balancing
+          UsageType:
+            - LoadBalancer-Application
+          TagKey:
+            - !Ref LambdaTagKey
+          TagValue:
+            - !Ref LambdaTagValue
+        NotificationsWithSubscribers:
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 75
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref LambdaCostAlertsTopic
+
+  # Budget for Lambda VPC networking
+  MonthlyLambdaVPCBudget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: !Sub '${EnvironmentName}-Lambda-VPC-Monthly-Budget'
+        BudgetLimit:
+          Amount: 150
+          Unit: USD
+        TimeUnit: MONTHLY
+        BudgetType: COST
+        CostFilters:
+          Service:
+            - Amazon Virtual Private Cloud
+          UsageType:
+            - VpcEndpoint-Hours
+            - NatGateway-Hours
+          TagKey:
+            - !Ref LambdaTagKey
+          TagValue:
+            - !Ref LambdaTagValue
+        NotificationsWithSubscribers:
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 80
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref LambdaCostAlertsTopic
+
+Outputs:
+  LambdaCostAlertsTopicArn:
+    Description: ARN of the Lambda cost alerts SNS topic
+    Value: !Ref LambdaCostAlertsTopic
+    Export:
+      Name: !Sub '${EnvironmentName}-Lambda-Cost-Alerts-Topic-ARN'
+
+  LambdaComputeBudgetName:
+    Description: Name of the Lambda compute monthly budget
+    Value: !Ref MonthlyLambdaComputeBudget
+    Export:
+      Name: !Sub '${EnvironmentName}-Lambda-Compute-Budget-Name'
+
+  LambdaRequestsBudgetName:
+    Description: Name of the Lambda requests monthly budget
+    Value: !Ref MonthlyLambdaRequestsBudget
+    Export:
+      Name: !Sub '${EnvironmentName}-Lambda-Requests-Budget-Name'
+
+  LambdaDurationBudgetName:
+    Description: Name of the Lambda duration monthly budget
+    Value: !Ref MonthlyLambdaDurationBudget
+    Export:
+      Name: !Sub '${EnvironmentName}-Lambda-Duration-Budget-Name'
+
+  LambdaProvisionedConcurrencyBudgetName:
+    Description: Name of the Lambda provisioned concurrency monthly budget
+    Value: !Ref MonthlyLambdaProvisionedConcurrencyBudget
+    Export:
+      Name: !Sub '${EnvironmentName}-Lambda-ProvisionedConcurrency-Budget-Name'
+
+  LambdaEdgeBudgetName:
+    Description: Name of the Lambda@Edge monthly budget
+    Value: !Ref MonthlyLambdaEdgeBudget
+    Export:
+      Name: !Sub '${EnvironmentName}-LambdaEdge-Budget-Name'
+
+  LambdaStorageBudgetName:
+    Description: Name of the Lambda storage monthly budget
+    Value: !Ref MonthlyLambdaStorageBudget
+    Export:
+      Name: !Sub '${EnvironmentName}-Lambda-Storage-Budget-Name'
+
+  LambdaLogsBudgetName:
+    Description: Name of the Lambda logs monthly budget
+    Value: !Ref MonthlyLambdaLogsBudget
+    Export:
+      Name: !Sub '${EnvironmentName}-Lambda-Logs-Budget-Name'
+
+  APIGatewayBudgetName:
+    Description: Name of the API Gateway monthly budget
+    Value: !Ref MonthlyAPIGatewayBudget
+    Export:
+      Name: !Sub '${EnvironmentName}-APIGateway-Lambda-Budget-Name'
+
+  EventBridgeBudgetName:
+    Description: Name of the EventBridge monthly budget
+    Value: !Ref MonthlyEventBridgeBudget
+    Export:
+      Name: !Sub '${EnvironmentName}-EventBridge-Lambda-Budget-Name'
+
+  StepFunctionsBudgetName:
+    Description: Name of the Step Functions monthly budget
+    Value: !Ref MonthlyStepFunctionsBudget
+    Export:
+      Name: !Sub '${EnvironmentName}-StepFunctions-Lambda-Budget-Name'
+
+  LambdaBudgetConfiguration:
+    Description: Summary of Lambda budget configuration
+    Value: !Sub |
+      Environment: ${EnvironmentName}
+      Lambda Budget: $${MonthlyLambdaBudgetAmount}
+      Request Threshold: ${RequestBudgetThreshold} million requests
+      Storage Budget: $${StorageBudget}
+      Tag Filter: ${LambdaTagKey}=${LambdaTagValue}
+      Alert Email: ${AlertEmail}
+      Services: Lambda Compute, Requests, Duration, Provisioned Concurrency, Lambda@Edge, Storage, Logs, API Gateway, EventBridge, SQS, Step Functions, SNS, X-Ray, ALB, VPC
+    Export:
+      Name: !Sub '${EnvironmentName}-Lambda-Budget-Configuration'

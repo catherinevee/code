@@ -1,0 +1,230 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'EC2 instance cost tracking and budget management'
+
+Parameters:
+  EnvironmentName:
+    Type: String
+    Default: production
+    Description: Environment name for tagging and identification
+
+  MonthlyEC2BudgetAmount:
+    Type: Number
+    Default: 500
+    MinValue: 1
+    Description: Monthly budget amount for EC2 instances in USD
+
+  AlertEmail:
+    Type: String
+    Description: Email address for cost alerts and notifications
+    AllowedPattern: '^[^\s@]+@[^\s@]+\.[^\s@]+$'
+
+  InstanceTagKey:
+    Type: String
+    Default: Environment
+    Description: Tag key to filter EC2 instances for cost tracking
+
+  InstanceTagValue:
+    Type: String
+    Default: production
+    Description: Tag value to filter EC2 instances for cost tracking
+
+Resources:
+  # SNS Topic for EC2 cost alerts
+  EC2CostAlertsTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: !Sub '${EnvironmentName}-EC2-Cost-Alerts'
+      DisplayName: !Sub '${EnvironmentName} EC2 Cost Alerts'
+      Tags:
+        - Key: Name
+          Value: !Sub '${EnvironmentName}-EC2-Cost-Alerts'
+        - Key: Environment
+          Value: !Ref EnvironmentName
+        - Key: Purpose
+          Value: EC2CostManagement
+
+  # Email subscription for EC2 cost alerts
+  EC2CostEmailSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      TopicArn: !Ref EC2CostAlertsTopic
+      Protocol: email
+      Endpoint: !Ref AlertEmail
+
+  # Monthly EC2 budget with tag-based filtering
+  MonthlyEC2Budget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: !Sub '${EnvironmentName}-EC2-Monthly-Budget'
+        BudgetLimit:
+          Amount: !Ref MonthlyEC2BudgetAmount
+          Unit: USD
+        TimeUnit: MONTHLY
+        BudgetType: COST
+        CostFilters:
+          Service:
+            - Amazon Elastic Compute Cloud - Compute
+          TagKey:
+            - !Ref InstanceTagKey
+          TagValue:
+            - !Ref InstanceTagValue
+        NotificationsWithSubscribers:
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 50
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref EC2CostAlertsTopic
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 75
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref EC2CostAlertsTopic
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 90
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref EC2CostAlertsTopic
+          - Notification:
+              NotificationType: FORECASTED
+              ComparisonOperator: GREATER_THAN
+              Threshold: 100
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref EC2CostAlertsTopic
+
+  # Budget for EBS volumes (associated with EC2)
+  MonthlyEBSBudget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: !Sub '${EnvironmentName}-EBS-Monthly-Budget'
+        BudgetLimit:
+          Amount: !Ref MonthlyEC2BudgetAmount
+          Unit: USD
+        TimeUnit: MONTHLY
+        BudgetType: COST
+        CostFilters:
+          Service:
+            - Amazon Elastic Compute Cloud - EBS
+          TagKey:
+            - !Ref InstanceTagKey
+          TagValue:
+            - !Ref InstanceTagValue
+        NotificationsWithSubscribers:
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 80
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref EC2CostAlertsTopic
+
+  # Budget for Data Transfer (EC2 related)
+  MonthlyDataTransferBudget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: !Sub '${EnvironmentName}-DataTransfer-Monthly-Budget'
+        BudgetLimit:
+          Amount: 100
+          Unit: USD
+        TimeUnit: MONTHLY
+        BudgetType: COST
+        CostFilters:
+          Service:
+            - Amazon Elastic Compute Cloud - Data Transfer
+          TagKey:
+            - !Ref InstanceTagKey
+          TagValue:
+            - !Ref InstanceTagValue
+        NotificationsWithSubscribers:
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 75
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref EC2CostAlertsTopic
+
+  # Usage budget for EC2 instance hours
+  MonthlyEC2UsageBudget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: !Sub '${EnvironmentName}-EC2-Usage-Budget'
+        BudgetLimit:
+          Amount: 1000
+          Unit: HOURS
+        TimeUnit: MONTHLY
+        BudgetType: USAGE
+        CostFilters:
+          Service:
+            - Amazon Elastic Compute Cloud - Compute
+          TagKey:
+            - !Ref InstanceTagKey
+          TagValue:
+            - !Ref InstanceTagValue
+        NotificationsWithSubscribers:
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 80
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref EC2CostAlertsTopic
+
+Outputs:
+  EC2CostAlertsTopicArn:
+    Description: ARN of the EC2 cost alerts SNS topic
+    Value: !Ref EC2CostAlertsTopic
+    Export:
+      Name: !Sub '${EnvironmentName}-EC2-Cost-Alerts-Topic-ARN'
+
+  EC2BudgetName:
+    Description: Name of the EC2 monthly budget
+    Value: !Ref MonthlyEC2Budget
+    Export:
+      Name: !Sub '${EnvironmentName}-EC2-Budget-Name'
+
+  EBSBudgetName:
+    Description: Name of the EBS monthly budget
+    Value: !Ref MonthlyEBSBudget
+    Export:
+      Name: !Sub '${EnvironmentName}-EBS-Budget-Name'
+
+  DataTransferBudgetName:
+    Description: Name of the data transfer monthly budget
+    Value: !Ref MonthlyDataTransferBudget
+    Export:
+      Name: !Sub '${EnvironmentName}-DataTransfer-Budget-Name'
+
+  EC2UsageBudgetName:
+    Description: Name of the EC2 usage budget
+    Value: !Ref MonthlyEC2UsageBudget
+    Export:
+      Name: !Sub '${EnvironmentName}-EC2-Usage-Budget-Name'
+
+  BudgetConfiguration:
+    Description: Summary of budget configuration
+    Value: !Sub |
+      Environment: ${EnvironmentName}
+      EC2 Monthly Budget: $${MonthlyEC2BudgetAmount}
+      Tag Filter: ${InstanceTagKey}=${InstanceTagValue}
+      Alert Email: ${AlertEmail}
+      Budgets Created: EC2 Compute, EBS Storage, Data Transfer, Usage Hours
+    Export:
+      Name: !Sub '${EnvironmentName}-Budget-Configuration'

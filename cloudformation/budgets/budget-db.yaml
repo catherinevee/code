@@ -1,0 +1,571 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'AWS database cost tracking and budget management'
+
+Parameters:
+  EnvironmentName:
+    Type: String
+    Default: production
+    Description: Environment name for tagging and identification
+
+  MonthlyDatabaseBudgetAmount:
+    Type: Number
+    Default: 2000
+    MinValue: 1
+    Description: Monthly budget amount for database services in USD
+
+  AlertEmail:
+    Type: String
+    Description: Email address for database cost alerts and notifications
+    AllowedPattern: '^[^\s@]+@[^\s@]+\.[^\s@]+$'
+
+  DatabaseTagKey:
+    Type: String
+    Default: Environment
+    Description: Tag key to filter database resources for cost tracking
+
+  DatabaseTagValue:
+    Type: String
+    Default: production
+    Description: Tag value to filter database resources for cost tracking
+
+  BackupRetentionBudget:
+    Type: Number
+    Default: 500
+    MinValue: 1
+    Description: Monthly budget for database backups and snapshots in USD
+
+Resources:
+  # SNS Topic for database cost alerts
+  DatabaseCostAlertsTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: !Sub '${EnvironmentName}-Database-Cost-Alerts'
+      DisplayName: !Sub '${EnvironmentName} Database Cost Alerts'
+      Tags:
+        - Key: Name
+          Value: !Sub '${EnvironmentName}-Database-Cost-Alerts'
+        - Key: Environment
+          Value: !Ref EnvironmentName
+        - Key: Purpose
+          Value: DatabaseCostManagement
+
+  # Email subscription for database cost alerts
+  DatabaseCostEmailSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      TopicArn: !Ref DatabaseCostAlertsTopic
+      Protocol: email
+      Endpoint: !Ref AlertEmail
+
+  # Budget for Amazon RDS
+  MonthlyRDSBudget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: !Sub '${EnvironmentName}-RDS-Monthly-Budget'
+        BudgetLimit:
+          Amount: !Ref MonthlyDatabaseBudgetAmount
+          Unit: USD
+        TimeUnit: MONTHLY
+        BudgetType: COST
+        CostFilters:
+          Service:
+            - Amazon Relational Database Service
+          TagKey:
+            - !Ref DatabaseTagKey
+          TagValue:
+            - !Ref DatabaseTagValue
+        NotificationsWithSubscribers:
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 50
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref DatabaseCostAlertsTopic
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 75
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref DatabaseCostAlertsTopic
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 90
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref DatabaseCostAlertsTopic
+          - Notification:
+              NotificationType: FORECASTED
+              ComparisonOperator: GREATER_THAN
+              Threshold: 100
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref DatabaseCostAlertsTopic
+
+  # Budget for Amazon DynamoDB
+  MonthlyDynamoDBBudget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: !Sub '${EnvironmentName}-DynamoDB-Monthly-Budget'
+        BudgetLimit:
+          Amount: !Ref MonthlyDatabaseBudgetAmount
+          Unit: USD
+        TimeUnit: MONTHLY
+        BudgetType: COST
+        CostFilters:
+          Service:
+            - Amazon DynamoDB
+          TagKey:
+            - !Ref DatabaseTagKey
+          TagValue:
+            - !Ref DatabaseTagValue
+        NotificationsWithSubscribers:
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 60
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref DatabaseCostAlertsTopic
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 85
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref DatabaseCostAlertsTopic
+
+  # Budget for Amazon ElastiCache
+  MonthlyElastiCacheBudget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: !Sub '${EnvironmentName}-ElastiCache-Monthly-Budget'
+        BudgetLimit:
+          Amount: 800
+          Unit: USD
+        TimeUnit: MONTHLY
+        BudgetType: COST
+        CostFilters:
+          Service:
+            - Amazon ElastiCache
+          TagKey:
+            - !Ref DatabaseTagKey
+          TagValue:
+            - !Ref DatabaseTagValue
+        NotificationsWithSubscribers:
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 70
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref DatabaseCostAlertsTopic
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 90
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref DatabaseCostAlertsTopic
+
+  # Budget for Amazon Aurora
+  MonthlyAuroraBudget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: !Sub '${EnvironmentName}-Aurora-Monthly-Budget'
+        BudgetLimit:
+          Amount: !Ref MonthlyDatabaseBudgetAmount
+          Unit: USD
+        TimeUnit: MONTHLY
+        BudgetType: COST
+        CostFilters:
+          Service:
+            - Amazon Relational Database Service
+          UsageType:
+            - Aurora:ServerlessUsage
+            - Aurora:BackupUsage
+            - Aurora:StorageUsage
+            - Aurora:IOUsage
+          TagKey:
+            - !Ref DatabaseTagKey
+          TagValue:
+            - !Ref DatabaseTagValue
+        NotificationsWithSubscribers:
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 65
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref DatabaseCostAlertsTopic
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 85
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref DatabaseCostAlertsTopic
+
+  # Budget for Amazon Redshift
+  MonthlyRedshiftBudget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: !Sub '${EnvironmentName}-Redshift-Monthly-Budget'
+        BudgetLimit:
+          Amount: 1500
+          Unit: USD
+        TimeUnit: MONTHLY
+        BudgetType: COST
+        CostFilters:
+          Service:
+            - Amazon Redshift
+          TagKey:
+            - !Ref DatabaseTagKey
+          TagValue:
+            - !Ref DatabaseTagValue
+        NotificationsWithSubscribers:
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 70
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref DatabaseCostAlertsTopic
+          - Notification:
+              NotificationType: FORECASTED
+              ComparisonOperator: GREATER_THAN
+              Threshold: 100
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref DatabaseCostAlertsTopic
+
+  # Budget for Amazon DocumentDB
+  MonthlyDocumentDBBudget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: !Sub '${EnvironmentName}-DocumentDB-Monthly-Budget'
+        BudgetLimit:
+          Amount: 600
+          Unit: USD
+        TimeUnit: MONTHLY
+        BudgetType: COST
+        CostFilters:
+          Service:
+            - Amazon DocumentDB
+          TagKey:
+            - !Ref DatabaseTagKey
+          TagValue:
+            - !Ref DatabaseTagValue
+        NotificationsWithSubscribers:
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 75
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref DatabaseCostAlertsTopic
+
+  # Budget for Amazon Neptune (Graph Database)
+  MonthlyNeptuneBudget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: !Sub '${EnvironmentName}-Neptune-Monthly-Budget'
+        BudgetLimit:
+          Amount: 800
+          Unit: USD
+        TimeUnit: MONTHLY
+        BudgetType: COST
+        CostFilters:
+          Service:
+            - Amazon Neptune
+          TagKey:
+            - !Ref DatabaseTagKey
+          TagValue:
+            - !Ref DatabaseTagValue
+        NotificationsWithSubscribers:
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 80
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref DatabaseCostAlertsTopic
+
+  # Budget for Database Backup and Snapshots
+  MonthlyBackupBudget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: !Sub '${EnvironmentName}-Database-Backup-Monthly-Budget'
+        BudgetLimit:
+          Amount: !Ref BackupRetentionBudget
+          Unit: USD
+        TimeUnit: MONTHLY
+        BudgetType: COST
+        CostFilters:
+          Service:
+            - Amazon Relational Database Service
+            - Amazon DynamoDB
+          UsageType:
+            - RDS:ChargedBackupUsage
+            - RDS:SnapshotUsage
+            - DDB:BackupRestoreUsage
+          TagKey:
+            - !Ref DatabaseTagKey
+          TagValue:
+            - !Ref DatabaseTagValue
+        NotificationsWithSubscribers:
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 70
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref DatabaseCostAlertsTopic
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 90
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref DatabaseCostAlertsTopic
+
+  # Budget for Database Storage (EBS volumes for databases)
+  MonthlyDatabaseStorageBudget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: !Sub '${EnvironmentName}-Database-Storage-Monthly-Budget'
+        BudgetLimit:
+          Amount: 800
+          Unit: USD
+        TimeUnit: MONTHLY
+        BudgetType: COST
+        CostFilters:
+          Service:
+            - Amazon Relational Database Service
+            - Amazon DynamoDB
+          UsageType:
+            - RDS:GP2-Storage
+            - RDS:GP3-Storage
+            - RDS:PIOPS-Storage
+            - DDB:StorageUsage
+          TagKey:
+            - !Ref DatabaseTagKey
+          TagValue:
+            - !Ref DatabaseTagValue
+        NotificationsWithSubscribers:
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 80
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref DatabaseCostAlertsTopic
+
+  # Budget for Database I/O Operations
+  MonthlyDatabaseIOBudget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: !Sub '${EnvironmentName}-Database-IO-Monthly-Budget'
+        BudgetLimit:
+          Amount: 300
+          Unit: USD
+        TimeUnit: MONTHLY
+        BudgetType: COST
+        CostFilters:
+          Service:
+            - Amazon Relational Database Service
+            - Amazon DynamoDB
+          UsageType:
+            - RDS:StorageIOUsage
+            - RDS:Aurora-Storage-ByteIOUsage
+            - DDB:ReadCapacityUnit-Hrs
+            - DDB:WriteCapacityUnit-Hrs
+          TagKey:
+            - !Ref DatabaseTagKey
+          TagValue:
+            - !Ref DatabaseTagValue
+        NotificationsWithSubscribers:
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 75
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref DatabaseCostAlertsTopic
+
+  # Budget for Amazon Timestream (Time Series Database)
+  MonthlyTimestreamBudget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: !Sub '${EnvironmentName}-Timestream-Monthly-Budget'
+        BudgetLimit:
+          Amount: 400
+          Unit: USD
+        TimeUnit: MONTHLY
+        BudgetType: COST
+        CostFilters:
+          Service:
+            - Amazon Timestream
+          TagKey:
+            - !Ref DatabaseTagKey
+          TagValue:
+            - !Ref DatabaseTagValue
+        NotificationsWithSubscribers:
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 80
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref DatabaseCostAlertsTopic
+
+  # Budget for Amazon MemoryDB for Redis
+  MonthlyMemoryDBBudget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: !Sub '${EnvironmentName}-MemoryDB-Monthly-Budget'
+        BudgetLimit:
+          Amount: 600
+          Unit: USD
+        TimeUnit: MONTHLY
+        BudgetType: COST
+        CostFilters:
+          Service:
+            - Amazon MemoryDB
+          TagKey:
+            - !Ref DatabaseTagKey
+          TagValue:
+            - !Ref DatabaseTagValue
+        NotificationsWithSubscribers:
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 75
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref DatabaseCostAlertsTopic
+
+Outputs:
+  DatabaseCostAlertsTopicArn:
+    Description: ARN of the database cost alerts SNS topic
+    Value: !Ref DatabaseCostAlertsTopic
+    Export:
+      Name: !Sub '${EnvironmentName}-Database-Cost-Alerts-Topic-ARN'
+
+  RDSBudgetName:
+    Description: Name of the RDS monthly budget
+    Value: !Ref MonthlyRDSBudget
+    Export:
+      Name: !Sub '${EnvironmentName}-RDS-Budget-Name'
+
+  DynamoDBBudgetName:
+    Description: Name of the DynamoDB monthly budget
+    Value: !Ref MonthlyDynamoDBBudget
+    Export:
+      Name: !Sub '${EnvironmentName}-DynamoDB-Budget-Name'
+
+  ElastiCacheBudgetName:
+    Description: Name of the ElastiCache monthly budget
+    Value: !Ref MonthlyElastiCacheBudget
+    Export:
+      Name: !Sub '${EnvironmentName}-ElastiCache-Budget-Name'
+
+  AuroraBudgetName:
+    Description: Name of the Aurora monthly budget
+    Value: !Ref MonthlyAuroraBudget
+    Export:
+      Name: !Sub '${EnvironmentName}-Aurora-Budget-Name'
+
+  RedshiftBudgetName:
+    Description: Name of the Redshift monthly budget
+    Value: !Ref MonthlyRedshiftBudget
+    Export:
+      Name: !Sub '${EnvironmentName}-Redshift-Budget-Name'
+
+  DocumentDBBudgetName:
+    Description: Name of the DocumentDB monthly budget
+    Value: !Ref MonthlyDocumentDBBudget
+    Export:
+      Name: !Sub '${EnvironmentName}-DocumentDB-Budget-Name'
+
+  NeptuneBudgetName:
+    Description: Name of the Neptune monthly budget
+    Value: !Ref MonthlyNeptuneBudget
+    Export:
+      Name: !Sub '${EnvironmentName}-Neptune-Budget-Name'
+
+  BackupBudgetName:
+    Description: Name of the database backup monthly budget
+    Value: !Ref MonthlyBackupBudget
+    Export:
+      Name: !Sub '${EnvironmentName}-Database-Backup-Budget-Name'
+
+  DatabaseStorageBudgetName:
+    Description: Name of the database storage monthly budget
+    Value: !Ref MonthlyDatabaseStorageBudget
+    Export:
+      Name: !Sub '${EnvironmentName}-Database-Storage-Budget-Name'
+
+  DatabaseIOBudgetName:
+    Description: Name of the database I/O monthly budget
+    Value: !Ref MonthlyDatabaseIOBudget
+    Export:
+      Name: !Sub '${EnvironmentName}-Database-IO-Budget-Name'
+
+  TimestreamBudgetName:
+    Description: Name of the Timestream monthly budget
+    Value: !Ref MonthlyTimestreamBudget
+    Export:
+      Name: !Sub '${EnvironmentName}-Timestream-Budget-Name'
+
+  MemoryDBBudgetName:
+    Description: Name of the MemoryDB monthly budget
+    Value: !Ref MonthlyMemoryDBBudget
+    Export:
+      Name: !Sub '${EnvironmentName}-MemoryDB-Budget-Name'
+
+  DatabaseBudgetConfiguration:
+    Description: Summary of database budget configuration
+    Value: !Sub |
+      Environment: ${EnvironmentName}
+      Database Budget: $${MonthlyDatabaseBudgetAmount}
+      Backup Budget: $${BackupRetentionBudget}
+      Tag Filter: ${DatabaseTagKey}=${DatabaseTagValue}
+      Alert Email: ${AlertEmail}
+      Services Monitored: RDS, DynamoDB, ElastiCache, Aurora, Redshift, DocumentDB, Neptune, Timestream, MemoryDB, Backups, Storage, I/O
+    Export:
+      Name: !Sub '${EnvironmentName}-Database-Budget-Configuration'

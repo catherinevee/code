@@ -1,0 +1,462 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'AWS networking cost tracking and budget management'
+
+Parameters:
+  EnvironmentName:
+    Type: String
+    Default: production
+    Description: Environment name for tagging and identification
+
+  MonthlyNetworkingBudgetAmount:
+    Type: Number
+    Default: 1000
+    MinValue: 1
+    Description: Monthly budget amount for networking services in USD
+
+  AlertEmail:
+    Type: String
+    Description: Email address for networking cost alerts and notifications
+    AllowedPattern: '^[^\s@]+@[^\s@]+\.[^\s@]+$'
+
+  NetworkTagKey:
+    Type: String
+    Default: Environment
+    Description: Tag key to filter networking resources for cost tracking
+
+  NetworkTagValue:
+    Type: String
+    Default: production
+    Description: Tag value to filter networking resources for cost tracking
+
+  DataTransferThreshold:
+    Type: Number
+    Default: 500
+    MinValue: 1
+    Description: Monthly budget for data transfer costs in USD
+
+Resources:
+  # SNS Topic for networking cost alerts
+  NetworkingCostAlertsTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: !Sub '${EnvironmentName}-Networking-Cost-Alerts'
+      DisplayName: !Sub '${EnvironmentName} Networking Cost Alerts'
+      Tags:
+        - Key: Name
+          Value: !Sub '${EnvironmentName}-Networking-Cost-Alerts'
+        - Key: Environment
+          Value: !Ref EnvironmentName
+        - Key: Purpose
+          Value: NetworkingCostManagement
+
+  # Email subscription for networking cost alerts
+  NetworkingCostEmailSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      TopicArn: !Ref NetworkingCostAlertsTopic
+      Protocol: email
+      Endpoint: !Ref AlertEmail
+
+  # Budget for VPC and networking services
+  MonthlyVPCBudget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: !Sub '${EnvironmentName}-VPC-Monthly-Budget'
+        BudgetLimit:
+          Amount: !Ref MonthlyNetworkingBudgetAmount
+          Unit: USD
+        TimeUnit: MONTHLY
+        BudgetType: COST
+        CostFilters:
+          Service:
+            - Amazon Virtual Private Cloud
+          TagKey:
+            - !Ref NetworkTagKey
+          TagValue:
+            - !Ref NetworkTagValue
+        NotificationsWithSubscribers:
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 50
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref NetworkingCostAlertsTopic
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 75
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref NetworkingCostAlertsTopic
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 90
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref NetworkingCostAlertsTopic
+
+  # Budget for CloudFront (CDN) costs
+  MonthlyCloudFrontBudget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: !Sub '${EnvironmentName}-CloudFront-Monthly-Budget'
+        BudgetLimit:
+          Amount: !Ref MonthlyNetworkingBudgetAmount
+          Unit: USD
+        TimeUnit: MONTHLY
+        BudgetType: COST
+        CostFilters:
+          Service:
+            - Amazon CloudFront
+          TagKey:
+            - !Ref NetworkTagKey
+          TagValue:
+            - !Ref NetworkTagValue
+        NotificationsWithSubscribers:
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 70
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref NetworkingCostAlertsTopic
+          - Notification:
+              NotificationType: FORECASTED
+              ComparisonOperator: GREATER_THAN
+              Threshold: 100
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref NetworkingCostAlertsTopic
+
+  # Budget for Route 53 (DNS) costs
+  MonthlyRoute53Budget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: !Sub '${EnvironmentName}-Route53-Monthly-Budget'
+        BudgetLimit:
+          Amount: 100
+          Unit: USD
+        TimeUnit: MONTHLY
+        BudgetType: COST
+        CostFilters:
+          Service:
+            - Amazon Route 53
+          TagKey:
+            - !Ref NetworkTagKey
+          TagValue:
+            - !Ref NetworkTagValue
+        NotificationsWithSubscribers:
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 80
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref NetworkingCostAlertsTopic
+
+  # Budget for Elastic Load Balancing
+  MonthlyELBBudget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: !Sub '${EnvironmentName}-ELB-Monthly-Budget'
+        BudgetLimit:
+          Amount: !Ref MonthlyNetworkingBudgetAmount
+          Unit: USD
+        TimeUnit: MONTHLY
+        BudgetType: COST
+        CostFilters:
+          Service:
+            - Elastic Load Balancing
+          TagKey:
+            - !Ref NetworkTagKey
+          TagValue:
+            - !Ref NetworkTagValue
+        NotificationsWithSubscribers:
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 75
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref NetworkingCostAlertsTopic
+
+  # Budget for NAT Gateway costs
+  MonthlyNATGatewayBudget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: !Sub '${EnvironmentName}-NATGateway-Monthly-Budget'
+        BudgetLimit:
+          Amount: 200
+          Unit: USD
+        TimeUnit: MONTHLY
+        BudgetType: COST
+        CostFilters:
+          Service:
+            - Amazon Virtual Private Cloud
+          UsageType:
+            - NatGateway-Hours
+            - NatGateway-Bytes
+          TagKey:
+            - !Ref NetworkTagKey
+          TagValue:
+            - !Ref NetworkTagValue
+        NotificationsWithSubscribers:
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 80
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref NetworkingCostAlertsTopic
+
+  # Budget for API Gateway costs
+  MonthlyAPIGatewayBudget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: !Sub '${EnvironmentName}-APIGateway-Monthly-Budget'
+        BudgetLimit:
+          Amount: 300
+          Unit: USD
+        TimeUnit: MONTHLY
+        BudgetType: COST
+        CostFilters:
+          Service:
+            - Amazon API Gateway
+          TagKey:
+            - !Ref NetworkTagKey
+          TagValue:
+            - !Ref NetworkTagValue
+        NotificationsWithSubscribers:
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 75
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref NetworkingCostAlertsTopic
+
+  # Budget for Data Transfer costs across all services
+  MonthlyDataTransferBudget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: !Sub '${EnvironmentName}-DataTransfer-Monthly-Budget'
+        BudgetLimit:
+          Amount: !Ref DataTransferThreshold
+          Unit: USD
+        TimeUnit: MONTHLY
+        BudgetType: COST
+        CostFilters:
+          Service:
+            - Amazon Elastic Compute Cloud - Data Transfer
+            - Amazon Simple Storage Service
+            - Amazon CloudFront
+          UsageType:
+            - DataTransfer-Out-Bytes
+            - DataTransfer-In-Bytes
+            - DataTransfer-Regional-Bytes
+          TagKey:
+            - !Ref NetworkTagKey
+          TagValue:
+            - !Ref NetworkTagValue
+        NotificationsWithSubscribers:
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 60
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref NetworkingCostAlertsTopic
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 85
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref NetworkingCostAlertsTopic
+
+  # Budget for VPN and Direct Connect
+  MonthlyVPNBudget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: !Sub '${EnvironmentName}-VPN-DirectConnect-Monthly-Budget'
+        BudgetLimit:
+          Amount: 500
+          Unit: USD
+        TimeUnit: MONTHLY
+        BudgetType: COST
+        CostFilters:
+          Service:
+            - AWS VPN
+            - AWS Direct Connect
+          TagKey:
+            - !Ref NetworkTagKey
+          TagValue:
+            - !Ref NetworkTagValue
+        NotificationsWithSubscribers:
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 80
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref NetworkingCostAlertsTopic
+
+  # Budget for Elastic IP addresses
+  MonthlyElasticIPBudget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: !Sub '${EnvironmentName}-ElasticIP-Monthly-Budget'
+        BudgetLimit:
+          Amount: 50
+          Unit: USD
+        TimeUnit: MONTHLY
+        BudgetType: COST
+        CostFilters:
+          Service:
+            - Amazon Elastic Compute Cloud - Elastic IPs
+          TagKey:
+            - !Ref NetworkTagKey
+          TagValue:
+            - !Ref NetworkTagValue
+        NotificationsWithSubscribers:
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 75
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref NetworkingCostAlertsTopic
+
+  # Budget for AWS Transit Gateway
+  MonthlyTransitGatewayBudget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: !Sub '${EnvironmentName}-TransitGateway-Monthly-Budget'
+        BudgetLimit:
+          Amount: 300
+          Unit: USD
+        TimeUnit: MONTHLY
+        BudgetType: COST
+        CostFilters:
+          Service:
+            - Amazon Virtual Private Cloud
+          UsageType:
+            - TransitGateway-Hours
+            - TransitGateway-Bytes
+          TagKey:
+            - !Ref NetworkTagKey
+          TagValue:
+            - !Ref NetworkTagValue
+        NotificationsWithSubscribers:
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 80
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref NetworkingCostAlertsTopic
+
+Outputs:
+  NetworkingCostAlertsTopicArn:
+    Description: ARN of the networking cost alerts SNS topic
+    Value: !Ref NetworkingCostAlertsTopic
+    Export:
+      Name: !Sub '${EnvironmentName}-Networking-Cost-Alerts-Topic-ARN'
+
+  VPCBudgetName:
+    Description: Name of the VPC monthly budget
+    Value: !Ref MonthlyVPCBudget
+    Export:
+      Name: !Sub '${EnvironmentName}-VPC-Budget-Name'
+
+  CloudFrontBudgetName:
+    Description: Name of the CloudFront monthly budget
+    Value: !Ref MonthlyCloudFrontBudget
+    Export:
+      Name: !Sub '${EnvironmentName}-CloudFront-Budget-Name'
+
+  DataTransferBudgetName:
+    Description: Name of the data transfer monthly budget
+    Value: !Ref MonthlyDataTransferBudget
+    Export:
+      Name: !Sub '${EnvironmentName}-DataTransfer-Budget-Name'
+
+  ELBBudgetName:
+    Description: Name of the Elastic Load Balancer monthly budget
+    Value: !Ref MonthlyELBBudget
+    Export:
+      Name: !Sub '${EnvironmentName}-ELB-Budget-Name'
+
+  Route53BudgetName:
+    Description: Name of the Route 53 monthly budget
+    Value: !Ref MonthlyRoute53Budget
+    Export:
+      Name: !Sub '${EnvironmentName}-Route53-Budget-Name'
+
+  NATGatewayBudgetName:
+    Description: Name of the NAT Gateway monthly budget
+    Value: !Ref MonthlyNATGatewayBudget
+    Export:
+      Name: !Sub '${EnvironmentName}-NATGateway-Budget-Name'
+
+  APIGatewayBudgetName:
+    Description: Name of the API Gateway monthly budget
+    Value: !Ref MonthlyAPIGatewayBudget
+    Export:
+      Name: !Sub '${EnvironmentName}-APIGateway-Budget-Name'
+
+  VPNBudgetName:
+    Description: Name of the VPN and Direct Connect monthly budget
+    Value: !Ref MonthlyVPNBudget
+    Export:
+      Name: !Sub '${EnvironmentName}-VPN-Budget-Name'
+
+  ElasticIPBudgetName:
+    Description: Name of the Elastic IP monthly budget
+    Value: !Ref MonthlyElasticIPBudget
+    Export:
+      Name: !Sub '${EnvironmentName}-ElasticIP-Budget-Name'
+
+  TransitGatewayBudgetName:
+    Description: Name of the Transit Gateway monthly budget
+    Value: !Ref MonthlyTransitGatewayBudget
+    Export:
+      Name: !Sub '${EnvironmentName}-TransitGateway-Budget-Name'
+
+  NetworkingBudgetConfiguration:
+    Description: Summary of networking budget configuration
+    Value: !Sub |
+      Environment: ${EnvironmentName}
+      Networking Budget: $${MonthlyNetworkingBudgetAmount}
+      Data Transfer Budget: $${DataTransferThreshold}
+      Tag Filter: ${NetworkTagKey}=${NetworkTagValue}
+      Alert Email: ${AlertEmail}
+      Services Monitored: VPC, CloudFront, Route53, ELB, NAT Gateway, API Gateway, Data Transfer, VPN/DirectConnect, Elastic IP, Transit Gateway
+    Export:
+      Name: !Sub '${EnvironmentName}-Networking-Budget-Configuration'

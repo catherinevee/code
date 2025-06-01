@@ -1,0 +1,452 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Network infrastructure with VPCs, subnets, and Transit Gateway'
+
+# ============================================================================
+# PARAMETERS
+# ============================================================================
+Parameters:
+  EnvironmentName:
+    Description: Environment name that will be prefixed to resource names
+    Type: String
+
+# ============================================================================
+# MAPPINGS - Environment-specific network configurations
+# ============================================================================
+Mappings:
+  NetworkConfig:
+    production:
+      VPC1CIDR: 10.0.0.0/16
+      VPC2CIDR: 10.1.0.0/16
+      VPC3CIDR: 10.2.0.0/16
+    staging:
+      VPC1CIDR: 10.10.0.0/16
+      VPC2CIDR: 10.11.0.0/16
+      VPC3CIDR: 10.12.0.0/16
+    development:
+      VPC1CIDR: 10.20.0.0/16
+      VPC2CIDR: 10.21.0.0/16
+      VPC3CIDR: 10.22.0.0/16
+
+# ============================================================================
+# RESOURCES
+# ============================================================================
+Resources:
+
+  # ========================================================================
+  # VPC 1 - Application Tier
+  # ========================================================================
+  VPC1:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: !FindInMap [NetworkConfig, !Ref EnvironmentName, VPC1CIDR]
+      EnableDnsHostnames: true
+      EnableDnsSupport: true
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-VPC1-Application
+        - Key: Environment
+          Value: !Ref EnvironmentName
+        - Key: Tier
+          Value: Application
+
+  # Internet Gateway for VPC1
+  VPC1InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-VPC1-IGW
+
+  VPC1InternetGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      InternetGatewayId: !Ref VPC1InternetGateway
+      VpcId: !Ref VPC1
+
+  # VPC1 Subnets
+  VPC1PublicSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC1
+      AvailabilityZone: !Select [0, !GetAZs '']
+      CidrBlock: !Select [0, !Cidr [!FindInMap [NetworkConfig, !Ref EnvironmentName, VPC1CIDR], 6, 8]]
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-VPC1-Public-Subnet
+        - Key: Type
+          Value: Public
+
+  VPC1PrivateSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC1
+      AvailabilityZone: !Select [1, !GetAZs '']
+      CidrBlock: !Select [1, !Cidr [!FindInMap [NetworkConfig, !Ref EnvironmentName, VPC1CIDR], 6, 8]]
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-VPC1-Private-Subnet
+        - Key: Type
+          Value: Private
+
+  VPC1DatabaseSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC1
+      AvailabilityZone: !Select [2, !GetAZs '']
+      CidrBlock: !Select [2, !Cidr [!FindInMap [NetworkConfig, !Ref EnvironmentName, VPC1CIDR], 6, 8]]
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-VPC1-Database-Subnet
+        - Key: Type
+          Value: Database
+
+  # ========================================================================
+  # VPC 2 - Services Tier
+  # ========================================================================
+  VPC2:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: !FindInMap [NetworkConfig, !Ref EnvironmentName, VPC2CIDR]
+      EnableDnsHostnames: true
+      EnableDnsSupport: true
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-VPC2-Services
+        - Key: Environment
+          Value: !Ref EnvironmentName
+        - Key: Tier
+          Value: Services
+
+  # VPC2 Subnets
+  VPC2PublicSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC2
+      AvailabilityZone: !Select [0, !GetAZs '']
+      CidrBlock: !Select [0, !Cidr [!FindInMap [NetworkConfig, !Ref EnvironmentName, VPC2CIDR], 6, 8]]
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-VPC2-Public-Subnet
+        - Key: Type
+          Value: Public
+
+  VPC2PrivateSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC2
+      AvailabilityZone: !Select [1, !GetAZs '']
+      CidrBlock: !Select [1, !Cidr [!FindInMap [NetworkConfig, !Ref EnvironmentName, VPC2CIDR], 6, 8]]
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-VPC2-Private-Subnet
+        - Key: Type
+          Value: Private
+
+  VPC2ServicesSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC2
+      AvailabilityZone: !Select [2, !GetAZs '']
+      CidrBlock: !Select [2, !Cidr [!FindInMap [NetworkConfig, !Ref EnvironmentName, VPC2CIDR], 6, 8]]
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-VPC2-Services-Subnet
+        - Key: Type
+          Value: Services
+
+  # ========================================================================
+  # VPC 3 - Management Tier
+  # ========================================================================
+  VPC3:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: !FindInMap [NetworkConfig, !Ref EnvironmentName, VPC3CIDR]
+      EnableDnsHostnames: true
+      EnableDnsSupport: true
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-VPC3-Management
+        - Key: Environment
+          Value: !Ref EnvironmentName
+        - Key: Tier
+          Value: Management
+
+  # VPC3 Subnets
+  VPC3PublicSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC3
+      AvailabilityZone: !Select [0, !GetAZs '']
+      CidrBlock: !Select [0, !Cidr [!FindInMap [NetworkConfig, !Ref EnvironmentName, VPC3CIDR], 6, 8]]
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-VPC3-Public-Subnet
+        - Key: Type
+          Value: Public
+
+  VPC3PrivateSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC3
+      AvailabilityZone: !Select [1, !GetAZs '']
+      CidrBlock: !Select [1, !Cidr [!FindInMap [NetworkConfig, !Ref EnvironmentName, VPC3CIDR], 6, 8]]
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-VPC3-Private-Subnet
+        - Key: Type
+          Value: Private
+
+  VPC3ManagementSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC3
+      AvailabilityZone: !Select [2, !GetAZs '']
+      CidrBlock: !Select [2, !Cidr [!FindInMap [NetworkConfig, !Ref EnvironmentName, VPC3CIDR], 6, 8]]
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-VPC3-Management-Subnet
+        - Key: Type
+          Value: Management
+
+  # ========================================================================
+  # TRANSIT GATEWAY - Connects all VPCs
+  # ========================================================================
+  TransitGateway:
+    Type: AWS::EC2::TransitGateway
+    Properties:
+      AmazonSideAsn: 64512
+      Description: !Sub ${EnvironmentName} Transit Gateway for inter-VPC communication
+      DefaultRouteTableAssociation: enable
+      DefaultRouteTablePropagation: enable
+      DnsSupport: enable
+      VpnEcmpSupport: enable
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-TGW
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
+  # Transit Gateway Attachments
+  TGWAttachmentVPC1:
+    Type: AWS::EC2::TransitGatewayAttachment
+    Properties:
+      TransitGatewayId: !Ref TransitGateway
+      VpcId: !Ref VPC1
+      SubnetIds:
+        - !Ref VPC1PrivateSubnet
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-TGW-VPC1-Attachment
+
+  TGWAttachmentVPC2:
+    Type: AWS::EC2::TransitGatewayAttachment
+    Properties:
+      TransitGatewayId: !Ref TransitGateway
+      VpcId: !Ref VPC2
+      SubnetIds:
+        - !Ref VPC2PrivateSubnet
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-TGW-VPC2-Attachment
+
+  TGWAttachmentVPC3:
+    Type: AWS::EC2::TransitGatewayAttachment
+    Properties:
+      TransitGatewayId: !Ref TransitGateway
+      VpcId: !Ref VPC3
+      SubnetIds:
+        - !Ref VPC3PrivateSubnet
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-TGW-VPC3-Attachment
+
+  # ========================================================================
+  # ROUTE TABLES - Network routing configuration
+  # ========================================================================
+  # Public Route Table for VPC1
+  VPC1PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC1
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-VPC1-Public-Routes
+
+  VPC1DefaultPublicRoute:
+    Type: AWS::EC2::Route
+    DependsOn: VPC1InternetGatewayAttachment
+    Properties:
+      RouteTableId: !Ref VPC1PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref VPC1InternetGateway
+
+  VPC1PublicSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref VPC1PublicRouteTable
+      SubnetId: !Ref VPC1PublicSubnet
+
+  # Private Route Table for VPC1
+  VPC1PrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC1
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-VPC1-Private-Routes
+
+  # Route to other VPCs via Transit Gateway
+  VPC1TGWRoute:
+    Type: AWS::EC2::Route
+    DependsOn: TGWAttachmentVPC1
+    Properties:
+      RouteTableId: !Ref VPC1PrivateRouteTable
+      DestinationCidrBlock: 10.0.0.0/8
+      TransitGatewayId: !Ref TransitGateway
+
+  VPC1PrivateSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref VPC1PrivateRouteTable
+      SubnetId: !Ref VPC1PrivateSubnet
+
+  VPC1DatabaseSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref VPC1PrivateRouteTable
+      SubnetId: !Ref VPC1DatabaseSubnet
+
+  # Private Route Table for VPC2
+  VPC2PrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC2
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-VPC2-Private-Routes
+
+  VPC2TGWRoute:
+    Type: AWS::EC2::Route
+    DependsOn: TGWAttachmentVPC2
+    Properties:
+      RouteTableId: !Ref VPC2PrivateRouteTable
+      DestinationCidrBlock: 10.0.0.0/8
+      TransitGatewayId: !Ref TransitGateway
+
+  VPC2PrivateSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref VPC2PrivateRouteTable
+      SubnetId: !Ref VPC2PrivateSubnet
+
+  VPC2ServicesSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref VPC2PrivateRouteTable
+      SubnetId: !Ref VPC2ServicesSubnet
+
+  # Private Route Table for VPC3
+  VPC3PrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC3
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-VPC3-Private-Routes
+
+  VPC3TGWRoute:
+    Type: AWS::EC2::Route
+    DependsOn: TGWAttachmentVPC3
+    Properties:
+      RouteTableId: !Ref VPC3PrivateRouteTable
+      DestinationCidrBlock: 10.0.0.0/8
+      TransitGatewayId: !Ref TransitGateway
+
+  VPC3PrivateSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref VPC3PrivateRouteTable
+      SubnetId: !Ref VPC3PrivateSubnet
+
+  VPC3ManagementSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref VPC3PrivateRouteTable
+      SubnetId: !Ref VPC3ManagementSubnet
+
+# ============================================================================
+# OUTPUTS
+# ============================================================================
+Outputs:
+  # VPC IDs
+  VPC1Id:
+    Description: ID of VPC1 (Application Tier)
+    Value: !Ref VPC1
+
+  VPC2Id:
+    Description: ID of VPC2 (Services Tier)
+    Value: !Ref VPC2
+
+  VPC3Id:
+    Description: ID of VPC3 (Management Tier)
+    Value: !Ref VPC3
+
+  # Transit Gateway
+  TransitGatewayId:
+    Description: ID of the Transit Gateway
+    Value: !Ref TransitGateway
+
+  # VPC1 Subnet IDs
+  VPC1PublicSubnetId:
+    Description: VPC1 Public Subnet ID
+    Value: !Ref VPC1PublicSubnet
+
+  VPC1PrivateSubnetId:
+    Description: VPC1 Private Subnet ID
+    Value: !Ref VPC1PrivateSubnet
+
+  VPC1DatabaseSubnetId:
+    Description: VPC1 Database Subnet ID
+    Value: !Ref VPC1DatabaseSubnet
+
+  # VPC2 Subnet IDs
+  VPC2PublicSubnetId:
+    Description: VPC2 Public Subnet ID
+    Value: !Ref VPC2PublicSubnet
+
+  VPC2PrivateSubnetId:
+    Description: VPC2 Private Subnet ID
+    Value: !Ref VPC2PrivateSubnet
+
+  VPC2ServicesSubnetId:
+    Description: VPC2 Services Subnet ID
+    Value: !Ref VPC2ServicesSubnet
+
+  # VPC3 Subnet IDs
+  VPC3PublicSubnetId:
+    Description: VPC3 Public Subnet ID
+    Value: !Ref VPC3PublicSubnet
+
+  VPC3PrivateSubnetId:
+    Description: VPC3 Private Subnet ID
+    Value: !Ref VPC3PrivateSubnet
+
+  VPC3ManagementSubnetId:
+    Description: VPC3 Management Subnet ID
+    Value: !Ref VPC3ManagementSubnet
+
+  # CIDR Blocks
+  VPC1CIDR:
+    Description: VPC1 CIDR Block
+    Value: !FindInMap [NetworkConfig, !Ref EnvironmentName, VPC1CIDR]
+
+  VPC2CIDR:
+    Description: VPC2 CIDR Block
+    Value: !FindInMap [NetworkConfig, !Ref EnvironmentName, VPC2CIDR]
+
+  VPC3CIDR:
+    Description: VPC3 CIDR Block
+    Value: !FindInMap [NetworkConfig, !Ref EnvironmentName, VPC3CIDR]

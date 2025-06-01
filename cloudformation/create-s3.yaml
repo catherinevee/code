@@ -1,0 +1,711 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'S3 bucket infrastructure with security, lifecycle, and monitoring - Fixed circular dependencies'
+
+# ============================================================================
+# PARAMETERS - Customizable bucket configuration
+# ============================================================================
+Parameters:
+  EnvironmentName:
+    Description: Environment name that will be prefixed to resource names
+    Type: String
+    Default: production
+    AllowedValues:
+      - development
+      - staging
+      - production
+
+  BucketPurpose:
+    Description: Primary purpose of the S3 bucket
+    Type: String
+    Default: application-data
+    AllowedValues:
+      - application-data
+      - static-website
+      - backup-storage
+      - data-lake
+      - logs
+      - artifacts
+
+  EnableVersioning:
+    Description: Enable S3 bucket versioning
+    Type: String
+    Default: Enabled
+    AllowedValues:
+      - Enabled
+      - Suspended
+
+  EnablePublicAccess:
+    Description: Allow public access to bucket (use with caution)
+    Type: String
+    Default: 'false'
+    AllowedValues:
+      - 'true'
+      - 'false'
+
+  EnableLogging:
+    Description: Enable S3 access logging
+    Type: String
+    Default: 'true'
+    AllowedValues:
+      - 'true'
+      - 'false'
+
+  EnableEventNotifications:
+    Description: Enable S3 event notifications
+    Type: String
+    Default: 'true'
+    AllowedValues:
+      - 'true'
+      - 'false'
+
+  TransitionToIADays:
+    Description: Days after which objects transition to IA storage class
+    Type: Number
+    Default: 30
+    MinValue: 1
+    MaxValue: 365
+
+  TransitionToGlacierDays:
+    Description: Days after which objects transition to Glacier storage class
+    Type: Number
+    Default: 90
+    MinValue: 1
+    MaxValue: 3650
+
+# ============================================================================
+# CONDITIONS - Conditional resource creation
+# ============================================================================
+Conditions:
+  IsProduction: !Equals [!Ref EnvironmentName, production]
+  EnableVersioningCondition: !Equals [!Ref EnableVersioning, Enabled]
+  EnablePublicAccessCondition: !Equals [!Ref EnablePublicAccess, 'true']
+  EnableLoggingCondition: !Equals [!Ref EnableLogging, 'true']
+  EnableEventNotificationsCondition: !Equals [!Ref EnableEventNotifications, 'true']
+  IsWebsiteBucket: !Equals [!Ref BucketPurpose, static-website]
+  IsDataLakeBucket: !Equals [!Ref BucketPurpose, data-lake]
+  IsLogsBucket: !Equals [!Ref BucketPurpose, logs]
+
+# ============================================================================
+# RESOURCES - S3 Infrastructure Components
+# ============================================================================
+Resources:
+
+  # ========================================================================
+  # KMS KEY - Customer-managed encryption key for S3
+  # ========================================================================
+  S3KMSKey:
+    Type: AWS::KMS::Key
+    Properties:
+      Description: !Sub ${EnvironmentName} S3 bucket encryption key for ${BucketPurpose}
+      KeyPolicy:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: Enable IAM User Permissions
+            Effect: Allow
+            Principal:
+              AWS: !Sub 'arn:aws:iam::${AWS::AccountId}:root'
+            Action: 'kms:*'
+            Resource: '*'
+          - Sid: Allow S3 Service
+            Effect: Allow
+            Principal:
+              Service: s3.amazonaws.com
+            Action:
+              - kms:Decrypt
+              - kms:GenerateDataKey
+              - kms:ReEncrypt*
+              - kms:CreateGrant
+              - kms:DescribeKey
+            Resource: '*'
+            Condition:
+              StringEquals:
+                'kms:ViaService': !Sub 's3.${AWS::Region}.amazonaws.com'
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-S3-${BucketPurpose}-KMS-Key
+        - Key: Environment
+          Value: !Ref EnvironmentName
+        - Key: Purpose
+          Value: !Ref BucketPurpose
+
+  S3KMSKeyAlias:
+    Type: AWS::KMS::Alias
+    Properties:
+      AliasName: !Sub alias/${EnvironmentName}-s3-${BucketPurpose}-key
+      TargetKeyId: !Ref S3KMSKey
+
+  # ========================================================================
+  # ACCESS LOGGING BUCKET - For S3 access logs (no circular dependency)
+  # ========================================================================
+  AccessLogsBucket:
+    Type: AWS::S3::Bucket
+    Condition: EnableLoggingCondition
+    Properties:
+      BucketName: !Sub ${EnvironmentName}-${AWS::AccountId}-s3-access-logs-${BucketPurpose}
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      LifecycleConfiguration:
+        Rules:
+          - Id: DeleteOldLogs
+            Status: Enabled
+            ExpirationInDays: !If [IsProduction, 90, 30]
+          - Id: TransitionToIA
+            Status: Enabled
+            Transition:
+              StorageClass: STANDARD_IA
+              TransitionInDays: 30
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-S3-AccessLogs-${BucketPurpose}
+        - Key: Environment
+          Value: !Ref EnvironmentName
+        - Key: Purpose
+          Value: AccessLogs
+
+  # ========================================================================
+  # MAIN S3 BUCKET - Primary bucket with comprehensive configuration
+  # ========================================================================
+  S3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub ${EnvironmentName}-${AWS::AccountId}-${BucketPurpose}-bucket
+      # Encryption configuration
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: aws:kms
+              KMSMasterKeyID: !Ref S3KMSKey
+            BucketKeyEnabled: true
+      # Versioning configuration
+      VersioningConfiguration:
+        Status: !Ref EnableVersioning
+      # Public access block configuration
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: !If [EnablePublicAccessCondition, false, true]
+        BlockPublicPolicy: !If [EnablePublicAccessCondition, false, true]
+        IgnorePublicAcls: !If [EnablePublicAccessCondition, false, true]
+        RestrictPublicBuckets: !If [EnablePublicAccessCondition, false, true]
+      # Access logging configuration
+      LoggingConfiguration: !If
+        - EnableLoggingCondition
+        - DestinationBucketName: !Ref AccessLogsBucket
+          LogFilePrefix: !Sub ${BucketPurpose}-access-logs/
+        - !Ref 'AWS::NoValue'
+      # Lifecycle configuration
+      LifecycleConfiguration:
+        Rules:
+          - Id: TransitionToIA
+            Status: Enabled
+            Transition:
+              StorageClass: STANDARD_IA
+              TransitionInDays: !Ref TransitionToIADays
+          - Id: TransitionToGlacier
+            Status: Enabled
+            Transition:
+              StorageClass: GLACIER
+              TransitionInDays: !Ref TransitionToGlacierDays
+          - Id: TransitionToDeepArchive
+            Status: Enabled
+            Transition:
+              StorageClass: DEEP_ARCHIVE
+              TransitionInDays: !If [IsProduction, 365, 180]
+          - Id: DeleteIncompleteMultipartUploads
+            Status: Enabled
+            AbortIncompleteMultipartUpload:
+              DaysAfterInitiation: 7
+          - Id: DeleteOldVersions
+            Status: !If [EnableVersioningCondition, Enabled, Disabled]
+            NoncurrentVersionExpirationInDays: !If [IsProduction, 90, 30]
+      # CORS configuration (for website buckets)
+      CorsConfiguration: !If
+        - IsWebsiteBucket
+        - CorsRules:
+            - AllowedHeaders: ['*']
+              AllowedMethods: [GET, PUT, POST, DELETE, HEAD]
+              AllowedOrigins: ['*']
+              ExposedHeaders: [ETag]
+              MaxAge: 3000
+        - !Ref 'AWS::NoValue'
+      # Website configuration (for website buckets)
+      WebsiteConfiguration: !If
+        - IsWebsiteBucket
+        - IndexDocument: index.html
+          ErrorDocument: error.html
+        - !Ref 'AWS::NoValue'
+      # Intelligent tiering configuration
+      IntelligentTieringConfigurations:
+        - Id: EntireBucket
+          Status: Enabled
+          OptionalFields:
+            - BucketKeyStatus
+      # Metrics configuration
+      MetricsConfigurations:
+        - Id: EntireBucket
+          Status: Enabled
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-S3-${BucketPurpose}
+        - Key: Environment
+          Value: !Ref EnvironmentName
+        - Key: Purpose
+          Value: !Ref BucketPurpose
+        - Key: BackupRequired
+          Value: !If [IsProduction, 'true', 'false']
+
+  # ========================================================================
+  # BUCKET POLICY - Fine-grained access control
+  # ========================================================================
+  S3BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref S3Bucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          # Deny insecure connections
+          - Sid: DenyInsecureConnections
+            Effect: Deny
+            Principal: '*'
+            Action: 's3:*'
+            Resource:
+              - !Sub '${S3Bucket}/*'
+              - !Ref S3Bucket
+            Condition:
+              Bool:
+                'aws:SecureTransport': 'false'
+          # Deny unencrypted uploads
+          - Sid: DenyUnencryptedUploads
+            Effect: Deny
+            Principal: '*'
+            Action: 's3:PutObject'
+            Resource: !Sub '${S3Bucket}/*'
+            Condition:
+              StringNotEquals:
+                's3:x-amz-server-side-encryption': 'aws:kms'
+          # Public read access (only if explicitly enabled)
+          - !If
+            - EnablePublicAccessCondition
+            - Sid: AllowPublicRead
+              Effect: Allow
+              Principal: '*'
+              Action: 's3:GetObject'
+              Resource: !Sub '${S3Bucket}/*'
+            - !Ref 'AWS::NoValue'
+
+  # ========================================================================
+  # IAM ROLES - For S3 operations
+  # ========================================================================
+  # S3 Access Role for applications
+  S3AccessRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub ${EnvironmentName}-S3-Access-Role-${BucketPurpose}
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: 
+                - ec2.amazonaws.com
+                - lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: S3AccessPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:PutObject
+                  - s3:DeleteObject
+                  - s3:GetObjectVersion
+                  - s3:GetObjectAcl
+                  - s3:PutObjectAcl
+                Resource: !Sub '${S3Bucket}/*'
+              - Effect: Allow
+                Action:
+                  - s3:ListBucket
+                  - s3:GetBucketLocation
+                  - s3:GetBucketVersioning
+                Resource: !Ref S3Bucket
+              - Effect: Allow
+                Action:
+                  - kms:Decrypt
+                  - kms:GenerateDataKey
+                  - kms:DescribeKey
+                Resource: !GetAtt S3KMSKey.Arn
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-S3-Access-Role
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
+  # Instance Profile for EC2 instances
+  S3AccessInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      InstanceProfileName: !Sub ${EnvironmentName}-S3-Access-InstanceProfile-${BucketPurpose}
+      Roles:
+        - !Ref S3AccessRole
+
+  # ========================================================================
+  # LAMBDA FUNCTION - S3 event processing (if enabled)
+  # ========================================================================
+  S3EventProcessorLambdaRole:
+    Type: AWS::IAM::Role
+    Condition: EnableEventNotificationsCondition
+    Properties:
+      RoleName: !Sub ${EnvironmentName}-S3-Event-Lambda-Role-${BucketPurpose}
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: S3EventProcessingPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:GetObjectVersion
+                  - s3:PutObject
+                  - s3:PutObjectTagging
+                  - s3:GetObjectTagging
+                  - s3:DeleteObjectTagging
+                Resource: !Sub '${S3Bucket}/*'
+              - Effect: Allow
+                Action:
+                  - s3:ListBucket
+                Resource: !Ref S3Bucket
+              - Effect: Allow
+                Action:
+                  - kms:Decrypt
+                  - kms:GenerateDataKey
+                Resource: !GetAtt S3KMSKey.Arn
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-S3-Event-Lambda-Role
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
+  S3EventProcessorLambda:
+    Type: AWS::Lambda::Function
+    Condition: EnableEventNotificationsCondition
+    Properties:
+      FunctionName: !Sub ${EnvironmentName}-s3-event-processor-${BucketPurpose}
+      Description: Lambda function to process S3 events
+      Runtime: python3.9
+      Handler: index.lambda_handler
+      Role: !GetAtt S3EventProcessorLambdaRole.Arn
+      Code:
+        ZipFile: |
+          import json
+          import boto3
+          import logging
+          from datetime import datetime
+          import urllib.parse
+          
+          # Configure logging
+          logger = logging.getLogger()
+          logger.setLevel(logging.INFO)
+          
+          def lambda_handler(event, context):
+              """
+              Process S3 events and perform actions based on event type
+              """
+              try:
+                  # Process each record in the event
+                  for record in event['Records']:
+                      # Extract S3 event information
+                      event_name = record['eventName']
+                      bucket_name = record['s3']['bucket']['name']
+                      object_key = urllib.parse.unquote_plus(
+                          record['s3']['object']['key'], encoding='utf-8'
+                      )
+                      object_size = record['s3']['object'].get('size', 0)
+                      
+                      logger.info(f"Processing event: {event_name}")
+                      logger.info(f"Bucket: {bucket_name}")
+                      logger.info(f"Object: {object_key}")
+                      logger.info(f"Size: {object_size} bytes")
+                      
+                      # Process based on event type
+                      if event_name.startswith('ObjectCreated'):
+                          process_object_created(bucket_name, object_key, object_size)
+                      elif event_name.startswith('ObjectRemoved'):
+                          process_object_removed(bucket_name, object_key)
+                      else:
+                          logger.warning(f"Unhandled event type: {event_name}")
+                  
+                  return {
+                      'statusCode': 200,
+                      'body': json.dumps({
+                          'message': 'Events processed successfully',
+                          'processed_records': len(event['Records'])
+                      })
+                  }
+                  
+              except Exception as e:
+                  logger.error(f"Error processing S3 events: {str(e)}")
+                  raise
+          
+          def process_object_created(bucket_name, object_key, object_size):
+              """Handle object creation events"""
+              try:
+                  s3_client = boto3.client('s3')
+                  
+                  # Example: Add metadata for image files
+                  if object_key.lower().endswith(('.jpg', '.jpeg', '.png', '.gif')):
+                      # Tag image files
+                      s3_client.put_object_tagging(
+                          Bucket=bucket_name,
+                          Key=object_key,
+                          Tagging={
+                              'TagSet': [
+                                  {'Key': 'ContentType', 'Value': 'Image'},
+                                  {'Key': 'ProcessedDate', 'Value': datetime.utcnow().isoformat()}
+                              ]
+                          }
+                      )
+                      logger.info(f"Tagged image file: {object_key}")
+                  
+                  # Example: Log large files
+                  if object_size > 100 * 1024 * 1024:  # Files larger than 100MB
+                      logger.info(f"Large file detected: {object_key} ({object_size} bytes)")
+                  
+              except Exception as e:
+                  logger.error(f"Error processing object creation: {str(e)}")
+                  raise
+          
+          def process_object_removed(bucket_name, object_key):
+              """Handle object removal events"""
+              try:
+                  logger.info(f"Object removed: {object_key} from bucket {bucket_name}")
+                  # Add any cleanup logic here
+                  
+              except Exception as e:
+                  logger.error(f"Error processing object removal: {str(e)}")
+                  raise
+      Timeout: 300
+      MemorySize: 256
+      Environment:
+        Variables:
+          BUCKET_NAME: !Ref S3Bucket
+          ENVIRONMENT: !Ref EnvironmentName
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-S3-Event-Processor
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
+  # Lambda permission for S3 to invoke the function
+  S3InvokeLambdaPermission:
+    Type: AWS::Lambda::Permission
+    Condition: EnableEventNotificationsCondition
+    Properties:
+      FunctionName: !Ref S3EventProcessorLambda
+      Action: lambda:InvokeFunction
+      Principal: s3.amazonaws.com
+      SourceArn: !GetAtt S3Bucket.Arn
+
+  # ========================================================================
+  # S3 BUCKET NOTIFICATION - Separate resource to avoid circular dependency
+  # ========================================================================
+  S3BucketNotification:
+    Type: AWS::S3::Bucket
+    Condition: EnableEventNotificationsCondition
+    DependsOn: S3InvokeLambdaPermission
+    Properties:
+      BucketName: !Ref S3Bucket
+      NotificationConfiguration:
+        LambdaConfigurations:
+          - Event: s3:ObjectCreated:*
+            Function: !GetAtt S3EventProcessorLambda.Arn
+          - Event: s3:ObjectRemoved:*
+            Function: !GetAtt S3EventProcessorLambda.Arn
+
+  # ========================================================================
+  # CLOUDWATCH - Monitoring and logging
+  # ========================================================================
+  # Log Group for Lambda function
+  S3EventLambdaLogGroup:
+    Type: AWS::Logs::LogGroup
+    Condition: EnableEventNotificationsCondition
+    Properties:
+      LogGroupName: !Sub /aws/lambda/${S3EventProcessorLambda}
+      RetentionInDays: !If [IsProduction, 30, 7]
+
+  # CloudWatch Alarms for production
+  S3BucketSizeAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Condition: IsProduction
+    Properties:
+      AlarmName: !Sub ${EnvironmentName}-S3-${BucketPurpose}-Size-High
+      AlarmDescription: S3 bucket size is growing rapidly
+      MetricName: BucketSizeBytes
+      Namespace: AWS/S3
+      Statistic: Average
+      Period: 86400  # Daily check
+      EvaluationPeriods: 2
+      Threshold: 107374182400  # 100GB
+      ComparisonOperator: GreaterThanThreshold
+      Dimensions:
+        - Name: BucketName
+          Value: !Ref S3Bucket
+        - Name: StorageType
+          Value: StandardStorage
+      TreatMissingData: notBreaching
+
+  S3ErrorRateAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Condition: IsProduction
+    Properties:
+      AlarmName: !Sub ${EnvironmentName}-S3-${BucketPurpose}-Error-Rate-High
+      AlarmDescription: S3 bucket error rate is high
+      MetricName: 4xxErrors
+      Namespace: AWS/S3
+      Statistic: Sum
+      Period: 300
+      EvaluationPeriods: 2
+      Threshold: 10
+      ComparisonOperator: GreaterThanThreshold
+      Dimensions:
+        - Name: BucketName
+          Value: !Ref S3Bucket
+      TreatMissingData: notBreaching
+
+  # ========================================================================
+  # SNS TOPIC - For notifications
+  # ========================================================================
+  S3NotificationTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: !Sub ${EnvironmentName}-S3-${BucketPurpose}-Notifications
+      DisplayName: S3 Bucket Notifications
+      KmsMasterKeyId: !Ref S3KMSKey
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-S3-Notifications
+        - Key: Environment
+          Value: !Ref EnvironmentName
+
+# ============================================================================
+# OUTPUTS - Export important values
+# ============================================================================
+Outputs:
+  # Bucket Information
+  S3BucketName:
+    Description: Name of the S3 bucket
+    Value: !Ref S3Bucket
+    Export:
+      Name: !Sub ${EnvironmentName}-S3-${BucketPurpose}-BucketName
+
+  S3BucketArn:
+    Description: ARN of the S3 bucket
+    Value: !GetAtt S3Bucket.Arn
+    Export:
+      Name: !Sub ${EnvironmentName}-S3-${BucketPurpose}-BucketArn
+
+  S3BucketDomainName:
+    Description: Domain name of the S3 bucket
+    Value: !GetAtt S3Bucket.DomainName
+    Export:
+      Name: !Sub ${EnvironmentName}-S3-${BucketPurpose}-DomainName
+
+  S3BucketRegionalDomainName:
+    Description: Regional domain name of the S3 bucket
+    Value: !GetAtt S3Bucket.RegionalDomainName
+    Export:
+      Name: !Sub ${EnvironmentName}-S3-${BucketPurpose}-RegionalDomainName
+
+  S3BucketWebsiteURL:
+    Description: Website URL of the S3 bucket (if configured as website)
+    Value: !If 
+      - IsWebsiteBucket
+      - !GetAtt S3Bucket.WebsiteURL
+      - 'Not configured as website'
+    Export:
+      Name: !Sub ${EnvironmentName}-S3-${BucketPurpose}-WebsiteURL
+
+  # KMS Key Information
+  S3KMSKeyId:
+    Description: ID of the KMS key used for S3 encryption
+    Value: !Ref S3KMSKey
+    Export:
+      Name: !Sub ${EnvironmentName}-S3-${BucketPurpose}-KMSKeyId
+
+  S3KMSKeyArn:
+    Description: ARN of the KMS key used for S3 encryption
+    Value: !GetAtt S3KMSKey.Arn
+    Export:
+      Name: !Sub ${EnvironmentName}-S3-${BucketPurpose}-KMSKeyArn
+
+  # Access Logs Bucket
+  AccessLogsBucketName:
+    Description: Name of the access logs bucket
+    Value: !If 
+      - EnableLoggingCondition
+      - !Ref AccessLogsBucket
+      - 'Access logging not enabled'
+    Export:
+      Name: !Sub ${EnvironmentName}-S3-${BucketPurpose}-AccessLogsBucket
+
+  # IAM Role Information
+  S3AccessRoleArn:
+    Description: ARN of the S3 access role
+    Value: !GetAtt S3AccessRole.Arn
+    Export:
+      Name: !Sub ${EnvironmentName}-S3-${BucketPurpose}-AccessRoleArn
+
+  S3AccessInstanceProfileArn:
+    Description: ARN of the S3 access instance profile
+    Value: !GetAtt S3AccessInstanceProfile.Arn
+    Export:
+      Name: !Sub ${EnvironmentName}-S3-${BucketPurpose}-InstanceProfileArn
+
+  # Lambda Function Information
+  S3EventProcessorLambdaArn:
+    Description: ARN of the S3 event processor Lambda function
+    Value: !If 
+      - EnableEventNotificationsCondition
+      - !GetAtt S3EventProcessorLambda.Arn
+      - 'Event notifications not enabled'
+    Export:
+      Name: !Sub ${EnvironmentName}-S3-${BucketPurpose}-EventProcessorArn
+
+  # SNS Topic
+  S3NotificationTopicArn:
+    Description: ARN of the S3 notification SNS topic
+    Value: !Ref S3NotificationTopic
+    Export:
+      Name: !Sub ${EnvironmentName}-S3-${BucketPurpose}-NotificationTopicArn
+
+  # Configuration Summary
+  BucketConfiguration:
+    Description: Summary of bucket configuration
+    Value: !Sub |
+      Bucket: ${S3Bucket}
+      Environment: ${EnvironmentName}
+      Purpose: ${BucketPurpose}
+      Versioning: ${EnableVersioning}
+      Public Access: ${EnablePublicAccess}
+      Encryption: KMS with customer-managed key
+      Lifecycle: IA after ${TransitionToIADays} days, Glacier after ${TransitionToGlacierDays} days
+      Logging: ${EnableLogging}
+      Event Notifications: ${EnableEventNotifications}
+    Export:
+      Name: !Sub ${EnvironmentName}-S3-${BucketPurpose}-Configuration
