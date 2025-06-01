@@ -1,0 +1,5 @@
+# Azure CLI command to get cost analysis
+az consumption usage list \
+  --billing-period-name "202501" \
+  --top 10 \
+  --output table

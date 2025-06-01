@@ -1,0 +1,24 @@
+# custodian-policy.yml
+policies:
+- name: terminate-unused-instances
+  resource: ec2
+  filters:
+  - 'State.Name': running
+  - type: metrics
+    name: CPUUtilization
+    days: 7
+    value: 5
+    op: less-than
+  actions:
+  - type: terminate
+
+- name: stop-after-hours
+  resource: ec2
+  filters:
+  - 'State.Name': running
+  - type: offhour
+    tag: Schedule
+    default_tz: EST
+    offhour: 19
+  actions:
+  - stop

@@ -1,0 +1,2 @@
+curl -H "Authorization: Bearer YOUR_API_TOKEN" \
+  "https://api.vantage.sh/v1/costs?provider=aws&start_date=2025-01-01&end_date=2025-01-31"

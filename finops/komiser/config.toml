@@ -1,0 +1,12 @@
+[aws]
+source = "CREDENTIALS_FILE"
+regions = ["us-east-1", "us-west-2"]
+profile = "default"
+
+[slack]
+webhook = "https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK"
+channel = "komiser"
+
+[cost]
+enabled = true
+currency = "USD"

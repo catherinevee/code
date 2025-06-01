@@ -1,0 +1,5 @@
+# Install Infracost
+curl -fsSL https://raw.githubusercontent.com/infracost/infracost/master/scripts/install.sh | sh
+
+# Generate cost estimate for Terraform
+infracost breakdown --path terraform/ --format table

@@ -1,0 +1,11 @@
+# Export billing data to BigQuery for analysis
+gcloud billing accounts list
+
+# Set up budget alerts
+gcloud alpha billing budgets create \
+  --billing-account=0X0X0X-0X0X0X-0X0X0X \
+  --display-name="DevOps Team Budget" \
+  --budget-amount=5000USD \
+  --threshold-rules-percent=50,90 \
+  --threshold-rules-basis=CURRENT_SPEND \
+  --notification-channels="projects/PROJECT_ID/notificationChannels/CHANNEL_ID"

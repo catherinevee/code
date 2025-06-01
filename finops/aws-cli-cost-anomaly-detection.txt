@@ -1,0 +1,4 @@
+# Create an anomaly detector for your services
+aws ce create-anomaly-detector \
+  --anomaly-detector AnomalyDetectorArn=string,DimensionKey=SERVICE \
+  --dimension-specifications Dimension=SERVICE,Key=EC2-Instance,MatchOptions=EQUALS

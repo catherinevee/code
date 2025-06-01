@@ -1,0 +1,9 @@
+# Add Kubecost Helm repository
+helm repo add kubecost https://kubecost.github.io/cost-model/
+
+# Install Kubecost
+helm install kubecost kubecost/cost-analyzer \
+  --namespace kubecost \
+  --create-namespace \
+  --set global.prometheus.enabled=false \
+  --set global.grafana.enabled=false

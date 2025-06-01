@@ -1,0 +1,5 @@
+# Query costs via Kubecost API
+curl -G "http://localhost:9090/model/allocation" \
+  -d window=today \
+  -d aggregate=namespace \
+  -d accumulate=false

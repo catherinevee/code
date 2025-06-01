@@ -1,0 +1,10 @@
+# Install Komiser
+wget https://github.com/mlabouardy/komiser/releases/download/2.10.0/komiser_2.10.0_Linux_x86_64.tar.gz
+tar -xzf komiser_2.10.0_Linux_x86_64.tar.gz
+
+# Configure for AWS
+export AWS_ACCESS_KEY_ID="YOUR_ACCESS_KEY"
+export AWS_SECRET_ACCESS_KEY="YOUR_SECRET_KEY"
+
+# Run Komiser
+./komiser start --config=config.toml

@@ -1,0 +1,6 @@
+A good tagging strategy serves multiple purposes:
+
+    Financial tracking: Allocate costs to the right teams and projects
+    Operational management: Identify resource owners and purposes
+    Compliance: Meet regulatory requirements for data classification
+    Automation: Enable automated policies based on resource metadata

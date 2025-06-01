@@ -1,0 +1,11 @@
+# Create a budget with email notifications
+az consumption budget create \
+  --budget-name "DevOps-Monthly-Budget" \
+  --amount 5000 \
+  --time-grain Monthly \
+  --time-period start-date="2025-01-01" end-date="2025-12-31" \
+  --notifications \
+    notification-enabled=true \
+    notification-operator=GreaterThan \
+    notification-threshold=80 \
+    contact-emails="devops-team@company.com"

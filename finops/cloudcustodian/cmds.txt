@@ -1,0 +1,8 @@
+# Validate policy
+custodian validate custodian-policy.yml
+
+# Run in dry-run mode
+custodian run --dryrun custodian-policy.yml -s output/
+
+# Execute the policy
+custodian run custodian-policy.yml -s output/
