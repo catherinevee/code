@@ -1,0 +1,967 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Comprehensive CloudWatch Dashboard for infrastructure monitoring and cost tracking'
+
+Parameters:
+  EnvironmentName:
+    Type: String
+    Default: production
+    Description: Environment name for dashboard identification
+
+  DashboardName:
+    Type: String
+    Default: Infrastructure-Overview
+    Description: Name of the CloudWatch dashboard
+
+  ApplicationName:
+    Type: String
+    Default: my-app
+    Description: Application name for filtering metrics
+
+  AutoScalingGroupName:
+    Type: String
+    Default: ''
+    Description: Auto Scaling Group name to monitor (optional)
+
+  LoadBalancerName:
+    Type: String
+    Default: ''
+    Description: Load Balancer name to monitor (optional)
+
+  RDSInstanceIdentifier:
+    Type: String
+    Default: ''
+    Description: RDS instance identifier to monitor (optional)
+
+  ElastiCacheClusterId:
+    Type: String
+    Default: ''
+    Description: ElastiCache cluster ID to monitor (optional)
+
+  LambdaFunctionNames:
+    Type: CommaDelimitedList
+    Default: ''
+    Description: Comma-separated list of Lambda function names to monitor
+
+  S3BucketNames:
+    Type: CommaDelimitedList
+    Default: ''
+    Description: Comma-separated list of S3 bucket names to monitor
+
+  Region:
+    Type: String
+    Default: us-east-1
+    Description: AWS region for the dashboard
+    AllowedValues:
+      - us-east-1
+      - us-east-2
+      - us-west-1
+      - us-west-2
+      - eu-west-1
+      - eu-central-1
+      - ap-southeast-1
+      - ap-northeast-1
+
+  AlertEmail:
+    Type: String
+    Description: Email address for dashboard alerts
+    AllowedPattern: '^[^\s@]+@[^\s@]+\.[^\s@]+$'
+
+  MonthlyBudgetAmount:
+    Type: Number
+    Default: 1000
+    MinValue: 1
+    Description: Monthly budget amount for cost monitoring in USD
+
+Conditions:
+  HasAutoScalingGroup: !Not [!Equals [!Ref AutoScalingGroupName, '']]
+  HasLoadBalancer: !Not [!Equals [!Ref LoadBalancerName, '']]
+  HasRDSInstance: !Not [!Equals [!Ref RDSInstanceIdentifier, '']]
+  HasElastiCache: !Not [!Equals [!Ref ElastiCacheClusterId, '']]
+  HasLambdaFunctions: !Not [!Equals [!Select [0, !Ref LambdaFunctionNames], '']]
+  HasS3Buckets: !Not [!Equals [!Select [0, !Ref S3BucketNames], '']]
+
+Resources:
+  # ========================================================================
+  # CLOUDWATCH DASHBOARD - Main infrastructure monitoring dashboard
+  # ========================================================================
+  InfrastructureDashboard:
+    Type: AWS::CloudWatch::Dashboard
+    Properties:
+      DashboardName: !Sub '${EnvironmentName}-${DashboardName}'
+      DashboardBody: !Sub |
+        {
+          "widgets": [
+            {
+              "type": "text",
+              "x": 0,
+              "y": 0,
+              "width": 24,
+              "height": 2,
+              "properties": {
+                "markdown": "# ${EnvironmentName} Infrastructure Dashboard\n\n**Environment:** ${EnvironmentName} | **Application:** ${ApplicationName} | **Region:** ${Region} | **Last Updated:** $(date)"
+              }
+            },
+            {
+              "type": "metric",
+              "x": 0,
+              "y": 2,
+              "width": 12,
+              "height": 6,
+              "properties": {
+                "metrics": [
+                  ["AWS/Billing", "EstimatedCharges", "Currency", "USD"],
+                  ["AWS/EC2", "RunningInstances", {"stat": "Maximum"}],
+                  ["AWS/ApplicationELB", "RequestCount", "LoadBalancer", "${LoadBalancerName}", {"stat": "Sum"}]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "${Region}",
+                "title": "Cost & Usage Overview",
+                "period": 3600,
+                "yAxis": {
+                  "left": {
+                    "min": 0
+                  }
+                }
+              }
+            },
+            {
+              "type": "metric",
+              "x": 12,
+              "y": 2,
+              "width": 12,
+              "height": 6,
+              "properties": {
+                "metrics": [
+                  ["AWS/EC2", "CPUUtilization", "AutoScalingGroupName", "${AutoScalingGroupName}"],
+                  ["AWS/EC2", "NetworkIn", "AutoScalingGroupName", "${AutoScalingGroupName}"],
+                  ["AWS/EC2", "NetworkOut", "AutoScalingGroupName", "${AutoScalingGroupName}"]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "${Region}",
+                "title": "EC2 Performance Metrics",
+                "period": 300,
+                "yAxis": {
+                  "left": {
+                    "min": 0
+                  }
+                }
+              }
+            },
+            {
+              "type": "metric",
+              "x": 0,
+              "y": 8,
+              "width": 8,
+              "height": 6,
+              "properties": {
+                "metrics": [
+                  ["AWS/ApplicationELB", "TargetResponseTime", "LoadBalancer", "${LoadBalancerName}"],
+                  ["AWS/ApplicationELB", "HTTPCode_Target_2XX_Count", "LoadBalancer", "${LoadBalancerName}", {"stat": "Sum"}],
+                  ["AWS/ApplicationELB", "HTTPCode_Target_4XX_Count", "LoadBalancer", "${LoadBalancerName}", {"stat": "Sum"}],
+                  ["AWS/ApplicationELB", "HTTPCode_Target_5XX_Count", "LoadBalancer", "${LoadBalancerName}", {"stat": "Sum"}]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "${Region}",
+                "title": "Load Balancer Performance",
+                "period": 300
+              }
+            },
+            {
+              "type": "metric",
+              "x": 8,
+              "y": 8,
+              "width": 8,
+              "height": 6,
+              "properties": {
+                "metrics": [
+                  ["AWS/RDS", "CPUUtilization", "DBInstanceIdentifier", "${RDSInstanceIdentifier}"],
+                  ["AWS/RDS", "DatabaseConnections", "DBInstanceIdentifier", "${RDSInstanceIdentifier}"],
+                  ["AWS/RDS", "FreeableMemory", "DBInstanceIdentifier", "${RDSInstanceIdentifier}"],
+                  ["AWS/RDS", "ReadLatency", "DBInstanceIdentifier", "${RDSInstanceIdentifier}"],
+                  ["AWS/RDS", "WriteLatency", "DBInstanceIdentifier", "${RDSInstanceIdentifier}"]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "${Region}",
+                "title": "RDS Database Performance",
+                "period": 300
+              }
+            },
+            {
+              "type": "metric",
+              "x": 16,
+              "y": 8,
+              "width": 8,
+              "height": 6,
+              "properties": {
+                "metrics": [
+                  ["AWS/ElastiCache", "CPUUtilization", "CacheClusterId", "${ElastiCacheClusterId}"],
+                  ["AWS/ElastiCache", "CacheMisses", "CacheClusterId", "${ElastiCacheClusterId}", {"stat": "Sum"}],
+                  ["AWS/ElastiCache", "CacheHits", "CacheClusterId", "${ElastiCacheClusterId}", {"stat": "Sum"}],
+                  ["AWS/ElastiCache", "NetworkBytesIn", "CacheClusterId", "${ElastiCacheClusterId}"],
+                  ["AWS/ElastiCache", "NetworkBytesOut", "CacheClusterId", "${ElastiCacheClusterId}"]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "${Region}",
+                "title": "ElastiCache Performance",
+                "period": 300
+              }
+            },
+            {
+              "type": "metric",
+              "x": 0,
+              "y": 14,
+              "width": 12,
+              "height": 6,
+              "properties": {
+                "metrics": [
+                  ["AWS/Lambda", "Duration", "FunctionName", "function-1"],
+                  ["AWS/Lambda", "Invocations", "FunctionName", "function-1", {"stat": "Sum"}],
+                  ["AWS/Lambda", "Errors", "FunctionName", "function-1", {"stat": "Sum"}],
+                  ["AWS/Lambda", "Throttles", "FunctionName", "function-1", {"stat": "Sum"}]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "${Region}",
+                "title": "Lambda Function Performance",
+                "period": 300
+              }
+            },
+            {
+              "type": "metric",
+              "x": 12,
+              "y": 14,
+              "width": 12,
+              "height": 6,
+              "properties": {
+                "metrics": [
+                  ["AWS/S3", "BucketSizeBytes", "BucketName", "bucket-1", "StorageType", "StandardStorage"],
+                  ["AWS/S3", "NumberOfObjects", "BucketName", "bucket-1", "StorageType", "AllStorageTypes"]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "${Region}",
+                "title": "S3 Storage Metrics",
+                "period": 86400
+              }
+            },
+            {
+              "type": "metric",
+              "x": 0,
+              "y": 20,
+              "width": 6,
+              "height": 6,
+              "properties": {
+                "metrics": [
+                  ["AWS/AutoScaling", "GroupDesiredCapacity", "AutoScalingGroupName", "${AutoScalingGroupName}"],
+                  ["AWS/AutoScaling", "GroupInServiceInstances", "AutoScalingGroupName", "${AutoScalingGroupName}"],
+                  ["AWS/AutoScaling", "GroupPendingInstances", "AutoScalingGroupName", "${AutoScalingGroupName}"],
+                  ["AWS/AutoScaling", "GroupTerminatingInstances", "AutoScalingGroupName", "${AutoScalingGroupName}"]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "${Region}",
+                "title": "Auto Scaling Activity",
+                "period": 300
+              }
+            },
+            {
+              "type": "metric",
+              "x": 6,
+              "y": 20,
+              "width": 6,
+              "height": 6,
+              "properties": {
+                "metrics": [
+                  ["AWS/EC2", "StatusCheckFailed", "AutoScalingGroupName", "${AutoScalingGroupName}", {"stat": "Sum"}],
+                  ["AWS/EC2", "StatusCheckFailed_Instance", "AutoScalingGroupName", "${AutoScalingGroupName}", {"stat": "Sum"}],
+                  ["AWS/EC2", "StatusCheckFailed_System", "AutoScalingGroupName", "${AutoScalingGroupName}", {"stat": "Sum"}]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "${Region}",
+                "title": "EC2 Health Checks",
+                "period": 300
+              }
+            },
+            {
+              "type": "metric",
+              "x": 12,
+              "y": 20,
+              "width": 6,
+              "height": 6,
+              "properties": {
+                "metrics": [
+                  ["AWS/ApplicationELB", "HealthyHostCount", "LoadBalancer", "${LoadBalancerName}"],
+                  ["AWS/ApplicationELB", "UnHealthyHostCount", "LoadBalancer", "${LoadBalancerName}"]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "${Region}",
+                "title": "Load Balancer Health",
+                "period": 300
+              }
+            },
+            {
+              "type": "metric",
+              "x": 18,
+              "y": 20,
+              "width": 6,
+              "height": 6,
+              "properties": {
+                "metrics": [
+                  ["AWS/Logs", "IncomingLogEvents", "LogGroupName", "/aws/lambda/${ApplicationName}"],
+                  ["AWS/Logs", "IncomingBytes", "LogGroupName", "/aws/lambda/${ApplicationName}"]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "${Region}",
+                "title": "CloudWatch Logs Volume",
+                "period": 300
+              }
+            },
+            {
+              "type": "log",
+              "x": 0,
+              "y": 26,
+              "width": 24,
+              "height": 6,
+              "properties": {
+                "query": "SOURCE '/aws/lambda/${ApplicationName}' | fields @timestamp, @message\n| filter @message like /ERROR/\n| sort @timestamp desc\n| limit 20",
+                "region": "${Region}",
+                "title": "Recent Application Errors",
+                "view": "table"
+              }
+            }
+          ]
+        }
+
+  # ========================================================================
+  # COST MONITORING DASHBOARD - Dedicated cost tracking dashboard
+  # ========================================================================
+  CostMonitoringDashboard:
+    Type: AWS::CloudWatch::Dashboard
+    Properties:
+      DashboardName: !Sub '${EnvironmentName}-Cost-Monitoring'
+      DashboardBody: !Sub |
+        {
+          "widgets": [
+            {
+              "type": "text",
+              "x": 0,
+              "y": 0,
+              "width": 24,
+              "height": 2,
+              "properties": {
+                "markdown": "# ${EnvironmentName} Cost Monitoring Dashboard\n\n**Environment:** ${EnvironmentName} | **Budget:** $${MonthlyBudgetAmount}/month | **Region:** ${Region}"
+              }
+            },
+            {
+              "type": "metric",
+              "x": 0,
+              "y": 2,
+              "width": 12,
+              "height": 6,
+              "properties": {
+                "metrics": [
+                  ["AWS/Billing", "EstimatedCharges", "Currency", "USD", {"label": "Total Estimated Charges"}],
+                  ["AWS/Billing", "EstimatedCharges", "Currency", "USD", "ServiceName", "AmazonEC2", {"label": "EC2 Charges"}],
+                  ["AWS/Billing", "EstimatedCharges", "Currency", "USD", "ServiceName", "AmazonRDS", {"label": "RDS Charges"}],
+                  ["AWS/Billing", "EstimatedCharges", "Currency", "USD", "ServiceName", "AmazonS3", {"label": "S3 Charges"}],
+                  ["AWS/Billing", "EstimatedCharges", "Currency", "USD", "ServiceName", "AWSLambda", {"label": "Lambda Charges"}]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "us-east-1",
+                "title": "AWS Service Costs",
+                "period": 86400,
+                "yAxis": {
+                  "left": {
+                    "min": 0
+                  }
+                }
+              }
+            },
+            {
+              "type": "metric",
+              "x": 12,
+              "y": 2,
+              "width": 12,
+              "height": 6,
+              "properties": {
+                "metrics": [
+                  ["AWS/EC2", "RunningInstances", {"stat": "Maximum", "label": "Running Instances"}],
+                  ["AWS/AutoScaling", "GroupDesiredCapacity", "AutoScalingGroupName", "${AutoScalingGroupName}", {"label": "Desired Capacity"}],
+                  ["AWS/AutoScaling", "GroupInServiceInstances", "AutoScalingGroupName", "${AutoScalingGroupName}", {"label": "In Service Instances"}]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "${Region}",
+                "title": "Instance Count vs Cost",
+                "period": 3600
+              }
+            },
+            {
+              "type": "metric",
+              "x": 0,
+              "y": 8,
+              "width": 8,
+              "height": 6,
+              "properties": {
+                "metrics": [
+                  ["AWS/Lambda", "Duration", "FunctionName", "function-1", {"stat": "Average"}],
+                  ["AWS/Lambda", "Invocations", "FunctionName", "function-1", {"stat": "Sum"}]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "${Region}",
+                "title": "Lambda Usage & Cost Drivers",
+                "period": 3600
+              }
+            },
+            {
+              "type": "metric",
+              "x": 8,
+              "y": 8,
+              "width": 8,
+              "height": 6,
+              "properties": {
+                "metrics": [
+                  ["AWS/RDS", "DatabaseConnections", "DBInstanceIdentifier", "${RDSInstanceIdentifier}"],
+                  ["AWS/RDS", "CPUUtilization", "DBInstanceIdentifier", "${RDSInstanceIdentifier}"]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "${Region}",
+                "title": "RDS Utilization vs Cost",
+                "period": 3600
+              }
+            },
+            {
+              "type": "metric",
+              "x": 16,
+              "y": 8,
+              "width": 8,
+              "height": 6,
+              "properties": {
+                "metrics": [
+                  ["AWS/S3", "BucketSizeBytes", "BucketName", "bucket-1", "StorageType", "StandardStorage"],
+                  ["AWS/S3", "NumberOfObjects", "BucketName", "bucket-1", "StorageType", "AllStorageTypes"]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "${Region}",
+                "title": "S3 Storage Growth",
+                "period": 86400
+              }
+            },
+            {
+              "type": "metric",
+              "x": 0,
+              "y": 14,
+              "width": 12,
+              "height": 6,
+              "properties": {
+                "metrics": [
+                  ["AWS/ApplicationELB", "RequestCount", "LoadBalancer", "${LoadBalancerName}", {"stat": "Sum"}],
+                  ["AWS/ApplicationELB", "ActiveConnectionCount", "LoadBalancer", "${LoadBalancerName}"]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "${Region}",
+                "title": "Load Balancer Traffic & Costs",
+                "period": 3600
+              }
+            },
+            {
+              "type": "metric",
+              "x": 12,
+              "y": 14,
+              "width": 12,
+              "height": 6,
+              "properties": {
+                "metrics": [
+                  ["AWS/ElastiCache", "CacheMisses", "CacheClusterId", "${ElastiCacheClusterId}", {"stat": "Sum"}],
+                  ["AWS/ElastiCache", "CacheHits", "CacheClusterId", "${ElastiCacheClusterId}", {"stat": "Sum"}]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "${Region}",
+                "title": "ElastiCache Efficiency",
+                "period": 3600
+              }
+            }
+          ]
+        }
+
+  # ========================================================================
+  # CUSTOM METRICS DASHBOARD - Application-specific metrics
+  # ========================================================================
+  ApplicationMetricsDashboard:
+    Type: AWS::CloudWatch::Dashboard
+    Properties:
+      DashboardName: !Sub '${EnvironmentName}-${ApplicationName}-Metrics'
+      DashboardBody: !Sub |
+        {
+          "widgets": [
+            {
+              "type": "text",
+              "x": 0,
+              "y": 0,
+              "width": 24,
+              "height": 2,
+              "properties": {
+                "markdown": "# ${ApplicationName} Application Metrics\n\n**Environment:** ${EnvironmentName} | **Application:** ${ApplicationName} | **Custom Metrics & KPIs**"
+              }
+            },
+            {
+              "type": "metric",
+              "x": 0,
+              "y": 2,
+              "width": 6,
+              "height": 6,
+              "properties": {
+                "metrics": [
+                  ["AWS/ApplicationELB", "TargetResponseTime", "LoadBalancer", "${LoadBalancerName}"],
+                  ["AWS/ApplicationELB", "RequestCount", "LoadBalancer", "${LoadBalancerName}", {"stat": "Sum"}]
+                ],
+                "view": "singleValue",
+                "region": "${Region}",
+                "title": "Current Response Time & Requests",
+                "period": 300
+              }
+            },
+            {
+              "type": "metric",
+              "x": 6,
+              "y": 2,
+              "width": 6,
+              "height": 6,
+              "properties": {
+                "metrics": [
+                  ["AWS/AutoScaling", "GroupInServiceInstances", "AutoScalingGroupName", "${AutoScalingGroupName}"],
+                  ["AWS/EC2", "CPUUtilization", "AutoScalingGroupName", "${AutoScalingGroupName}"]
+                ],
+                "view": "singleValue",
+                "region": "${Region}",
+                "title": "Active Instances & CPU",
+                "period": 300
+              }
+            },
+            {
+              "type": "metric",
+              "x": 12,
+              "y": 2,
+              "width": 6,
+              "height": 6,
+              "properties": {
+                "metrics": [
+                  ["AWS/RDS", "DatabaseConnections", "DBInstanceIdentifier", "${RDSInstanceIdentifier}"],
+                  ["AWS/RDS", "CPUUtilization", "DBInstanceIdentifier", "${RDSInstanceIdentifier}"]
+                ],
+                "view": "singleValue",
+                "region": "${Region}",
+                "title": "DB Connections & CPU",
+                "period": 300
+              }
+            },
+            {
+              "type": "metric",
+              "x": 18,
+              "y": 2,
+              "width": 6,
+              "height": 6,
+              "properties": {
+                "metrics": [
+                  ["AWS/Billing", "EstimatedCharges", "Currency", "USD"],
+                  ["AWS/Billing", "EstimatedCharges", "Currency", "USD", "ServiceName", "AmazonEC2"]
+                ],
+                "view": "singleValue",
+                "region": "us-east-1",
+                "title": "Current Costs",
+                "period": 86400
+              }
+            },
+            {
+              "type": "metric",
+              "x": 0,
+              "y": 8,
+              "width": 12,
+              "height": 6,
+              "properties": {
+                "metrics": [
+                  ["AWS/ApplicationELB", "HTTPCode_Target_2XX_Count", "LoadBalancer", "${LoadBalancerName}", {"stat": "Sum"}],
+                  ["AWS/ApplicationELB", "HTTPCode_Target_4XX_Count", "LoadBalancer", "${LoadBalancerName}", {"stat": "Sum"}],
+                  ["AWS/ApplicationELB", "HTTPCode_Target_5XX_Count", "LoadBalancer", "${LoadBalancerName}", {"stat": "Sum"}]
+                ],
+                "view": "timeSeries",
+                "stacked": true,
+                "region": "${Region}",
+                "title": "HTTP Response Codes Distribution",
+                "period": 300
+              }
+            },
+            {
+              "type": "metric",
+              "x": 12,
+              "y": 8,
+              "width": 12,
+              "height": 6,
+              "properties": {
+                "metrics": [
+                  ["AWS/Lambda", "Duration", "FunctionName", "function-1"],
+                  ["AWS/Lambda", "Errors", "FunctionName", "function-1", {"stat": "Sum"}],
+                  ["AWS/Lambda", "Throttles", "FunctionName", "function-1", {"stat": "Sum"}]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "${Region}",
+                "title": "Lambda Performance & Errors",
+                "period": 300
+              }
+            },
+            {
+              "type": "metric",
+              "x": 0,
+              "y": 14,
+              "width": 8,
+              "height": 6,
+              "properties": {
+                "metrics": [
+                  ["AWS/ElastiCache", "CacheHitRate", "CacheClusterId", "${ElastiCacheClusterId}"],
+                  ["AWS/ElastiCache", "CPUUtilization", "CacheClusterId", "${ElastiCacheClusterId}"]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "${Region}",
+                "title": "Cache Performance",
+                "period": 300
+              }
+            },
+            {
+              "type": "metric",
+              "x": 8,
+              "y": 14,
+              "width": 8,
+              "height": 6,
+              "properties": {
+                "metrics": [
+                  ["AWS/RDS", "ReadLatency", "DBInstanceIdentifier", "${RDSInstanceIdentifier}"],
+                  ["AWS/RDS", "WriteLatency", "DBInstanceIdentifier", "${RDSInstanceIdentifier}"],
+                  ["AWS/RDS", "ReadThroughput", "DBInstanceIdentifier", "${RDSInstanceIdentifier}"],
+                  ["AWS/RDS", "WriteThroughput", "DBInstanceIdentifier", "${RDSInstanceIdentifier}"]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "${Region}",
+                "title": "Database I/O Performance",
+                "period": 300
+              }
+            },
+            {
+              "type": "metric",
+              "x": 16,
+              "y": 14,
+              "width": 8,
+              "height": 6,
+              "properties": {
+                "metrics": [
+                  ["AWS/EC2", "NetworkIn", "AutoScalingGroupName", "${AutoScalingGroupName}"],
+                  ["AWS/EC2", "NetworkOut", "AutoScalingGroupName", "${AutoScalingGroupName}"],
+                  ["AWS/EC2", "NetworkPacketsIn", "AutoScalingGroupName", "${AutoScalingGroupName}"],
+                  ["AWS/EC2", "NetworkPacketsOut", "AutoScalingGroupName", "${AutoScalingGroupName}"]
+                ],
+                "view": "timeSeries",
+                "stacked": false,
+                "region": "${Region}",
+                "title": "Network Traffic",
+                "period": 300
+              }
+            }
+          ]
+        }
+
+  # ========================================================================
+  # SNS TOPIC - For dashboard alerts
+  # ========================================================================
+  DashboardAlertsTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: !Sub '${EnvironmentName}-Dashboard-Alerts'
+      DisplayName: !Sub '${EnvironmentName} Dashboard Alerts'
+      Tags:
+        - Key: Name
+          Value: !Sub '${EnvironmentName}-Dashboard-Alerts'
+        - Key: Environment
+          Value: !Ref EnvironmentName
+        - Key: Application
+          Value: !Ref ApplicationName
+
+  DashboardAlertsEmailSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      TopicArn: !Ref DashboardAlertsTopic
+      Protocol: email
+      Endpoint: !Ref AlertEmail
+
+  # ========================================================================
+  # CLOUDWATCH ALARMS - Based on dashboard metrics
+  # ========================================================================
+  HighCostAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub '${EnvironmentName}-High-Cost-Alert'
+      AlarmDescription: Alarm when estimated charges exceed 80% of budget
+      MetricName: EstimatedCharges
+      Namespace: AWS/Billing
+      Statistic: Maximum
+      Period: 86400
+      EvaluationPeriods: 1
+      Threshold: !Ref MonthlyBudgetAmount
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      Dimensions:
+        - Name: Currency
+          Value: USD
+      AlarmActions:
+        - !Ref DashboardAlertsTopic
+      TreatMissingData: notBreaching
+
+  ApplicationResponseTimeAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Condition: HasLoadBalancer
+    Properties:
+      AlarmName: !Sub '${EnvironmentName}-${ApplicationName}-High-Response-Time'
+      AlarmDescription: Alarm when application response time exceeds 2 seconds
+      MetricName: TargetResponseTime
+      Namespace: AWS/ApplicationELB
+      Statistic: Average
+      Period: 300
+      EvaluationPeriods: 2
+      Threshold: 2
+      ComparisonOperator: GreaterThanThreshold
+      Dimensions:
+        - Name: LoadBalancer
+          Value: !Ref LoadBalancerName
+      AlarmActions:
+        - !Ref DashboardAlertsTopic
+
+  DatabaseCPUAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Condition: HasRDSInstance
+    Properties:
+      AlarmName: !Sub '${EnvironmentName}-${RDSInstanceIdentifier}-High-CPU'
+      AlarmDescription: Alarm when database CPU exceeds 80%
+      MetricName: CPUUtilization
+      Namespace: AWS/RDS
+      Statistic: Average
+      Period: 300
+      EvaluationPeriods: 2
+      Threshold: 80
+      ComparisonOperator: GreaterThanThreshold
+      Dimensions:
+        - Name: DBInstanceIdentifier
+          Value: !Ref RDSInstanceIdentifier
+      AlarmActions:
+        - !Ref DashboardAlertsTopic
+
+  ApplicationErrorRateAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Condition: HasLoadBalancer
+    Properties:
+      AlarmName: !Sub '${EnvironmentName}-${ApplicationName}-High-Error-Rate'
+      AlarmDescription: Alarm when 5XX error rate exceeds 5%
+      MetricName: HTTPCode_Target_5XX_Count
+      Namespace: AWS/ApplicationELB
+      Statistic: Sum
+      Period: 300
+      EvaluationPeriods: 2
+      Threshold: 10
+      ComparisonOperator: GreaterThanThreshold
+      Dimensions:
+        - Name: LoadBalancer
+          Value: !Ref LoadBalancerName
+      AlarmActions:
+        - !Ref DashboardAlertsTopic
+
+  LambdaErrorAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Condition: HasLambdaFunctions
+    Properties:
+      AlarmName: !Sub '${EnvironmentName}-Lambda-High-Errors'
+      AlarmDescription: Alarm when Lambda error rate exceeds 5%
+      MetricName: Errors
+      Namespace: AWS/Lambda
+      Statistic: Sum
+      Period: 300
+      EvaluationPeriods: 2
+      Threshold: 5
+      ComparisonOperator: GreaterThanThreshold
+      Dimensions:
+        - Name: FunctionName
+          Value: !Select [0, !Ref LambdaFunctionNames]
+      AlarmActions:
+        - !Ref DashboardAlertsTopic
+
+  AutoScalingCapacityAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Condition: HasAutoScalingGroup
+    Properties:
+      AlarmName: !Sub '${EnvironmentName}-AutoScaling-Max-Capacity'
+      AlarmDescription: Alarm when Auto Scaling Group reaches maximum capacity
+      MetricName: GroupInServiceInstances
+      Namespace: AWS/AutoScaling
+      Statistic: Maximum
+      Period: 300
+      EvaluationPeriods: 1
+      Threshold: 8
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      Dimensions:
+        - Name: AutoScalingGroupName
+          Value: !Ref AutoScalingGroupName
+      AlarmActions:
+        - !Ref DashboardAlertsTopic
+
+  # ========================================================================
+  # BUDGET - Cost control with dashboard integration
+  # ========================================================================
+  DashboardBudget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: !Sub '${EnvironmentName}-Dashboard-Budget'
+        BudgetLimit:
+          Amount: !Ref MonthlyBudgetAmount
+          Unit: USD
+        TimeUnit: MONTHLY
+        BudgetType: COST
+        CostFilters:
+          TagKey:
+            - Environment
+          TagValue:
+            - !Ref EnvironmentName
+        NotificationsWithSubscribers:
+          - Notification:
+              NotificationType: ACTUAL
+              ComparisonOperator: GREATER_THAN
+              Threshold: 80
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref DashboardAlertsTopic
+          - Notification:
+              NotificationType: FORECASTED
+              ComparisonOperator: GREATER_THAN
+              Threshold: 100
+              ThresholdType: PERCENTAGE
+            Subscribers:
+              - SubscriptionType: SNS
+                Address: !Ref DashboardAlertsTopic
+
+  # ========================================================================
+  # LOG GROUPS - For dashboard log widgets
+  # ========================================================================
+  ApplicationLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub '/aws/lambda/${ApplicationName}'
+      RetentionInDays: 30
+
+  AccessLogGroup:
+    Type: AWS::Logs::LogGroup
+    Condition: HasLoadBalancer
+    Properties:
+      LogGroupName: !Sub '/aws/applicationloadbalancer/${EnvironmentName}-${ApplicationName}'
+      RetentionInDays: 14
+
+  # ========================================================================
+  # CUSTOM METRIC FILTERS - Extract custom metrics from logs
+  # ========================================================================
+  ErrorMetricFilter:
+    Type: AWS::Logs::MetricFilter
+    Properties:
+      LogGroupName: !Ref ApplicationLogGroup
+      FilterPattern: '[timestamp, request_id, "ERROR"]'
+      MetricTransformations:
+        - MetricNamespace: !Sub '${EnvironmentName}/${ApplicationName}'
+          MetricName: ErrorCount
+          MetricValue: '1'
+          DefaultValue: 0
+
+  ResponseTimeMetricFilter:
+    Type: AWS::Logs::MetricFilter
+    Condition: HasLoadBalancer
+    Properties:
+      LogGroupName: !Ref AccessLogGroup
+      FilterPattern: '[timestamp, elb, client_port, target_port, request_processing_time, target_processing_time, response_processing_time, elb_status_code, target_status_code, received_bytes, sent_bytes, request, user_agent, ssl_cipher, ssl_protocol]'
+      MetricTransformations:
+        - MetricNamespace: !Sub '${EnvironmentName}/${ApplicationName}'
+          MetricName: ResponseTime
+          MetricValue: '$target_processing_time'
+          DefaultValue: 0
+
+Outputs:
+  InfrastructureDashboardURL:
+    Description: URL of the Infrastructure Overview Dashboard
+    Value: !Sub 'https://${Region}.console.aws.amazon.com/cloudwatch/home?region=${Region}#dashboards:name=${EnvironmentName}-${DashboardName}'
+    Export:
+      Name: !Sub '${EnvironmentName}-Infrastructure-Dashboard-URL'
+
+  CostMonitoringDashboardURL:
+    Description: URL of the Cost Monitoring Dashboard
+    Value: !Sub 'https://${Region}.console.aws.amazon.com/cloudwatch/home?region=${Region}#dashboards:name=${EnvironmentName}-Cost-Monitoring'
+    Export:
+      Name: !Sub '${EnvironmentName}-Cost-Dashboard-URL'
+
+  ApplicationMetricsDashboardURL:
+    Description: URL of the Application Metrics Dashboard
+    Value: !Sub 'https://${Region}.console.aws.amazon.com/cloudwatch/home?region=${Region}#dashboards:name=${EnvironmentName}-${ApplicationName}-Metrics'
+    Export:
+      Name: !Sub '${EnvironmentName}-Application-Dashboard-URL'
+
+  DashboardAlertsTopicArn:
+    Description: ARN of the dashboard alerts SNS topic
+    Value: !Ref DashboardAlertsTopic
+    Export:
+      Name: !Sub '${EnvironmentName}-Dashboard-Alerts-Topic-ARN'
+
+  ApplicationLogGroupName:
+    Description: Name of the application log group
+    Value: !Ref ApplicationLogGroup
+    Export:
+      Name: !Sub '${EnvironmentName}-Application-LogGroup-Name'
+
+  AccessLogGroupName:
+    Description: Name of the access log group
+    Condition: HasLoadBalancer
+    Value: !Ref AccessLogGroup
+    Export:
+      Name: !Sub '${EnvironmentName}-Access-LogGroup-Name'
+
+  DashboardConfiguration:
+    Description: Summary of dashboard configuration
+    Value: !Sub |
+      Environment: ${EnvironmentName}
+      Application: ${ApplicationName}
+      Region: ${Region}
+      Budget: ${MonthlyBudgetAmount}/month
+      
+      Dashboards Created:
+      1. Infrastructure Overview: ${EnvironmentName}-${DashboardName}
+      2. Cost Monitoring: ${EnvironmentName}-Cost-Monitoring
+      3. Application Metrics: ${EnvironmentName}-${ApplicationName}-Metrics
+      
+      Resources Monitored:
+      - Auto Scaling Group: ${AutoScalingGroupName}
+      - Load Balancer: ${LoadBalancerName}
+      - RDS Instance: ${RDSInstanceIdentifier}
+      - ElastiCache: ${ElastiCacheClusterId}
+      - Lambda Functions: ${LambdaFunctionNames}
+      - S3 Buckets: ${S3BucketNames}
+      
+      Alert Email: ${AlertEmail}
+    Export:
+      Name: !Sub '${EnvironmentName}-Dashboard-Configuration'
