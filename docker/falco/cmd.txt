@@ -3,3 +3,14 @@ sudo docker run --rm -i -t --name falco --privileged  \
     -v /dev:/host/dev -v /proc:/host/proc:ro -v /boot:/host/boot:ro \
     -v /lib/modules:/host/lib/modules:ro -v /usr:/host/usr:ro -v /etc:/host/etc:ro \
     falcosecurity/falco:0.41.0
+
+docker pull falcosecurity/falco:latest
+docker run --rm -it \
+           --cap-drop all \
+           --cap-add sys_admin \
+           --cap-add sys_resource \
+           --cap-add sys_ptrace \
+           -v /var/run/docker.sock:/host/var/run/docker.sock \
+           -v /proc:/host/proc:ro \
+           -v /etc:/host/etc:ro \
+           falcosecurity/falco:latest
