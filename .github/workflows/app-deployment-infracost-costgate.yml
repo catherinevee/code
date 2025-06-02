@@ -1,0 +1,89 @@
+# .github/workflows/cost-gate.yml
+name: Cost Gate Deployment
+on:
+  push:
+    branches: [main]
+    paths: ['terraform/**']
+
+jobs:
+  cost-estimate:
+    runs-on: ubuntu-latest
+    outputs:
+      cost-increase: ${{ steps.cost-check.outputs.cost-increase }}
+      requires-approval: ${{ steps.cost-check.outputs.requires-approval }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Infracost
+        uses: infracost/actions/setup@v2
+        with:
+          api-key: ${{ secrets.INFRACOST_API_KEY }}
+
+      - name: Generate cost estimate
+        run: |
+          infracost breakdown --path=terraform \
+                              --format=json \
+                              --out-file=/tmp/infracost.json
+
+      - name: Check cost increase
+        id: cost-check
+        run: |
+          COST_INCREASE=$(jq -r '.diffTotalMonthlyCost' /tmp/infracost.json || echo "0")
+          echo "cost-increase=$COST_INCREASE" >> $GITHUB_OUTPUT
+
+          # Require approval for increases over $500/month
+          if (( $(echo "$COST_INCREASE > 500" | bc -l) )); then
+            echo "requires-approval=true" >> $GITHUB_OUTPUT
+          else
+            echo "requires-approval=false" >> $GITHUB_OUTPUT
+          fi
+
+  approval-gate:
+    if: needs.cost-estimate.outputs.requires-approval == 'true'
+    needs: cost-estimate
+    runs-on: ubuntu-latest
+    environment: cost-approval
+    steps:
+      - name: Request approval for high-cost change
+        run: |
+          echo "Cost increase of ${{ needs.cost-estimate.outputs.cost-increase }} requires approval"
+          echo "Manual approval required before deployment"
+
+  deploy:
+    needs: [cost-estimate, approval-gate]
+    if: always() && (needs.approval-gate.result == 'success' || needs.cost-estimate.outputs.requires-approval == 'false')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Deploy infrastructure
+        run: |
+          cd terraform
+          terraform init
+          terraform apply -auto-approve
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Notify deployment with cost info
+        run: |
+          curl -X POST ${{ secrets.SLACK_WEBHOOK }} \
+            -H 'Content-type: application/json' \
+            --data '{
+              "text": "🚀 Infrastructure deployed",
+              "attachments": [{
+                "color": "good",
+                "fields": [
+                  {
+                    "title": "Cost Impact",
+                    "value": "${{ needs.cost-estimate.outputs.cost-increase }}/month",
+                    "short": true
+                  },
+                  {
+                    "title": "Environment", 
+                    "value": "Production",
+                    "short": true
+                  }
+                ]
+              }]
+            }'

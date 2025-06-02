@@ -1,0 +1,27 @@
+# .github/pull_request_template.md additions
+
+## Cost Impact Checklist
+
+Before merging infrastructure changes, reviewers should verify:
+
+- [ ] **Resource Sizing**: Are new resources appropriately sized for their intended use?
+- [ ] **Environment Parity**: Do non-production environments use cost-appropriate configurations?
+- [ ] **Tagging**: Are all new resources properly tagged for cost attribution?
+- [ ] **Cleanup**: Are temporary resources configured for automatic cleanup?
+- [ ] **Monitoring**: Will new resources be included in cost monitoring?
+
+## Cost Optimization Review
+
+For infrastructure changes, consider:
+
+- [ ] Could this use a smaller instance type initially and scale up if needed?
+- [ ] Are we using the most cost-effective storage type for this use case?
+- [ ] Could any of these resources benefit from scheduled scaling?
+- [ ] Have we considered serverless alternatives where appropriate?
+
+## Questions for the Author
+
+- What is the expected monthly cost impact of this change?
+- How did you determine the resource sizing?
+- Are there any cost optimization opportunities you considered?
+- How will we track the cost effectiveness of this implementation?

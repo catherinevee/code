@@ -1,0 +1,29 @@
+# .github/workflows/post-deployment-monitoring.yml
+name: Post-Deployment Cost Monitoring
+on:
+  workflow_run:
+    workflows: ['Cost Gate Deployment']
+    types: [completed]
+
+jobs:
+  setup-monitoring:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Create cost monitoring alarm
+        run: |
+          python scripts/create_cost_alarm.py \
+            --deployment-id ${{ github.run_id }} \
+            --estimated-cost ${{ github.event.workflow_run.outputs.cost-increase }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Schedule cost validation
+        run: |
+          # Create a scheduled job to validate costs in 7 days
+          python scripts/schedule_cost_validation.py \
+            --deployment-id ${{ github.run_id }} \
+            --validation-date $(date -d '+7 days' '+%Y-%m-%d')

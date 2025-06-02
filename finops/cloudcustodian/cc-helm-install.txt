@@ -1,0 +1,6 @@
+helm repo add c7n https://cloud-custodian.github.io/helm-charts/
+helm repo update
+helm search repo c7n -l
+...
+
+helm install c7n-kube c7n/c7n-kube  --namespace c7n-system -f values.yml --create-namespace

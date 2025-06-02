@@ -1,0 +1,54 @@
+# Architecture Review Template with Cost Considerations
+
+## Architecture Review Checklist
+
+### Functional Requirements
+
+- [ ] Does the design meet all functional requirements?
+- [ ] Are performance requirements clearly defined and achievable?
+- [ ] Is the system scalable to handle expected load?
+
+### Cost Considerations
+
+- [ ] **Cost Estimation**: What is the estimated monthly cost of this architecture?
+- [ ] **Cost Drivers**: What are the primary cost drivers in this design?
+- [ ] **Alternatives Considered**: Were lower-cost alternatives evaluated?
+- [ ] **Environment Scaling**: How will costs scale across dev/staging/prod environments?
+- [ ] **Cost Monitoring**: How will costs be tracked and attributed post-launch?
+
+### Cost Optimization Opportunities
+
+- [ ] **Right-Sizing**: Are compute resources appropriately sized for the workload?
+- [ ] **Spot Instances**: Can any workloads use spot instances for cost savings?
+- [ ] **Reserved Capacity**: Should any resources use reserved instances or savings plans?
+- [ ] **Storage Optimization**: Are appropriate storage tiers and lifecycle policies planned?
+- [ ] **Serverless Opportunities**: Could any components benefit from serverless architectures?
+
+### Ongoing Cost Management
+
+- [ ] **Budget Allocation**: Is this project within the team's quarterly budget?
+- [ ] **Cost Alerts**: Will appropriate cost monitoring and alerts be implemented?
+- [ ] **Optimization Plan**: Is there a plan for ongoing cost optimization?
+- [ ] **Sunset Plan**: Is there a plan for resource cleanup when the project ends?
+
+## Cost Impact Analysis
+
+### Estimated Monthly Costs
+
+| Environment | Compute | Storage | Network | Other | Total |
+| ----------- | ------- | ------- | ------- | ----- | ----- |
+| Development | $XXX    | $XXX    | $XXX    | $XXX  | $XXX  |
+| Staging     | $XXX    | $XXX    | $XXX    | $XXX  | $XXX  |
+| Production  | $XXX    | $XXX    | $XXX    | $XXX  | $XXX  |
+
+### Cost Justification
+
+- **Business Value**: How does the cost relate to expected business value?
+- **Cost per User**: What is the expected cost per active user?
+- **Break-even Analysis**: At what usage level does this become cost-effective?
+
+### Risk Mitigation
+
+- **Cost Overruns**: What safeguards prevent unexpected cost spikes?
+- **Monitoring**: How will cost anomalies be detected and addressed?
+- **Emergency Shutdown**: Can resources be quickly scaled down if needed?
