@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: production-memory-constraint
+spec:
+  limits:
+  - default:
+      memory: 1Gi
+    defaultRequest:
+      memory: 1Gi
+    max:
+      memory: 1Gi
+    mix:
+      memory: 500m
+    type: Container
