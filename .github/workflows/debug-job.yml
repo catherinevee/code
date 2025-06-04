@@ -1,0 +1,10 @@
+- name: Debug environment
+  if: failure()
+  run: |
+    echo "Node version: $(node --version)"
+    echo "NPM version: $(npm --version)"
+    echo "Working directory: $(pwd)"
+    echo "Directory contents:"
+    ls -la
+    echo "Environment variables:"
+    env | sort

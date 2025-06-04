@@ -1,0 +1,96 @@
+name: Build and Deploy Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+
+      - name: Build application
+        run: npm run build
+
+      # Create a deployment package with everything needed
+      - name: Create deployment package
+        run: |
+          mkdir -p deploy-package
+          cp -r dist/* deploy-package/
+          cp package.json deploy-package/
+          cp package-lock.json deploy-package/
+
+          # Add deployment metadata
+          echo "{
+            \"version\": \"${{ github.sha }}\",
+            \"buildTime\": \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\",
+            \"branch\": \"${{ github.ref_name }}\"
+          }" > deploy-package/build-info.json
+
+      # Upload the complete deployment package
+      - name: Upload deployment package
+        uses: actions/upload-artifact@v4
+        with:
+          name: deployment-package
+          path: deploy-package/
+          retention-days: 30
+
+      # Also upload test results for analysis
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results
+          path: |
+            coverage/
+            test-results.xml
+          retention-days: 7
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    environment: staging
+
+    steps:
+      - name: Download deployment package
+        uses: actions/download-artifact@v4
+        with:
+          name: deployment-package
+          path: ./package
+
+      - name: Verify package contents
+        run: |
+          echo "Deployment package contents:"
+          ls -la package/
+
+          echo "Build information:"
+          cat package/build-info.json
+
+          # Verify required files exist
+          if [ ! -f "package/index.html" ]; then
+            echo "Error: Missing index.html in deployment package"
+            exit 1
+          fi
+
+      - name: Deploy to staging
+        run: |
+          echo "Deploying to staging environment..."
+          # Your deployment commands would go here
+          # rsync -avz package/ user@staging-server:/var/www/app/

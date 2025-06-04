@@ -1,4 +1,9 @@
-test:
+name: Python Application
+
+on: [push, pull_request]
+
+jobs:
+ test:
   runs-on: ubuntu-latest
 
   # Test against multiple Node.js versions

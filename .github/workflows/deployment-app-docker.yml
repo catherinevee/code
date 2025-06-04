@@ -1,0 +1,30 @@
+name: Docker Build
+
+on: [push, pull_request]
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Build the Docker image
+      - name: Build Docker image
+        run: docker build -t myapp:${{ github.sha }} .
+
+      # Test the built image
+      - name: Test Docker image
+        run: |
+          docker run --rm myapp:${{ github.sha }} npm test
+
+      # Save the image for deployment (optional)
+      - name: Save Docker image
+        run: |
+          docker save myapp:${{ github.sha }} | gzip > myapp.tar.gz
+
+      - name: Upload Docker image
+        uses: actions/upload-artifact@v4
+        with:
+          name: docker-image
+          path: myapp.tar.gz

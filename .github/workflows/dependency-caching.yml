@@ -1,0 +1,48 @@
+name: Optimized Build with Smart Caching
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          # Built-in npm cache that handles most scenarios
+          cache: 'npm'
+
+      # For more complex caching scenarios
+      - name: Cache node modules
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          # Cache key includes package-lock.json hash
+          # When dependencies change, cache automatically invalidates
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+          # Fallback to partial cache matches if exact key not found
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install dependencies
+        run: |
+          # Only install if node_modules doesn't exist or is outdated
+          if [ ! -d "node_modules" ] || [ "package-lock.json" -nt "node_modules/.package-lock.json" ]; then
+            echo "Installing dependencies..."
+            npm ci
+            cp package-lock.json node_modules/.package-lock.json
+          else
+            echo "Using cached dependencies"
+          fi
+
+      # Cache other build artifacts that are expensive to recreate
+      - name: Cache build cache
+        uses: actions/cache@v3
+        with:
+          path: .next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('package-lock.json') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('package-lock.json') }}-
+            ${{ runner.os }}-nextjs-
