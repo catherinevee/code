@@ -1,0 +1,24 @@
+# deploy.yml workflow
+name: Deploy Application
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_sha:
+        description: 'Git SHA of build to deploy'
+        required: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Download artifacts from a different workflow run
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-${{ github.event.inputs.build_sha }}
+          path: dist/
+          run-id: ${{ github.event.inputs.build_sha }}
+
+      # ... deployment steps ...
