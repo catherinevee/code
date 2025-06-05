@@ -1,0 +1,32 @@
+- name: Validate required configuration
+  run: |
+    # Check required environment variables
+    REQUIRED_VARS="NODE_VERSION API_URL DEPLOY_ENV"
+    MISSING_VARS=""
+
+    for var in $REQUIRED_VARS; do
+      if [ -z "${!var}" ]; then
+        echo "❌ Missing required variable: $var"
+        MISSING_VARS="$MISSING_VARS $var"
+      else
+        echo "✅ $var is configured"
+      fi
+    done
+
+    if [ -n "$MISSING_VARS" ]; then
+      echo "Missing required variables:$MISSING_VARS"
+      exit 1
+    fi
+
+    # Validate configuration values
+    if [[ ! "$API_URL" =~ ^https:// ]]; then
+      echo "❌ API_URL must start with https://"
+      exit 1
+    fi
+
+    if [[ ! "$DEPLOY_ENV" =~ ^(production|staging|development)$ ]]; then
+      echo "❌ DEPLOY_ENV must be production, staging, or development"
+      exit 1
+    fi
+
+    echo "✅ All configuration validation passed"

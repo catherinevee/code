@@ -1,0 +1,75 @@
+name: Multi-Environment Deployment
+
+# Workflow-level variables available to all jobs
+env:
+  NODE_VERSION: '18'
+  BUILD_ENVIRONMENT: 'development'
+
+on:
+  push:
+    branches: [main, develop]
+  workflow_dispatch:
+    inputs:
+      target_environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'staging'
+        type: choice
+        options: [staging, production]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    # Job-level variables can override workflow-level ones
+    env:
+      BUILD_ENVIRONMENT: ${{ github.ref == 'refs/heads/main' && 'production' || 'development' }}
+      API_BASE_URL: ${{ github.ref == 'refs/heads/main' && 'https://api.example.com' || 'https://api.staging.example.com' }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Show build configuration
+        run: |
+          echo "Node Version: $NODE_VERSION"
+          echo "Build Environment: $BUILD_ENVIRONMENT"
+          echo "API Base URL: $API_BASE_URL"
+          echo "Git Branch: ${{ github.ref_name }}"
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Step-level variables have highest precedence
+      - name: Build application
+        env:
+          NODE_ENV: production
+          BUILD_ID: ${{ github.run_number }}
+          COMMIT_SHA: ${{ github.sha }}
+        run: |
+          echo "Building with environment: $NODE_ENV"
+          echo "Build ID: $BUILD_ID"
+          echo "Commit: $COMMIT_SHA"
+
+          # Create build-time configuration
+          cat > src/config.js << EOF
+          export const config = {
+            environment: '$BUILD_ENVIRONMENT',
+            apiBaseUrl: '$API_BASE_URL',
+            buildId: '$BUILD_ID',
+            commitSha: '$COMMIT_SHA'
+          };
+          EOF
+
+          npm run build
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-${{ env.BUILD_ENVIRONMENT }}
+          path: dist/

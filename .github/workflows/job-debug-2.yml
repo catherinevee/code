@@ -1,0 +1,23 @@
+- name: Debug configuration (safe values only)
+  run: |
+    echo "=== Environment Variables ==="
+    env | grep -E '^(NODE_|API_|DEPLOY_|GITHUB_)' | sort
+
+    echo "=== GitHub Context ==="
+    echo "Repository: ${{ github.repository }}"
+    echo "Branch: ${{ github.ref_name }}"
+    echo "Event: ${{ github.event_name }}"
+    echo "Actor: ${{ github.actor }}"
+
+    echo "=== Computed Values ==="
+    echo "Build Environment: $BUILD_ENVIRONMENT"
+    echo "Deploy Environment: $DEPLOY_ENV"
+
+    # Check file system for configuration files
+    echo "=== Configuration Files ==="
+    if [ -f "src/config.js" ]; then
+      echo "Config file exists:"
+      cat src/config.js
+    else
+      echo "No config file found"
+    fi

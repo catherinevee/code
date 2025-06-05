@@ -1,0 +1,10 @@
+# This job uses environment protection
+deploy-production:
+  runs-on: ubuntu-latest
+  environment:
+    name: production
+    url: https://myapp.com
+
+  steps:
+    - name: Deploy to production
+      run: echo "Deploying to production..."

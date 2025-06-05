@@ -1,0 +1,19 @@
+- name: Cache large dependencies
+  uses: actions/cache@v3
+  with:
+    path: |
+      large-dataset/
+      ml-models/
+    key: large-deps-${{ hashFiles('data-version.txt') }}
+    restore-keys: large-deps-
+
+- name: Download large dependencies if needed
+  run: |
+    if [ ! -d "large-dataset" ]; then
+      echo "Downloading large dataset..."
+      wget -O dataset.tar.gz https://example.com/large-dataset.tar.gz
+      tar -xzf dataset.tar.gz
+      rm dataset.tar.gz
+    else
+      echo "Using cached large dataset"
+    fi
