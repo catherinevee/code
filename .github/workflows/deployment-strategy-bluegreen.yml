@@ -1,0 +1,106 @@
+name: Blue-Green Deployment
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_environment:
+        description: 'Target environment (blue or green)'
+        required: true
+        type: choice
+        options: [blue, green]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: production-build
+          path: dist/
+
+      - name: Deploy to ${{ github.event.inputs.target_environment }} environment
+        env:
+          TARGET_ENV: ${{ github.event.inputs.target_environment }}
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
+        run: |
+          echo "Deploying to $TARGET_ENV environment..."
+
+          # Deploy to the target environment
+          mkdir -p ~/.ssh
+          echo "$DEPLOY_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+
+          # Deploy files to target environment
+          rsync -avz --delete \
+            -e "ssh -o StrictHostKeyChecking=no" \
+            dist/ deployer@$DEPLOY_HOST:/var/www/app-$TARGET_ENV/
+
+          # Start services on target environment
+          ssh -o StrictHostKeyChecking=no deployer@$DEPLOY_HOST \
+            "sudo systemctl start app-$TARGET_ENV"
+
+      - name: Run comprehensive tests on ${{ github.event.inputs.target_environment }}
+        run: |
+          TARGET_ENV="${{ github.event.inputs.target_environment }}"
+
+          # Wait for application to start
+          sleep 30
+
+          # Get the internal URL for testing
+          if [ "$TARGET_ENV" = "blue" ]; then
+            TEST_URL="https://blue.internal.example.com"
+          else
+            TEST_URL="https://green.internal.example.com"
+          fi
+
+          echo "Testing $TARGET_ENV environment at $TEST_URL"
+
+          # Health check
+          curl --fail "$TEST_URL/health" || exit 1
+
+          # API functionality test
+          curl --fail "$TEST_URL/api/status" || exit 1
+
+          # Database connectivity test
+          curl --fail "$TEST_URL/api/db-check" || exit 1
+
+          echo "✅ All tests passed on $TARGET_ENV environment"
+
+      - name: Switch traffic to ${{ github.event.inputs.target_environment }}
+        env:
+          TARGET_ENV: ${{ github.event.inputs.target_environment }}
+          LOAD_BALANCER_HOST: ${{ secrets.LOAD_BALANCER_HOST }}
+          LB_API_KEY: ${{ secrets.LOAD_BALANCER_API_KEY }}
+        run: |
+          echo "Switching traffic to $TARGET_ENV environment..."
+
+          # Update load balancer to point to new environment
+          curl -X POST "https://$LOAD_BALANCER_HOST/api/switch" \
+            -H "Authorization: Bearer $LB_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d "{\"active_environment\": \"$TARGET_ENV\"}"
+
+          echo "✅ Traffic switched to $TARGET_ENV environment"
+
+      - name: Monitor new deployment
+        run: |
+          echo "Monitoring new deployment for 5 minutes..."
+
+          for i in {1..10}; do
+            echo "Health check $i/10..."
+            
+            if ! curl --fail https://example.com/health; then
+              echo "❌ Health check failed, consider rollback"
+              exit 1
+            fi
+            
+            sleep 30
+          done
+
+          echo "✅ Deployment stable after monitoring period"

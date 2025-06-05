@@ -1,0 +1,20 @@
+# Use GitHub Variables for environment-specific configuration
+- name: Set environment configuration
+  run: |
+    case "${{ github.event.inputs.environment || 'staging' }}" in
+      "development")
+        echo "API_URL=${{ vars.DEV_API_URL }}" >> $GITHUB_ENV
+        echo "DATABASE_POOL_SIZE=5" >> $GITHUB_ENV
+        echo "LOG_LEVEL=debug" >> $GITHUB_ENV
+        ;;
+      "staging")
+        echo "API_URL=${{ vars.STAGING_API_URL }}" >> $GITHUB_ENV
+        echo "DATABASE_POOL_SIZE=10" >> $GITHUB_ENV
+        echo "LOG_LEVEL=info" >> $GITHUB_ENV
+        ;;
+      "production")
+        echo "API_URL=${{ vars.PROD_API_URL }}" >> $GITHUB_ENV
+        echo "DATABASE_POOL_SIZE=20" >> $GITHUB_ENV
+        echo "LOG_LEVEL=warn" >> $GITHUB_ENV
+        ;;
+    esac

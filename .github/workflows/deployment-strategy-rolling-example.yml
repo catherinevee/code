@@ -1,0 +1,101 @@
+name: Rolling Deployment
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  rolling-deploy:
+    runs-on: ubuntu-latest
+    environment: production
+
+    strategy:
+      # Deploy to servers one at a time
+      max-parallel: 1
+      matrix:
+        server: [web1, web2, web3, web4]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: production-build
+          path: dist/
+
+      - name: Remove ${{ matrix.server }} from load balancer
+        env:
+          SERVER: ${{ matrix.server }}
+          LB_HOST: ${{ secrets.LOAD_BALANCER_HOST }}
+          LB_API_KEY: ${{ secrets.LOAD_BALANCER_API_KEY }}
+        run: |
+          echo "Removing $SERVER from load balancer..."
+
+          curl -X POST "https://$LB_HOST/api/servers/$SERVER/disable" \
+            -H "Authorization: Bearer $LB_API_KEY"
+
+          # Wait for connections to drain
+          sleep 30
+
+      - name: Deploy to ${{ matrix.server }}
+        env:
+          SERVER: ${{ matrix.server }}
+          DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
+        run: |
+          echo "Deploying to $SERVER..."
+
+          mkdir -p ~/.ssh
+          echo "$DEPLOY_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+
+          # Get server hostname
+          SERVER_HOST="${{ secrets[format('{0}_HOST', matrix.server)] }}"
+
+          # Deploy files
+          rsync -avz --delete \
+            -e "ssh -o StrictHostKeyChecking=no" \
+            dist/ deployer@$SERVER_HOST:/var/www/app/
+
+          # Restart application
+          ssh -o StrictHostKeyChecking=no deployer@$SERVER_HOST \
+            "sudo systemctl restart app"
+
+      - name: Verify ${{ matrix.server }} health
+        env:
+          SERVER: ${{ matrix.server }}
+        run: |
+          SERVER_HOST="${{ secrets[format('{0}_HOST', matrix.server)] }}"
+
+          echo "Testing $SERVER health..."
+
+          # Wait for service to start
+          sleep 30
+
+          # Health check
+          for i in {1..6}; do
+            if curl --fail "http://$SERVER_HOST:8080/health"; then
+              echo "✅ $SERVER is healthy"
+              break
+            fi
+            
+            if [ $i -eq 6 ]; then
+              echo "❌ $SERVER failed health check"
+              exit 1
+            fi
+            
+            sleep 10
+          done
+
+      - name: Add ${{ matrix.server }} back to load balancer
+        env:
+          SERVER: ${{ matrix.server }}
+          LB_HOST: ${{ secrets.LOAD_BALANCER_HOST }}
+          LB_API_KEY: ${{ secrets.LOAD_BALANCER_API_KEY }}
+        run: |
+          echo "Adding $SERVER back to load balancer..."
+
+          curl -X POST "https://$LB_HOST/api/servers/$SERVER/enable" \
+            -H "Authorization: Bearer $LB_API_KEY"
+
+          echo "✅ $SERVER deployment completed"

@@ -1,0 +1,92 @@
+name: Emergency Rollback
+
+on:
+  workflow_dispatch:
+    inputs:
+      rollback_target:
+        description: 'Commit SHA to rollback to'
+        required: true
+      environment:
+        description: 'Environment to rollback'
+        required: true
+        type: choice
+        options: [staging, production]
+
+jobs:
+  rollback:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.rollback_target }}
+
+      - name: Download rollback artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-${{ github.event.inputs.rollback_target }}
+          path: dist/
+
+      - name: Execute rollback
+        env:
+          ENVIRONMENT: ${{ github.event.inputs.environment }}
+          ROLLBACK_TARGET: ${{ github.event.inputs.rollback_target }}
+        run: |
+          echo "🚨 EMERGENCY ROLLBACK 🚨"
+          echo "Rolling back $ENVIRONMENT to commit $ROLLBACK_TARGET"
+
+          # Confirm rollback (in real scenario, this might be automated)
+          echo "Executing rollback in 10 seconds..."
+          sleep 10
+
+          # Deploy the previous version
+          DEPLOY_HOST="${{ secrets[format('{0}_DEPLOY_HOST', env.ENVIRONMENT)] }}"
+          DEPLOY_KEY="${{ secrets[format('{0}_DEPLOY_KEY', env.ENVIRONMENT)] }}"
+
+          mkdir -p ~/.ssh
+          echo "$DEPLOY_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+
+          rsync -avz --delete \
+            -e "ssh -o StrictHostKeyChecking=no" \
+            dist/ deployer@$DEPLOY_HOST:/var/www/app/
+
+          ssh -o StrictHostKeyChecking=no deployer@$DEPLOY_HOST \
+            "sudo systemctl restart app"
+
+          echo "✅ Rollback completed"
+
+      - name: Verify rollback
+        run: |
+          ENVIRONMENT="${{ github.event.inputs.environment }}"
+
+          if [ "$ENVIRONMENT" = "production" ]; then
+            TEST_URL="https://example.com"
+          else
+            TEST_URL="https://staging.example.com"
+          fi
+
+          echo "Verifying rollback..."
+          sleep 30
+
+          curl --fail "$TEST_URL/health" || {
+            echo "❌ Rollback verification failed"
+            exit 1
+          }
+
+          echo "✅ Rollback verified"
+
+      - name: Send rollback notification
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          ENVIRONMENT: ${{ github.event.inputs.environment }}
+          ROLLBACK_TARGET: ${{ github.event.inputs.rollback_target }}
+        run: |
+          curl -X POST "$SLACK_WEBHOOK" \
+            -H 'Content-type: application/json' \
+            --data "{
+              \"text\": \"🚨 Emergency rollback completed for $ENVIRONMENT to commit $ROLLBACK_TARGET\",
+              \"username\": \"Deployment Bot\",
+              \"icon_emoji\": \":warning:\"
+            }"
