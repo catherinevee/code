@@ -1,0 +1,136 @@
+name: Supply Chain Security
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  security-scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Pin actions to specific SHA hashes for maximum security
+      - name: Setup Node.js (pinned)
+        uses: actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d # v4.0.3
+        with:
+          node-version: '18'
+
+      # Audit dependencies for known vulnerabilities
+      - name: Audit dependencies
+        run: |
+          echo "=== Dependency Security Audit ==="
+
+          # Check for known vulnerabilities
+          npm audit --audit-level=moderate
+
+          # Check for outdated packages with security updates
+          npm outdated --depth=0 || true
+
+          # Generate dependency report
+          npm list --all > dependency-report.txt
+          echo "📊 Dependency report generated"
+
+      # Scan for secrets accidentally committed to repository
+      - name: Secret scanning
+        run: |
+          echo "=== Secret Scanning ==="
+
+          # Look for common secret patterns
+          if grep -r -E "(password|passwd|pwd|secret|key|token|api_key)" . \
+             --exclude-dir=node_modules \
+             --exclude-dir=.git \
+             --exclude="*.md" \
+             --exclude="*.yml" \
+             --exclude="*.yaml"; then
+            echo "⚠️ Potential secrets found in code"
+            echo "Review the above matches to ensure no real secrets are committed"
+          else
+            echo "✅ No obvious secret patterns found"
+          fi
+
+      # Static code analysis for security issues
+      - name: Static security analysis
+        run: |
+          echo "=== Static Security Analysis ==="
+
+          # Install and run ESLint security plugin
+          npm install --no-save eslint-plugin-security
+
+          # Create temporary ESLint config for security scanning
+          cat > .eslintrc.security.js << 'EOF'
+          module.exports = {
+            plugins: ['security'],
+            extends: ['plugin:security/recommended'],
+            parserOptions: {
+              ecmaVersion: 2020,
+              sourceType: 'module'
+            }
+          };
+          EOF
+
+          # Run security-focused linting
+          npx eslint --config .eslintrc.security.js src/ || {
+            echo "⚠️ Security issues found in code"
+            echo "Review and fix security-related ESLint errors"
+          }
+
+      # Check for dependency confusion attacks
+      - name: Check package integrity
+        run: |
+          echo "=== Package Integrity Check ==="
+
+          # Verify package-lock.json exists and is up to date
+          if [ ! -f "package-lock.json" ]; then
+            echo "❌ package-lock.json missing - dependency confusion risk"
+            exit 1
+          fi
+
+          # Check for suspicious package names that might be typosquatting
+          SUSPICIOUS_PATTERNS="^(react-|vue-|angular-|lodas|request|express)"
+          if npm list --json | jq -r '.dependencies | keys[]' | grep -E "$SUSPICIOUS_PATTERNS"; then
+            echo "⚠️ Suspicious package names found - verify legitimacy"
+          fi
+
+          echo "✅ Package integrity checks completed"
+
+      # Generate security report
+      - name: Generate security report
+        if: always()
+        run: |
+          cat > security-report.md << 'EOF'
+          # Security Scan Report
+
+          **Repository**: ${{ github.repository }}
+          **Commit**: ${{ github.sha }}
+          **Branch**: ${{ github.ref_name }}
+          **Scan Date**: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+
+          ## Scans Performed
+
+          - ✅ Dependency vulnerability audit
+          - ✅ Secret pattern scanning
+          - ✅ Static code security analysis
+          - ✅ Package integrity verification
+
+          ## Recommendations
+
+          1. Regularly update dependencies to patch security vulnerabilities
+          2. Use dependabot or similar tools for automated dependency updates
+          3. Implement pre-commit hooks to prevent secret commits
+          4. Consider using SAST tools in your development workflow
+
+          EOF
+
+          echo "Security report generated"
+
+      - name: Upload security report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: security-report
+          path: security-report.md
+          retention-days: 30

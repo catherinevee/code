@@ -1,0 +1,28 @@
+- name: Debug dependency issues
+  if: failure()
+  run: |
+    echo "=== Dependency Debug Information ==="
+
+    # Check npm cache
+    echo "NPM cache info:"
+    npm cache verify
+
+    # Check for permission issues
+    echo "NPM configuration:"
+    npm config list
+
+    # Check network connectivity
+    echo "Network connectivity test:"
+    curl -I https://registry.npmjs.org/ || echo "NPM registry unreachable"
+
+    # Check package.json validity
+    echo "Package.json validation:"
+    node -e "console.log('package.json is valid JSON')" < package.json || echo "Invalid package.json"
+
+    # Check for conflicting global packages
+    echo "Global packages:"
+    npm list -g --depth=0
+
+    # Clear cache and retry
+    echo "Clearing NPM cache..."
+    npm cache clean --force

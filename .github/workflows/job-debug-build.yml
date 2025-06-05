@@ -1,0 +1,25 @@
+- name: Debug build failures
+  if: failure()
+  run: |
+    echo "=== Build Debug Information ==="
+
+    # Check build configuration
+    echo "Build scripts in package.json:"
+    cat package.json | jq '.scripts'
+
+    # Check for missing environment variables
+    echo "Required environment variables:"
+    echo "NODE_ENV: ${NODE_ENV:-'not set'}"
+    echo "CI: ${CI:-'not set'}"
+
+    # Check memory usage
+    echo "Memory usage:"
+    free -h
+
+    # Check for large files that might cause issues
+    echo "Large files in project:"
+    find . -type f -size +10M -not -path './node_modules/*' | head -10
+
+    # Try building with more memory
+    echo "Attempting build with increased memory:"
+    NODE_OPTIONS="--max_old_space_size=4096" npm run build || echo "Build still failed with more memory"

@@ -1,0 +1,53 @@
+name: Optimized Workflow
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Multi-layer caching strategy
+      - name: Cache node modules
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.npm
+            node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      # Cache build outputs
+      - name: Cache build output
+        uses: actions/cache@v3
+        with:
+          path: |
+            .next/cache
+            dist/
+          key: ${{ runner.os }}-build-${{ hashFiles('src/**/*', 'package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          # Built-in cache for additional speed
+          cache: 'npm'
+
+      # Only install if cache miss
+      - name: Install dependencies
+        run: |
+          if [ ! -d "node_modules" ]; then
+            echo "Cache miss, installing dependencies..."
+            npm ci
+          else
+            echo "Using cached dependencies"
+            # Verify cache integrity
+            npm list > /dev/null || {
+              echo "Cache corrupted, reinstalling..."
+              rm -rf node_modules
+              npm ci
+            }
+          fi

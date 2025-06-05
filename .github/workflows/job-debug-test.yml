@@ -1,0 +1,23 @@
+- name: Debug test failures
+  if: failure()
+  run: |
+    echo "=== Test Debug Information ==="
+
+    # Run tests with maximum verbosity
+    echo "Running tests with debug output:"
+    npm test -- --verbose --no-coverage --detectOpenHandles --forceExit || true
+
+    # Check for test environment issues
+    echo "Test environment:"
+    echo "NODE_ENV: ${NODE_ENV:-'not set'}"
+    echo "CI: ${CI:-'not set'}"
+
+    # Check for port conflicts
+    echo "Checking for port usage:"
+    netstat -tulpn 2>/dev/null | grep :300 || echo "No processes on port 3000"
+
+    # Check test configuration
+    if [ -f "jest.config.js" ]; then
+      echo "Jest configuration:"
+      cat jest.config.js
+    fi

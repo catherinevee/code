@@ -1,0 +1,39 @@
+name: Robust Workflow with Error Handling
+
+jobs:
+  deploy-with-retry:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy with automatic retry
+        uses: nick-fields/retry@v2
+        with:
+          timeout_minutes: 10
+          max_attempts: 3
+          retry_wait_seconds: 30
+          command: |
+            echo "Attempting deployment..."
+            # Your deployment command here
+            if [ $RANDOM -lt 16384 ]; then
+              echo "Deployment failed, will retry..."
+              exit 1
+            else
+              echo "Deployment successful!"
+            fi
+
+      - name: Handle deployment failure
+        if: failure()
+        run: |
+          echo "Deployment failed after all retries"
+          # Send alert, create incident, etc.
+
+      - name: Cleanup on failure
+        if: failure()
+        run: |
+          echo "Running cleanup after failure..."
+          # Cleanup partially deployed resources
+
+      - name: Success notification
+        if: success()
+        run: |
+          echo "Deployment completed successfully"
