@@ -1,0 +1,44 @@
+name: Infrastructure and Application Deployment
+
+jobs:
+  provision-infrastructure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.0
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Plan
+        run: terraform plan -out=tfplan
+
+      - name: Terraform Apply
+        run: terraform apply tfplan
+
+      - name: Output infrastructure details
+        run: terraform output -json > infrastructure.json
+
+      - name: Upload infrastructure details
+        uses: actions/upload-artifact@v4
+        with:
+          name: infrastructure-config
+          path: infrastructure.json
+
+  deploy-application:
+    needs: provision-infrastructure
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download infrastructure config
+        uses: actions/download-artifact@v4
+        with:
+          name: infrastructure-config
+
+      - name: Deploy to provisioned infrastructure
+        run: |
+          # Use infrastructure.json to get deployment targets
+          # Deploy application using the provisioned resources

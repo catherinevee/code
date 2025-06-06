@@ -1,0 +1,118 @@
+name: Monorepo CI/CD
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # Detect which services changed
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      api-changed: ${{ steps.changes.outputs.api }}
+      web-changed: ${{ steps.changes.outputs.web }}
+      mobile-changed: ${{ steps.changes.outputs.mobile }}
+      shared-changed: ${{ steps.changes.outputs.shared }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            api:
+              - 'services/api/**'
+              - 'packages/shared/**'
+            web:
+              - 'services/web/**'
+              - 'packages/shared/**'
+            mobile:
+              - 'services/mobile/**'
+              - 'packages/shared/**'
+            shared:
+              - 'packages/shared/**'
+
+  # Test shared packages first since other services depend on them
+  test-shared:
+    runs-on: ubuntu-latest
+    needs: detect-changes
+    if: needs.detect-changes.outputs.shared-changed == 'true'
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run test --workspace=packages/shared
+
+  # Test and build API service
+  test-api:
+    runs-on: ubuntu-latest
+    needs: [detect-changes, test-shared]
+    if: always() && needs.detect-changes.outputs.api-changed == 'true' && (needs.test-shared.result == 'success' || needs.test-shared.result == 'skipped')
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: testdb
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run test --workspace=services/api
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/testdb
+
+  # Test web service
+  test-web:
+    runs-on: ubuntu-latest
+    needs: [detect-changes, test-shared]
+    if: always() && needs.detect-changes.outputs.web-changed == 'true' && (needs.test-shared.result == 'success' || needs.test-shared.result == 'skipped')
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run test --workspace=services/web
+      - run: npm run build --workspace=services/web
+
+  # Deploy services that changed and passed tests
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [detect-changes, test-api, test-web]
+    if: always() && github.ref == 'refs/heads/main'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy API service
+        if: needs.detect-changes.outputs.api-changed == 'true' && needs.test-api.result == 'success'
+        run: |
+          echo "Deploying API service..."
+          # API deployment commands
+
+      - name: Deploy Web service
+        if: needs.detect-changes.outputs.web-changed == 'true' && needs.test-web.result == 'success'
+        run: |
+          echo "Deploying Web service..."
+          # Web deployment commands
