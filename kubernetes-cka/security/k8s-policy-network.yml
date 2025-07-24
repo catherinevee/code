@@ -1,0 +1,48 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: catstar-policy
+spec:
+  podSelector:
+    matchLabels:
+      role: catstar-db
+  policyTypes:
+  - Ingress
+
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          name: catstar-db-1
+      namespaceSelector:
+        matchLabels:
+          name: db
+    - ipBlock:
+        cidr: 10.254.254.254/32
+    ports:
+    - protocol: TCP
+      port: 3306
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: restrict-api-access
+  namespace: kube-system
+spec:
+  podSelector:
+    matchLabels:
+      component: kube-apiserver
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: trusted-namespace
+  - podSelector:
+      matchLabels:
+        access: api-server
+  ports:
+  - protocol: TCP
+    port: 6443

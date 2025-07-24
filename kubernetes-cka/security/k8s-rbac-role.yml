@@ -7,3 +7,26 @@ rules:
 - apiGroups: [ '' ]
   resources: [ 'pods' ]
   verbs: [ 'get', 'watch', 'list' ]
+---
+
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: developer
+  namespace: testing
+rules:
+- apiGroups:
+  - "apps"
+  ResourceNames:
+  - catstar
+  resources:
+  - deployments
+  - pods
+  - services
+  verbs:
+  - get
+  - watch
+  - create
+  - delete

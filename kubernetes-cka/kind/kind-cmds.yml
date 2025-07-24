@@ -1,0 +1,7 @@
+kind create cluster --name kind-prod
+kind load docker-image catprompt:1.04  --name kind-prod
+
+#or kind delete {...}
+
+#the kind-kind is NOT a typo
+kubectl cluster-info --context kind-kind-prod

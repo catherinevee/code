@@ -1,0 +1,45 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: dos-alert-rules
+  namespace: default
+spec:
+  groups:
+  - name: dos-alerts
+    rules:
+    - alert: HighCPUUsage
+      expr: sum(rate(container_cpu_usage_seconds_total[5m])) by (namespace) > 0.8
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: "High CPU Usage Detected"
+        description: "CPU usage is above 80% in namespace {{{$labels.namespace}}."
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: network-alert-rules
+  namespace: default
+spec:
+  groups:
+  - name: network-alerts
+    rules:
+    - alert: HighAPIRequests
+      expr: sum(rate(apiserver_request_total[5m])) by (client) > 100
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: "High rate of API server requests detected."
+        description: "CPU usage is above 80% in namespace {{{$labels.namespace}}."
+
+    - alert: HighNetworkTraffic
+      expr: sum(rate(container_network_receive_bytes_total[5m])) by (client) > 100
+      for: 5m
+      labels:
+        severity: critical
+      annotations:
+        summary: "High network traffic detected in pod."
+        description: "The pod {{$labels.pod}} is generating unusually high network traffic."
