@@ -10,3 +10,9 @@ kubectl exec etcd-controlplane -n kube-system -- sh -c "ETCDCTL_API=3 etcdctl ge
   --cacert /etc/kubernetes/pki/etcd/ca.crt \
   --cert /etc/kubernetes/pki/etcd/server.crt \
   --key /etc/kubernetes/pki/etcd/server.key"
+
+etcdutl backup \ --data-dir /var/lib/etcd \ --backup-dir /backup/etcd-backup
+
+etcdctl snapshot status /backup/etcd-snapshot.db \ --write-out=table
+
+etcdutl snapshot restore /backup/etcd-snapshot.db \ --data-dir /var/lib/etcd-restored
